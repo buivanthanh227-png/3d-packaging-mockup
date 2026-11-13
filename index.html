@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>3D Packaging Mockup Studio V0.4 - Pro Direct 3D</title>
+<title>3D Packaging Mockup Studio V0.5 - Dieline First Workflow</title>
 <style>
 :root{
   --bg:#eef2f7;--panel:#fff;--ink:#1e293b;--muted:#64748b;--line:#e2e8f0;
@@ -16,7 +16,7 @@ header h1{font-size:16px;margin:0;letter-spacing:.3px;display:flex;align-items:c
 header small{color:#94a3b8;display:block;font-size:11.5px;margin-top:2px}
 .badge{background:#10b98122;color:#34d399;border:1px solid #10b98155;border-radius:20px;padding:2px 8px;font-size:11px;font-weight:700}
 
-main{max-width:1700px;margin:auto;padding:12px;display:grid;grid-template-columns:380px minmax(0,1fr);gap:12px}
+main{max-width:1700px;margin:auto;padding:12px;display:grid;grid-template-columns:390px minmax(0,1fr);gap:12px}
 .panel,.stage{background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 4px 16px #0f172a08}
 .panel{padding:14px;max-height:calc(100vh - 78px);overflow-y:auto}
 .panel h2{font-size:13.5px;margin:0 0 10px;color:#0f172a;display:flex;align-items:center;justify-content:space-between;font-weight:700}
@@ -26,7 +26,6 @@ main{max-width:1700px;margin:auto;padding:12px;display:grid;grid-template-column
 .field{display:grid;grid-template-columns:1fr 110px;align-items:center;gap:8px;margin:6px 0}
 .field label{color:#334155;font-size:12.5px}
 .field input[type=number],.field select{width:100%;padding:5px 7px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;color:var(--ink);font-size:12.5px}
-.field input[type=range]{width:100%;accent-color:var(--blue)}
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .mini-field{display:flex;flex-direction:column;gap:2px}
 .mini-field label{font-size:11px;color:var(--muted)}
@@ -35,29 +34,30 @@ main{max-width:1700px;margin:auto;padding:12px;display:grid;grid-template-column
 input[type=file]{width:100%;font-size:11.5px;padding:6px;border:1px dashed #94a3b8;border-radius:8px;background:#f8fafc;cursor:pointer}
 .hint{font-size:11px;color:var(--muted);margin:5px 0;line-height:1.35}
 
-button{border:0;border-radius:6px;background:var(--blue);color:#fff;padding:7px 11px;font-weight:600;font-size:12.5px;cursor:pointer;transition:.15s}
+button{border:0;border-radius:6px;background:var(--blue);color:#fff;padding:8px 12px;font-weight:600;font-size:12.5px;cursor:pointer;transition:.15s}
 button:hover{background:var(--blue-hover)}
 button.secondary{background:#e2e8f0;color:#1e293b}
 button.secondary:hover{background:#cbd5e1}
-button.sm{padding:4px 8px;font-size:11.5px}
-.actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+button.sm{padding:5px 9px;font-size:11.5px}
+.actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 
 .stage{min-height:700px;height:calc(100vh - 78px);overflow:hidden;display:flex;flex-direction:column;position:relative}
 .toolbar{padding:8px 12px;border-bottom:1px solid var(--line);display:flex;gap:6px;align-items:center;flex-wrap:wrap;background:#f8fafc;z-index:2}
 .toolbar .status{margin-left:auto;color:var(--muted);font-size:11.5px;font-weight:500}
 
-#view{flex:1;position:relative;background:radial-gradient(circle at 50% 40%,#ffffff 0%,#eef2f6 65%,#d8e1ed 100%)}
-#view canvas{display:block;width:100%;height:100%}
+#viewArea{flex:1;position:relative;background:#0f172a;overflow:hidden;display:flex;align-items:center;justify-content:center}
+#dieline2DCanvas{background:#1e293b;cursor:grab;box-shadow:0 10px 30px rgba(0,0,0,0.5)}
+#dieline2DCanvas:active{cursor:grabbing}
+#threeCanvas{display:none;width:100%;height:100%}
 
-/* Bảng điều khiển nổi bên trong 3D Stage (Nắp + Băng keo + Artwork mapping) */
-.stage-control-overlay{
+/* Bảng điều khiển nổi thao tác 2D & 3D */
+.float-panel{
   position:absolute;top:54px;left:12px;background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);
   border:1px solid var(--line);border-radius:8px;padding:12px;width:310px;z-index:10;
-  box-shadow:0 6px 20px rgba(15,23,42,0.12);font-size:12px;max-height:calc(100vh - 140px);overflow-y:auto;
+  box-shadow:0 6px 20px rgba(15,23,42,0.15);font-size:12px;
 }
-.stage-control-overlay h4{margin:0 0 8px 0;font-size:12.5px;color:#0f172a;display:flex;justify-content:space-between;align-items:center}
-.stage-control-overlay .field{grid-template-columns:1fr 90px;margin:5px 0}
-.stage-control-overlay .field label{font-size:11.5px}
+.float-panel h4{margin:0 0 8px 0;font-size:12.5px;color:#0f172a;display:flex;justify-content:space-between;align-items:center}
+.float-panel .field{grid-template-columns:1fr 90px;margin:5px 0}
 
 .foot{padding:6px 12px;color:var(--muted);font-size:11px;border-top:1px solid var(--line);background:#fff;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;z-index:2}
 
@@ -72,19 +72,20 @@ button.sm{padding:4px 8px;font-size:11.5px}
 
 <header>
   <div>
-    <h1>3D PACKAGING MOCKUP STUDIO <span class="badge">V0.4 PRO DIRECT</span></h1>
-    <small>Tạo thùng carton 3D · Tùy chỉnh chiều cao cánh · Nạp file & canh chỉnh trực tiếp trên 3D</small>
+    <h1>3D PACKAGING MOCKUP STUDIO <span class="badge">V0.5 DIELINE FIRST</span></h1>
+    <small>Trải phẳng chuẩn kỹ thuật · Canh chỉnh artwork 2D trực quan · Dựng 3D 1 chạm</small>
   </div>
   <div class="actions" style="margin:0">
-    <button class="sm" id="saveBtn">Xuất ảnh PNG 3D</button>
+    <button class="secondary sm" id="switchMode2D">Quay lại sửa bản trải 2D</button>
+    <button class="sm" id="build3DBtn" style="background:#059669">🚀 Dựng Mockup 3D</button>
   </div>
 </header>
 
 <main>
 <aside class="panel">
-  <!-- MỤC 1: KÍCH THƯỚC THÙNG, MỐI NỐI TS, CHIỀU CAO CÁNH & MÀU GIẤY -->
+  <!-- MỤC 1: KÍCH THƯỚC & KHE XẺ RÃNH -->
   <div class="section">
-    <h2>1. Kích thước thùng & Kết cấu</h2>
+    <h2>1. Kích thước thùng & Khe xẻ rãnh</h2>
     <div class="grid-2">
       <div class="mini-field"><label>Dài (L), mm</label><input id="L" type="number" min="30" value="550"></div>
       <div class="mini-field"><label>Rộng (W), mm</label><input id="W" type="number" min="30" value="310"></div>
@@ -98,7 +99,9 @@ button.sm{padding:4px 8px;font-size:11.5px}
       <div class="mini-field"><label>Cao cánh trên (mm)</label><input id="topFlapH" type="number" min="0" value="155"></div>
       <div class="mini-field"><label>Cao cánh đáy (mm)</label><input id="botFlapH" type="number" min="0" value="155"></div>
     </div>
-    <div class="hint">Nhập chiều cao cánh = 0 nếu thùng cụt nắp hoặc cụt đáy (chỉ có thân).</div>
+    <div class="field" style="margin-top:6px">
+      <label>Khe xẻ rãnh (Slotter gap)</label><input id="slotGap" type="number" min="0" max="15" value="3">
+    </div>
     
     <div class="field" style="margin-top:6px">
       <label>Màu giấy carton</label>
@@ -107,64 +110,61 @@ button.sm{padding:4px 8px;font-size:11.5px}
         <select id="paperPreset" style="flex:1">
           <option value="#c6a276">Kraft Vàng Tự Nhiên</option>
           <option value="#d9b382">Kraft Sáng</option>
-          <option value="#a78153">Kraft Đậm / 5 Lớp</option>
-          <option value="#f1f3f5">Carton Trắng (White Duplex)</option>
+          <option value="#a78153">Kraft Đậm</option>
+          <option value="#f1f3f5">Carton Trắng</option>
         </select>
       </div>
     </div>
-    
+
     <div class="actions" style="margin-top:8px">
-      <button id="rebuildBtn" style="width:100%">Cập nhật mô hình 3D</button>
+      <button id="updateDielineBtn" style="width:100%">1. Cập nhật bản trải phẳng 2D</button>
     </div>
   </div>
 
-  <!-- MỤC 2: NẠP FILE ẢNH HOẶC PDF VÀO THAO TÁC TRỰC TIẾP TRÊN 3D -->
+  <!-- MỤC 2: NẠP FILE & CANH CHỈNH 2D -->
   <div class="section">
-    <h2>2. Nạp file Thiết kế (Ảnh / PDF)</h2>
+    <h2>2. Nạp file thiết kế (Ảnh / PDF)</h2>
     <input id="artInput" type="file" accept="image/png,image/jpeg,image/webp,application/pdf">
-    <p class="hint">Tải file ảnh hoặc PDF. Sau khi tải lên, bạn có thể tinh chỉnh dịch chuyển nội dung trực tiếp trên không gian 3D phía bên phải.</p>
+    <p class="hint">Sau khi tạo bản trải 2D, tải file artwork lên. File sẽ đè lên bản trải để bạn kéo thả, zoom, dịch chuyển cho khớp hoàn hảo.</p>
     
-    <div id="fileInfoBox" style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:6px;padding:8px;font-size:11.5px;color:#334155;display:none;margin-top:6px">
-      Đã nạp file thành công. Sử dụng bảng điều khiển nổi trên khung 3D để căn chỉnh.
+    <div class="grid-2" style="margin-top:6px">
+      <button class="secondary sm" id="zoomIn2D">🔍 phóng to</button>
+      <button class="secondary sm" id="zoomOut2D">🔍 Thu nhỏ</button>
     </div>
+    <button class="secondary sm" id="resetZoom2D" style="width:100%;margin-top:4px">Đặt lại góc nhìn 2D</button>
   </div>
 </aside>
 
 <section class="stage">
   <div class="toolbar">
-    <strong>Khung nhìn 3D</strong>
-    <button class="secondary sm" id="camIso">Góc 3/4 Chuẩn</button>
-    <button class="secondary sm" id="camFront">Mặt chính (L)</button>
-    <button class="secondary sm" id="camSide">Mặt hông (W)</button>
-    <button class="secondary sm" id="camTop">Nhìn từ trên</button>
-    <button class="secondary sm" id="camBottom">Nhìn từ dưới lên</button>
-    <span class="status" id="statusText">Sẵn sàng</span>
+    <strong id="stageTitle">Bản trải phẳng 2D (Dieline Studio)</strong>
+    <div id="camToolbar" style="display:none;gap:6px">
+      <button class="secondary sm" id="camIso">Góc 3/4</button>
+      <button class="secondary sm" id="camFront">Mặt chính</button>
+      <button class="secondary sm" id="camSide">Mặt hông</button>
+      <button class="secondary sm" id="camTop">Nhìn từ trên</button>
+      <button class="secondary sm" id="camBottom">Nhìn từ dưới</button>
+    </div>
+    <span class="status" id="statusText">Đã tạo bản trải phẳng 2D chuẩn xác</span>
   </div>
 
-  <div id="view">
-    <!-- BẢNG ĐIỀU KHIỂN NỔI TÍCH HỢP TRONG 3D STAGE -->
-    <div class="stage-control-overlay">
-      <h4><span>3. Điều khiển & Căn chỉnh 3D</span> <button class="secondary sm" id="toggleOverlay" style="padding:1px 5px;font-size:10px">Thu gọn</button></h4>
+  <div id="viewArea">
+    <!-- KHUNG CANH CHỈNH 2D (DIELINE CANVAS) -->
+    <canvas id="dieline2DCanvas" width="900" height="600"></canvas>
+
+    <!-- KHUNG NHÌN 3D (THREE.JS) -->
+    <div id="threeCanvas"></div>
+
+    <!-- BẢNG ĐIỀU KHIỂN NỔI KHI Ở CHẾ ĐỘ 3D -->
+    <div class="float-panel" id="controls3DPanel" style="display:none">
+      <h4><span>Điều khiển 3D & Nắp</span> <button class="secondary sm" id="toggleOverlay" style="padding:1px 5px;font-size:10px">Thu gọn</button></h4>
       <div id="overlayContent">
         <div class="field"><label>Mở nắp trên lớn (L)</label><input id="topMainOpen" type="range" min="0" max="135" value="32"></div>
         <div class="field"><label>Mở nắp trên nhỏ (W)</label><input id="topSideOpen" type="range" min="0" max="115" value="12"></div>
         <div class="field"><label>Mở cánh đáy</label><input id="bottomOpen" type="range" min="0" max="110" value="0"></div>
-        
-        <div style="border-top:1px dashed #cbd5e1;margin:8px 0;padding-top:6px">
-          <div class="field"><label>Băng keo nắp</label><select id="tapeMode"><option value="none">Không dán</option><option value="clear">Băng keo trong</option><option value="color">Băng keo màu tùy chỉnh</option></select></div>
-          <div id="tapeColorRow" class="field" style="display:none"><label>Màu & loại keo</label><input type="color" id="tapeColorPicker" value="#facc15" style="width:100%;height:26px;border:1px solid #cbd5e1;border-radius:4px;cursor:pointer;padding:0"></div>
-        </div>
-
-        <div style="border-top:1px dashed #cbd5e1;margin:8px 0;padding-top:6px">
-          <div style="font-weight:600;margin-bottom:4px;color:#334155">Canh chỉnh Artwork trên mặt 3D</div>
-          <div class="grid-2">
-            <div class="mini-field"><label>Dịch ngang X</label><input id="artOffsetX" type="number" step="0.01" value="0"></div>
-            <div class="mini-field"><label>Dịch dọc Y</label><input id="artOffsetY" type="number" step="0.01" value="0"></div>
-          </div>
-          <div class="mini-field" style="margin-top:4px"><label>Tỷ lệ phóng to Artwork</label><input id="artScale" type="number" step="0.1" min="0.5" max="5" value="1.0"></div>
-        </div>
-
-        <div class="actions" style="margin-top:8px">
+        <div class="field"><label>Băng keo nắp</label><select id="tapeMode"><option value="none">Không dán</option><option value="clear">Băng keo trong</option><option value="color">Băng keo màu</option></select></div>
+        <div id="tapeColorRow" class="field" style="display:none"><label>Màu băng keo</label><input type="color" id="tapeColorPicker" value="#facc15" style="width:100%;height:26px;border:0;cursor:pointer;padding:0"></div>
+        <div class="actions" style="margin-top:6px">
           <button class="secondary sm" id="presetStudio" style="flex:1">Mở tự nhiên</button>
           <button class="secondary sm" id="presetClosed" style="flex:1">Đóng kín</button>
         </div>
@@ -173,8 +173,8 @@ button.sm{padding:4px 8px;font-size:11.5px}
   </div>
 
   <div class="foot">
-    <span>🖱️ Chuột trái: Xoay 360° · Cuộn chuột: Phóng to/thu nhỏ · Chuột phải: Di chuyển</span>
-    <span>Cấu trúc 5 lớp: Giấy mặt + Lớp sóng hình sin + Giấy đáy</span>
+    <span>💡 Ở chế độ 2D: Kéo thả chuột để di chuyển bản vẽ, cuộn chuột để zoom. Khớp artwork rồi bấm "Dựng Mockup 3D".</span>
+    <span>Chuẩn RSC / FEFCO 0201</span>
   </div>
 </section>
 </main>
@@ -192,38 +192,180 @@ button.sm{padding:4px 8px;font-size:11.5px}
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-const viewEl = document.getElementById('view');
+// --- BIẾN TOÀN CỤC QUẢN LÝ 2D & 3D ---
+let currentMode = '2d'; // '2d' hoặc '3d'
+let loadedArtImg = null;
+
+// Trạng thái pan/zoom của artwork trên bản trải 2D
+let artTransform = { x: 0, y: 0, scale: 1.0 };
+let isDragging2D = false, dragStart2D = { x: 0, y: 0 };
+
+const viewArea = document.getElementById('viewArea');
+const canvas2D = document.getElementById('dieline2DCanvas');
+const ctx2D = canvas2D.getContext('2d');
+
+function getDims() {
+  return {
+    L: Math.max(30, +document.getElementById('L').value || 550),
+    W: Math.max(30, +document.getElementById('W').value || 310),
+    H: Math.max(30, +document.getElementById('H').value || 420),
+    T: Math.max(1, +document.getElementById('thick').value || 4),
+    TS: Math.max(0, +document.getElementById('glueTS').value || 35),
+    topFlapH: Math.max(0, +document.getElementById('topFlapH').value || 155),
+    botFlapH: Math.max(0, +document.getElementById('botFlapH').value || 155),
+    slotGap: Math.max(0, +document.getElementById('slotGap').value || 3)
+  };
+}
+
+// Tính toán kích thước tổng thể bản trải 2D
+function getDielineGeometry(d) {
+  const totalW = d.TS + d.L + d.W + d.L + d.W;
+  const totalH = d.topFlapH + d.H + d.botFlapH;
+  return { totalW, totalH };
+}
+
+// --- VẼ BẢN TRẢI PHẲNG 2D (DIELINE 2D) ---
+function render2DDieline() {
+  const d = getDims();
+  const cw = viewArea.clientWidth - 40;
+  const ch = viewArea.clientHeight - 40;
+  canvas2D.width = Math.max(600, cw);
+  canvas2D.height = Math.max(450, ch);
+
+  ctx2D.clearRect(0, 0, canvas2D.width, canvas2D.height);
+
+  const geom = getDielineGeometry(d);
+  const paperColor = document.getElementById('paperColorPicker').value;
+
+  // Scale fit canvas
+  const padding = 60;
+  const scaleX = (canvas2D.width - padding * 2) / geom.totalW;
+  const scaleY = (canvas2D.height - padding * 2) / geom.totalH;
+  const scale = Math.min(scaleX, scaleY);
+
+  const startX = (canvas2D.width - geom.totalW * scale) / 2;
+  const startY = (canvas2D.height - geom.totalH * scale) / 2;
+
+  ctx2D.save();
+  ctx2D.translate(startX, startY);
+
+  // 1. Vẽ nền màu giấy kraft cho toàn bộ dieline
+  ctx2D.fillStyle = paperColor;
+  ctx2D.fillRect(0, 0, geom.totalW * scale, geom.totalH * scale);
+
+  // 2. Nếu có artwork, vẽ artwork đè lên với transform (pan/zoom)
+  if (loadedArtImg) {
+    ctx2D.save();
+    ctx2D.translate(artTransform.x, artTransform.y);
+    ctx2D.scale(artTransform.scale, artTransform.scale);
+    ctx2D.drawImage(loadedArtImg, 0, 0, geom.totalW * scale, geom.totalH * scale);
+    ctx2D.restore();
+  }
+
+  // 3. Vẽ đường cấn gấp (Crease lines - màu hồng/đỏ) & đường cắt (Cut lines - màu đen/đậm)
+  ctx2D.strokeStyle = '#ec4899'; // Đường cấn gấp hồng
+  ctx2D.lineWidth = 1.5;
+
+  // Đường cấn ngang trên & dưới thân
+  const bodyTopY = d.topFlapH * scale;
+  const bodyBotY = (d.topFlapH + d.H) * scale;
+  ctx2D.beginPath();
+  ctx2D.moveTo(0, bodyTopY); ctx2D.lineTo(geom.totalW * scale, bodyTopY);
+  ctx2D.moveTo(0, bodyBotY); ctx2D.lineTo(geom.totalW * scale, bodyBotY);
+  ctx2D.stroke();
+
+  // Các đường cấn dọc chia mặt (TS, L1, W1, L2, W2)
+  let curX = d.TS * scale;
+  const panelWidths = [d.L, d.W, d.L, d.W];
+  
+  // Vẽ lưỡi gà TS bên trái
+  ctx2D.strokeRect(0, bodyTopY, d.TS * scale, d.H * scale);
+
+  panelWidths.forEach((pw, idx) => {
+    const nextX = curX + pw * scale;
+    // Đường dọc phân chia mặt
+    if (idx > 0) {
+      ctx2D.beginPath();
+      ctx2D.moveTo(curX, 0); ctx2D.lineTo(curX, geom.totalH * scale);
+      ctx2D.stroke();
+    }
+
+    // Nhãn tên mặt trên 2D
+    ctx2D.fillStyle = 'rgba(15, 23, 42, 0.75)';
+    ctx2D.font = 'bold 12px sans-serif';
+    ctx2D.fillText(idx % 2 === 0 ? `L${idx/2+1} (${pw}mm)` : `W${(idx+1)/2} (${pw}mm)`, curX + 10, bodyTopY + 30);
+
+    // Khe xẻ rãnh (Slotter gap) đen tại các góc cánh nắp
+    if (d.slotGap > 0) {
+      ctx2D.fillStyle = '#0f172a';
+      const gapPx = d.slotGap * scale;
+      if (idx < 4) {
+        ctx2D.fillRect(curX - gapPx/2, bodyTopY - 2, gapPx, 4);
+        ctx2D.fillRect(curX - gapPx/2, bodyBotY - 2, gapPx, 4);
+      }
+    }
+
+    curX = nextX;
+  });
+
+  // Khung bao ngoài cùng của dieline
+  ctx2D.strokeStyle = '#0f172a';
+  ctx2D.lineWidth = 2;
+  ctx2D.strokeRect(0, 0, geom.totalW * scale, geom.totalH * scale);
+
+  ctx2D.restore();
+}
+
+// Tương tác chuột kéo thả & zoom trên bản 2D
+canvas2D.addEventListener('pointerdown', e => {
+  if (currentMode !== '2d') return;
+  isDragging2D = true;
+  dragStart2D = { x: e.clientX - artTransform.x, y: e.clientY - artTransform.y };
+  canvas2D.setPointerCapture(e.pointerId);
+});
+canvas2D.addEventListener('pointermove', e => {
+  if (!isDragging2D || currentMode !== '2d') return;
+  artTransform.x = e.clientX - dragStart2D.x;
+  artTransform.y = e.clientY - dragStart2D.y;
+  render2DDieline();
+});
+canvas2D.addEventListener('pointerup', () => { isDragging2D = false; });
+canvas2D.addEventListener('wheel', e => {
+  if (currentMode !== '2d') return;
+  e.preventDefault();
+  const factor = e.deltaY < 0 ? 1.1 : 0.9;
+  artTransform.scale = Math.max(0.2, Math.min(10, artTransform.scale * factor));
+  render2DDieline();
+}, { passive: false });
+
+document.getElementById('zoomIn2D').onclick = () => { artTransform.scale *= 1.2; render2DDieline(); };
+document.getElementById('zoomOut2D').onclick = () => { artTransform.scale /= 1.2; render2DDieline(); };
+document.getElementById('resetZoom2D').onclick = () => { artTransform = { x: 0, y: 0, scale: 1.0 }; render2DDieline(); };
+
+// --- KHỞI TẠO THREE.JS CHO MÔ HÌNH 3D ---
+const threeContainer = document.getElementById('threeCanvas');
 const scene = new THREE.Scene();
 
-const camera = new THREE.PerspectiveCamera(35, viewEl.clientWidth / viewEl.clientHeight, 1, 10000);
+const camera = new THREE.PerspectiveCamera(35, viewArea.clientWidth / viewArea.clientHeight, 1, 10000);
 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-renderer.setSize(viewEl.clientWidth, viewEl.clientHeight);
+renderer.setSize(viewArea.clientWidth, viewArea.clientHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.08;
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-viewEl.appendChild(renderer.domElement);
+threeContainer.appendChild(renderer.domElement);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.06;
-controls.maxPolarAngle = Math.PI * 0.95; // Cho phép xoay xuống dưới để nhìn từ dưới lên
+controls.maxPolarAngle = Math.PI * 0.95;
 
-const hemiLight = new THREE.HemisphereLight(0xffffff, 0xd8dee9, 1.35);
-scene.add(hemiLight);
-
+scene.add(new THREE.HemisphereLight(0xffffff, 0xd8dee9, 1.35));
 const keyLight = new THREE.DirectionalLight(0xfffaf2, 1.85);
 keyLight.position.set(550, 950, 650);
 keyLight.castShadow = true;
-keyLight.shadow.mapSize.set(2048, 2048);
-keyLight.shadow.camera.near = 100;
-keyLight.shadow.camera.far = 3000;
-const dCam = 750;
-keyLight.shadow.camera.left = -dCam; keyLight.shadow.camera.right = dCam;
-keyLight.shadow.camera.top = dCam; keyLight.shadow.camera.bottom = -dCam;
-keyLight.shadow.bias = -0.0005; keyLight.shadow.radius = 4;
 scene.add(keyLight);
 
 const fillLight = new THREE.DirectionalLight(0xeef4ff, 0.75);
@@ -239,162 +381,85 @@ shadowFloor.position.y = -0.5;
 shadowFloor.receiveShadow = true;
 scene.add(shadowFloor);
 
-// --- TẠO TEXTURE GIẤY KRAFT & SÓNG CARTON NHIỀU LỚP ---
+// Tạo texture giấy kraft
 function createPaperTexture(hexColor) {
-  const c = document.createElement('canvas');
-  c.width = 512; c.height = 512;
+  const c = document.createElement('canvas'); c.width = 512; c.height = 512;
   const ctx = c.getContext('2d');
-  ctx.fillStyle = hexColor;
-  ctx.fillRect(0, 0, 512, 512);
-
+  ctx.fillStyle = hexColor; ctx.fillRect(0, 0, 512, 512);
   for (let i = 0; i < 9000; i++) {
-    const x = Math.random() * 512, y = Math.random() * 512, len = 1 + Math.random() * 3;
     ctx.fillStyle = Math.random() > 0.5 ? 'rgba(70,40,15,0.14)' : 'rgba(255,245,220,0.18)';
-    ctx.fillRect(x, y, len, 1);
+    ctx.fillRect(Math.random() * 512, Math.random() * 512, 2, 1);
   }
   const tex = new THREE.CanvasTexture(c);
-  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-  tex.repeat.set(2, 2);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping; tex.repeat.set(2, 2);
   tex.colorSpace = THREE.SRGBColorSpace;
   return tex;
 }
 
 function createCorrugatedEdgeTexture(hexColor) {
-  const c = document.createElement('canvas');
-  c.width = 128; c.height = 64;
+  const c = document.createElement('canvas'); c.width = 128; c.height = 64;
   const ctx = c.getContext('2d');
-  ctx.fillStyle = hexColor;
-  ctx.fillRect(0, 0, 128, 64);
-
-  ctx.fillStyle = '#b08a5e';
-  ctx.fillRect(0, 0, 128, 12);
-  ctx.fillRect(0, 52, 128, 12);
-
-  ctx.fillStyle = '#9e7b51';
-  ctx.fillRect(0, 12, 128, 40);
-
-  ctx.strokeStyle = '#573c20';
-  ctx.lineWidth = 3.5;
+  ctx.fillStyle = hexColor; ctx.fillRect(0, 0, 128, 64);
+  ctx.fillStyle = '#b08a5e'; ctx.fillRect(0, 0, 128, 12); ctx.fillRect(0, 52, 128, 12);
+  ctx.fillStyle = '#9e7b51'; ctx.fillRect(0, 12, 128, 40);
+  ctx.strokeStyle = '#573c20'; ctx.lineWidth = 3.5;
   ctx.beginPath();
   for (let x = 0; x <= 128; x += 2) {
     const y = 32 + Math.sin((x / 128) * Math.PI * 10) * 14;
     if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
   }
   ctx.stroke();
-
   const tex = new THREE.CanvasTexture(c);
-  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-  tex.repeat.set(16, 1);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping; tex.repeat.set(16, 1);
   tex.colorSpace = THREE.SRGBColorSpace;
   return tex;
 }
 
-let currentPaperColor = '#c6a276';
-let currentPaperTex = createPaperTexture(currentPaperColor);
-let currentEdgeTex = createCorrugatedEdgeTexture(currentPaperColor);
-
-function updatePaperColor(hex) {
-  currentPaperColor = hex;
-  currentPaperTex = createPaperTexture(hex);
-  currentEdgeTex = createCorrugatedEdgeTexture(hex);
-  buildCarton3D();
-}
-
-document.getElementById('paperColorPicker').addEventListener('input', e => {
-  document.getElementById('paperPreset').value = '';
-  updatePaperColor(e.target.value);
-});
-document.getElementById('paperPreset').addEventListener('change', e => {
-  if (!e.target.value) return;
-  document.getElementById('paperColorPicker').value = e.target.value;
-  updatePaperColor(e.target.value);
-});
-
-// --- QUẢN LÝ KÍCH THƯỚC & ARTWORK ---
-let loadedArtImg = null;
-
-function getDims() {
-  return {
-    L: Math.max(30, +document.getElementById('L').value || 550),
-    W: Math.max(30, +document.getElementById('W').value || 310),
-    H: Math.max(30, +document.getElementById('H').value || 420),
-    T: Math.max(1, +document.getElementById('thick').value || 4),
-    TS: Math.max(0, +document.getElementById('glueTS').value || 35),
-    topFlapH: Math.max(0, +document.getElementById('topFlapH').value || 155),
-    botFlapH: Math.max(0, +document.getElementById('botFlapH').value || 155)
-  };
-}
-
-function createPanelMaterial(panelIdx, regionType, d) {
-  const texCanvas = document.createElement('canvas');
-  texCanvas.width = 1024; texCanvas.height = 1024;
-  const ctx = texCanvas.getContext('2d');
-
-  ctx.fillStyle = currentPaperColor;
-  ctx.fillRect(0, 0, 1024, 1024);
-  for (let i = 0; i < 6000; i++) {
-    ctx.fillStyle = Math.random() > 0.5 ? 'rgba(70,40,15,0.12)' : 'rgba(255,245,220,0.14)';
-    ctx.fillRect(Math.random() * 1024, Math.random() * 1024, 2, 1);
-  }
-
-  if (loadedArtImg) {
-    const offsetX = +document.getElementById('artOffsetX').value || 0;
-    const offsetY = +document.getElementById('artOffsetY').value || 0;
-    const scale = +document.getElementById('artScale').value || 1.0;
-
-    // Tổng chiều rộng bản trải: TS + L1 + W1 + L2 + W2
-    const totalNetW = d.TS + d.L + d.W + d.L + d.W;
-    const totalNetH = d.topFlapH + d.H + d.botFlapH;
-
-    // Xác định tọa độ x trên bản trải cho panel này
-    let panelXStart = d.TS;
-    if (panelIdx === 1) panelXStart = d.TS + d.L;
-    else if (panelIdx === 2) panelXStart = d.TS + d.L + d.W;
-    else if (panelIdx === 3) panelXStart = d.TS + d.L + d.W + d.L;
-    const panelW = (panelIdx % 2 === 0) ? d.L : d.W;
-
-    let regionStartY = d.topFlapH;
-    let regionH = d.H;
-    if (regionType === 'top') { regionStartY = 0; regionH = d.topFlapH; }
-    else if (regionType === 'bottom') { regionStartY = d.topFlapH + d.H; regionH = d.botFlapH; }
-
-    // Ánh xạ sang uv của ảnh gốc kèm offset & scale do người dùng kéo chỉnh trực tiếp trên 3D
-    const sx = ((panelXStart / totalNetW) + offsetX) * loadedArtImg.width;
-    const sw = (panelW / totalNetW) * loadedArtImg.width * scale;
-    const sy = ((regionStartY / totalNetH) + offsetY) * loadedArtImg.height;
-    const sh = (regionH / totalNetH) * loadedArtImg.height * scale;
-
-    ctx.save();
-    ctx.globalCompositeOperation = 'multiply';
-    ctx.drawImage(loadedArtImg, sx, sy, sw, sh, 0, 0, 1024, 1024);
-    ctx.restore();
-  }
-
-  const tex = new THREE.CanvasTexture(texCanvas);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
-
-  return new THREE.MeshStandardMaterial({
-    map: tex,
-    roughness: 0.86,
-    metalness: 0.02
-  });
-}
-
-// --- DỰNG KHỐI 3D CARTON ---
 let cartonRoot = new THREE.Group();
 scene.add(cartonRoot);
 let flapControllers = [];
 let tapeMesh = null;
 
-function createCorrugatedBoard(width, height, depthT, outerMat, innerMat, edgeMat) {
-  if (height <= 0) return null;
-  const geo = new THREE.BoxGeometry(width, height, depthT);
-  const mats = [edgeMat, edgeMat, edgeMat, edgeMat, outerMat, innerMat];
-  const mesh = new THREE.Mesh(geo, mats);
-  mesh.castShadow = true;
-  mesh.receiveShadow = true;
-  return mesh;
+// Ánh xạ từ ảnh 2D đã canh chỉnh lên bề mặt 3D
+function createPanelMaterial3D(panelIdx, regionType, d) {
+  const texCanvas = document.createElement('canvas');
+  texCanvas.width = 1024; texCanvas.height = 1024;
+  const ctx = texCanvas.getContext('2d');
+
+  const paperColor = document.getElementById('paperColorPicker').value;
+  ctx.fillStyle = paperColor;
+  ctx.fillRect(0, 0, 1024, 1024);
+
+  if (loadedArtImg) {
+    const geom = getDielineGeometry(d);
+    // Lấy tọa độ tương ứng trên bản trải 2D đã dịch chuyển
+    let panelX = d.TS;
+    if (panelIdx === 1) panelX = d.TS + d.L;
+    else if (panelIdx === 2) panelX = d.TS + d.L + d.W;
+    else if (panelIdx === 3) panelX = d.TS + d.L + d.W + d.L;
+    const pw = (panelIdx % 2 === 0) ? d.L : d.W;
+
+    let regionY = d.topFlapH, rh = d.H;
+    if (regionType === 'top') { regionY = 0; rh = d.topFlapH; }
+    else if (regionType === 'bottom') { regionY = d.topFlapH + d.H; rh = d.botFlapH; }
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'multiply';
+    // Đưa transform từ 2D sang canvas 3D texture
+    const scaleFactor = 1024 / geom.totalW;
+    ctx.drawImage(loadedArtImg, 
+      (panelX - artTransform.x / scaleFactor), 
+      (regionY - artTransform.y / scaleFactor), 
+      pw * scaleFactor / artTransform.scale, 
+      rh * scaleFactor / artTransform.scale, 
+      0, 0, 1024, 1024
+    );
+    ctx.restore();
+  }
+
+  const tex = new THREE.CanvasTexture(texCanvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return new THREE.MeshStandardMaterial({ map: tex, roughness: 0.86 });
 }
 
 function buildCarton3D() {
@@ -402,7 +467,7 @@ function buildCarton3D() {
     if (obj.geometry) obj.geometry.dispose();
     if (obj.material) {
       const arr = Array.isArray(obj.material) ? obj.material : [obj.material];
-      arr.forEach(m => { if (m.map && m.map !== currentPaperTex) m.map.dispose(); m.dispose(); });
+      arr.forEach(m => m.dispose());
     }
   });
   scene.remove(cartonRoot);
@@ -411,10 +476,11 @@ function buildCarton3D() {
   flapControllers = [];
 
   const d = getDims();
-  const { L, W, H, T, TS, topFlapH, botFlapH } = d;
+  const { L, W, H, T, TS, topFlapH, botFlapH, slotGap } = d;
+  const paperColor = document.getElementById('paperColorPicker').value;
 
-  const innerMat = new THREE.MeshStandardMaterial({ map: currentPaperTex, roughness: 0.92 });
-  const edgeMat = new THREE.MeshStandardMaterial({ map: currentEdgeTex, roughness: 0.95 });
+  const innerMat = new THREE.MeshStandardMaterial({ map: createPaperTexture(paperColor), roughness: 0.92 });
+  const edgeMat = new THREE.MeshStandardMaterial({ map: createCorrugatedEdgeTexture(paperColor), roughness: 0.95 });
 
   const wallConfigs = [
     { panelIdx: 0, w: L, pos: [0, H / 2, W / 2 - T / 2], rotY: 0, isLong: true },
@@ -423,67 +489,51 @@ function buildCarton3D() {
     { panelIdx: 3, w: W - T * 2, pos: [-L / 2 + T / 2, H / 2, 0], rotY: -Math.PI / 2, isLong: false }
   ];
 
-  wallConfigs.forEach((cfg) => {
+  wallConfigs.forEach(cfg => {
     const wallGroup = new THREE.Group();
     wallGroup.position.set(...cfg.pos);
     wallGroup.rotation.y = cfg.rotY;
     cartonRoot.add(wallGroup);
 
-    const bodyOuterMat = createPanelMaterial(cfg.panelIdx, 'body', d);
-    const bodyBoard = createCorrugatedBoard(cfg.w, H, T, bodyOuterMat, innerMat, edgeMat);
-    if (bodyBoard) wallGroup.add(bodyBoard);
+    const bodyMat = createPanelMaterial3D(cfg.panelIdx, 'body', d);
+    const bodyBox = new THREE.Mesh(new THREE.BoxGeometry(cfg.w, H, T), [edgeMat, edgeMat, edgeMat, edgeMat, bodyMat, innerMat]);
+    bodyBox.castShadow = true; bodyBox.receiveShadow = true;
+    wallGroup.add(bodyBox);
 
-    // Cánh trên
     if (topFlapH > 0) {
-      const hinge = new THREE.Group();
-      hinge.position.set(0, H / 2, T / 2);
-      wallGroup.add(hinge);
-
-      const flapW = cfg.w - 2;
-      const flapOuterMat = createPanelMaterial(cfg.panelIdx, 'top', d);
-      const flapBoard = createCorrugatedBoard(flapW, topFlapH, T, flapOuterMat, innerMat, edgeMat);
-      if (flapBoard) {
-        flapBoard.position.set(0, topFlapH / 2, -T / 2);
-        hinge.add(flapBoard);
-      }
-      flapControllers.push({ hinge, isTop: true, isLong: cfg.isLong, flapH: topFlapH });
+      const hinge = new THREE.Group(); hinge.position.set(0, H / 2, T / 2); wallGroup.add(hinge);
+      const flapMat = createPanelMaterial3D(cfg.panelIdx, 'top', d);
+      const flapBox = new THREE.Mesh(new THREE.BoxGeometry(cfg.w - slotGap, topFlapH, T), [edgeMat, edgeMat, edgeMat, edgeMat, flapMat, innerMat]);
+      flapBox.position.set(0, topFlapH / 2, -T / 2);
+      flapBox.castShadow = true; flapBox.receiveShadow = true;
+      hinge.add(flapBox);
+      flapControllers.push({ hinge, isTop: true, isLong: cfg.isLong });
     }
 
-    // Cánh đáy
     if (botFlapH > 0) {
-      const hinge = new THREE.Group();
-      hinge.position.set(0, -H / 2, T / 2);
-      wallGroup.add(hinge);
-
-      const flapW = cfg.w - 2;
-      const flapOuterMat = createPanelMaterial(cfg.panelIdx, 'bottom', d);
-      const flapBoard = createCorrugatedBoard(flapW, botFlapH, T, flapOuterMat, innerMat, edgeMat);
-      if (flapBoard) {
-        flapBoard.position.set(0, -botFlapH / 2, -T / 2);
-        hinge.add(flapBoard);
-      }
-      flapControllers.push({ hinge, isTop: false, isLong: cfg.isLong, flapH: botFlapH });
+      const hinge = new THREE.Group(); hinge.position.set(0, -H / 2, T / 2); wallGroup.add(hinge);
+      const flapMat = createPanelMaterial3D(cfg.panelIdx, 'bottom', d);
+      const flapBox = new THREE.Mesh(new THREE.BoxGeometry(cfg.w - slotGap, botFlapH, T), [edgeMat, edgeMat, edgeMat, edgeMat, flapMat, innerMat]);
+      flapBox.position.set(0, -botFlapH / 2, -T / 2);
+      flapBox.castShadow = true; flapBox.receiveShadow = true;
+      hinge.add(flapBox);
+      flapControllers.push({ hinge, isTop: false, isLong: cfg.isLong });
     }
   });
 
-  // Mối nối / Lưỡi gà TS
   if (TS > 0 && H > 6) {
     const glueTab = new THREE.Mesh(new THREE.BoxGeometry(TS, H - 6, T * 0.8), innerMat);
     glueTab.position.set(-L / 2 + TS / 2 + T, H / 2, W / 2 - T * 1.4);
     cartonRoot.add(glueTab);
   }
 
-  // Băng keo niêm phong nắp trên
   if (topFlapH > 0) {
     const tapeGeo = new THREE.PlaneGeometry(L + 50, 48);
-    const tapeColorHex = document.getElementById('tapeColorPicker').value || '#facc15';
     const isClear = document.getElementById('tapeMode').value === 'clear';
+    const tapeColor = document.getElementById('tapeColorPicker').value || '#facc15';
     const tapeMat = new THREE.MeshPhysicalMaterial({
-      color: isClear ? 0xfff8e7 : tapeColorHex,
-      transparent: true,
-      opacity: isClear ? 0.35 : 0.88,
-      roughness: 0.18,
-      side: THREE.DoubleSide
+      color: isClear ? 0xfff8e7 : tapeColor,
+      transparent: true, opacity: isClear ? 0.35 : 0.88, roughness: 0.18, side: THREE.DoubleSide
     });
     tapeMesh = new THREE.Mesh(tapeGeo, tapeMat);
     tapeMesh.rotation.x = -Math.PI / 2;
@@ -492,7 +542,6 @@ function buildCarton3D() {
   }
 
   applyFlapAngles();
-  document.getElementById('statusText').textContent = `Đã dựng: ${L} × ${W} × ${H} mm (TS: ${TS}mm)`;
 }
 
 function applyFlapAngles() {
@@ -504,15 +553,13 @@ function applyFlapAngles() {
   flapControllers.forEach(fc => {
     let openDeg = fc.isTop ? (fc.isLong ? topMainDeg : topSideDeg) : botDeg;
     const sign = fc.isTop ? -1 : 1;
-    const closedRad = sign * (Math.PI / 2);
-    const openOffsetRad = -sign * THREE.MathUtils.degToRad(openDeg);
-    fc.hinge.rotation.x = closedRad + openOffsetRad;
+    fc.hinge.rotation.x = sign * (Math.PI / 2) - sign * THREE.MathUtils.degToRad(openDeg);
     fc.hinge.position.y = (fc.isTop ? 1 : -1) * (getDims().H / 2 + (openDeg < 5 ? (fc.isLong ? T : 0.2) : 0));
   });
 
   if (tapeMesh) {
-    const tapeMode = document.getElementById('tapeMode').value;
-    tapeMesh.visible = (tapeMode !== 'none' && topMainDeg === 0 && topSideDeg === 0);
+    const mode = document.getElementById('tapeMode').value;
+    tapeMesh.visible = (mode !== 'none' && topMainDeg === 0 && topSideDeg === 0);
   }
 }
 
@@ -523,35 +570,68 @@ function focusCamera(preset = 'iso') {
   if (preset === 'front') camera.position.set(0, H * 0.55, maxDim * 2.2);
   else if (preset === 'side') camera.position.set(maxDim * 2.2, H * 0.55, 0);
   else if (preset === 'top') camera.position.set(0, maxDim * 2.4, 10);
-  else if (preset === 'bottom') camera.position.set(0, -maxDim * 2.4, 10); // Góc nhìn từ dưới lên
+  else if (preset === 'bottom') camera.position.set(0, -maxDim * 2.4, 10);
   else camera.position.set(maxDim * 1.65, maxDim * 1.25, maxDim * 1.85);
   controls.update();
 }
 
-// --- SỰ KIỆN GIAO DIỆN ---
+// --- CHUYỂN ĐỔI GIỮA 2D & 3D ---
+document.getElementById('updateDielineBtn').onclick = () => {
+  currentMode = '2d';
+  canvas2D.style.display = 'block';
+  threeContainer.style.display = 'none';
+  document.getElementById('camToolbar').style.display = 'none';
+  document.getElementById('controls3DPanel').style.display = 'none';
+  document.getElementById('stageTitle').textContent = 'Bản trải phẳng 2D (Dieline Studio)';
+  render2DDieline();
+};
+
+document.getElementById('build3DBtn').onclick = () => {
+  currentMode = '3d';
+  canvas2D.style.display = 'none';
+  threeContainer.style.display = 'block';
+  document.getElementById('camToolbar').style.display = 'flex';
+  document.getElementById('controls3DPanel').style.display = 'block';
+  document.getElementById('stageTitle').textContent = 'Khung nhìn Mockup 3D';
+  build3D();
+};
+
+document.getElementById('switchMode2D').onclick = () => {
+  currentMode = '2d';
+  canvas2D.style.display = 'block';
+  threeContainer.style.display = 'none';
+  document.getElementById('camToolbar').style.display = 'none';
+  document.getElementById('controls3DPanel').style.display = 'none';
+  document.getElementById('stageTitle').textContent = 'Bản trải phẳng 2D (Dieline Studio)';
+  render2DDieline();
+};
+
+function build3D() {
+  buildCarton3D();
+  focusCamera('iso');
+}
+
+// --- NẠP FILE ẢNH/PDF ---
 document.getElementById('artInput').addEventListener('change', e => {
   const file = e.target.files[0];
   if (!file) return;
-  
-  if (file.type === 'application/pdf') {
-    alert('Đã nhận file PDF. App sẽ trích xuất trang đầu tiên làm ảnh texture mockup.');
-  }
-
   const url = URL.createObjectURL(file);
   const img = new Image();
   img.onload = () => {
     loadedArtImg = img;
-    document.getElementById('fileInfoBox').style.display = 'block';
-    buildCarton3D();
+    artTransform = { x: 0, y: 0, scale: 1.0 };
+    if (currentMode === '2d') render2DDieline();
+    else build3D();
   };
   img.src = url;
 });
 
-document.getElementById('rebuildBtn').onclick = () => { buildCarton3D(); focusCamera('iso'); };
-
-['glueTS', 'topFlapH', 'botFlapH', 'artOffsetX', 'artOffsetY', 'artScale'].forEach(id => {
-  document.getElementById(id).onchange = buildCarton3D;
-  document.getElementById(id).oninput = buildCarton3D;
+// Sự kiện giao diện khác
+['glueTS', 'topFlapH', 'botFlapH', 'slotGap', 'paperColorPicker'].forEach(id => {
+  document.getElementById(id).onchange = () => {
+    if (currentMode === '2d') render2DDieline();
+    else build3D();
+  };
 });
 
 ['topMainOpen', 'topSideOpen', 'bottomOpen'].forEach(id => {
@@ -559,34 +639,10 @@ document.getElementById('rebuildBtn').onclick = () => { buildCarton3D(); focusCa
 });
 
 document.getElementById('tapeMode').onchange = e => {
-  const row = document.getElementById('tapeColorRow');
-  row.style.display = e.target.value === 'color' ? 'grid' : 'none';
+  document.getElementById('tapeColorRow').style.display = e.target.value === 'color' ? 'grid' : 'none';
   applyFlapAngles();
 };
 document.getElementById('tapeColorPicker').oninput = applyFlapAngles;
-
-document.getElementById('presetStudio').onclick = () => {
-  document.getElementById('topMainOpen').value = 32;
-  document.getElementById('topSideOpen').value = 12;
-  document.getElementById('bottomOpen').value = 0;
-  applyFlapAngles();
-};
-document.getElementById('presetClosed').onclick = () => {
-  document.getElementById('topMainOpen').value = 0;
-  document.getElementById('topSideOpen').value = 0;
-  document.getElementById('bottomOpen').value = 0;
-  applyFlapAngles();
-};
-
-document.getElementById('toggleOverlay').onclick = () => {
-  const content = document.getElementById('overlayContent');
-  const btn = document.getElementById('toggleOverlay');
-  if (content.style.display === 'none') {
-    content.style.display = 'block'; btn.textContent = 'Thu gọn';
-  } else {
-    content.style.display = 'none'; btn.textContent = 'Mở rộng';
-  }
-};
 
 document.getElementById('camIso').onclick = () => focusCamera('iso');
 document.getElementById('camFront').onclick = () => focusCamera('front');
@@ -594,29 +650,33 @@ document.getElementById('camSide').onclick = () => focusCamera('side');
 document.getElementById('camTop').onclick = () => focusCamera('top');
 document.getElementById('camBottom').onclick = () => focusCamera('bottom');
 
-document.getElementById('saveBtn').onclick = () => {
-  renderer.render(scene, camera);
-  const a = document.createElement('a');
-  a.download = `carton-mockup-${getDims().L}x${getDims().W}x${getDims().H}.png`;
-  a.href = renderer.domElement.toDataURL('image/png');
-  a.click();
+document.getElementById('toggleOverlay').onclick = () => {
+  const c = document.getElementById('overlayContent');
+  const b = document.getElementById('toggleOverlay');
+  c.style.display = c.style.display === 'none' ? 'block' : 'none';
+  b.textContent = c.style.display === 'none' ? 'Mở rộng' : 'Thu gọn';
 };
 
 new ResizeObserver(() => {
-  const w = viewEl.clientWidth, h = viewEl.clientHeight;
-  camera.aspect = w / h;
-  camera.updateProjectionMatrix();
-  renderer.setSize(w, h);
-}).observe(viewEl);
+  const w = viewArea.clientWidth, h = viewArea.clientHeight;
+  if (currentMode === '3d') {
+    camera.aspect = w / h; camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+  } else {
+    render2DDieline();
+  }
+}).observe(viewArea);
 
 function animate() {
   requestAnimationFrame(animate);
-  controls.update();
-  renderer.render(scene, camera);
+  if (currentMode === '3d') {
+    controls.update();
+    renderer.render(scene, camera);
+  }
 }
 
-buildCarton3D();
-focusCamera('iso');
+// Khởi chạy mặc định hiển thị bản trải 2D
+render2DDieline();
 animate();
 </script>
 </body>
