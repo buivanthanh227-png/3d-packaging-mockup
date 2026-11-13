@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>3D Packaging Mockup Studio V0.5 - Dieline First Workflow</title>
+<title>3D Packaging Mockup Studio V0.6 - Pro Dieline Studio</title>
 <style>
 :root{
   --bg:#eef2f7;--panel:#fff;--ink:#1e293b;--muted:#64748b;--line:#e2e8f0;
-  --blue:#2563eb;--blue-hover:#1d4ed8;--blue-light:#eff6ff;--accent:#e11d48;
+  --blue:#2563eb;--blue-hover:#1d4ed8;--blue-light:#eff6ff;--accent:#e11d48;--green:#059669;--green-hover:#047857;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:13px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
@@ -46,11 +46,10 @@ button.sm{padding:5px 9px;font-size:11.5px}
 .toolbar .status{margin-left:auto;color:var(--muted);font-size:11.5px;font-weight:500}
 
 #viewArea{flex:1;position:relative;background:#0f172a;overflow:hidden;display:flex;align-items:center;justify-content:center}
-#dieline2DCanvas{background:#1e293b;cursor:grab;box-shadow:0 10px 30px rgba(0,0,0,0.5)}
-#dieline2DCanvas:active{cursor:grabbing}
+#dieline2DCanvas{background:#1e293b;cursor:crosshair;box-shadow:0 10px 30px rgba(0,0,0,0.5)}
 #threeCanvas{display:none;width:100%;height:100%}
 
-/* Bảng điều khiển nổi thao tác 2D & 3D */
+/* Bảng điều khiển nổi thao tác 3D */
 .float-panel{
   position:absolute;top:54px;left:12px;background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);
   border:1px solid var(--line);border-radius:8px;padding:12px;width:310px;z-index:10;
@@ -72,12 +71,11 @@ button.sm{padding:5px 9px;font-size:11.5px}
 
 <header>
   <div>
-    <h1>3D PACKAGING MOCKUP STUDIO <span class="badge">V0.5 DIELINE FIRST</span></h1>
-    <small>Trải phẳng chuẩn kỹ thuật · Canh chỉnh artwork 2D trực quan · Dựng 3D 1 chạm</small>
+    <h1>3D PACKAGING MOCKUP STUDIO <span class="badge">V0.6 PRO</span></h1>
+    <small>Trải phẳng 2D chuẩn kỹ thuật · Kéo giãn 4 cạnh tự do · Dựng 3D trực quan</small>
   </div>
   <div class="actions" style="margin:0">
-    <button class="secondary sm" id="switchMode2D">Quay lại sửa bản trải 2D</button>
-    <button class="sm" id="build3DBtn" style="background:#059669">🚀 Dựng Mockup 3D</button>
+    <button class="secondary sm" id="switchMode2D">Quay lại chỉnh 2D</button>
   </div>
 </header>
 
@@ -85,7 +83,7 @@ button.sm{padding:5px 9px;font-size:11.5px}
 <aside class="panel">
   <!-- MỤC 1: KÍCH THƯỚC & KHE XẺ RÃNH -->
   <div class="section">
-    <h2>1. Kích thước thùng & Khe xẻ rãnh</h2>
+    <h2>1. Kích thước thùng & Kết cấu</h2>
     <div class="grid-2">
       <div class="mini-field"><label>Dài (L), mm</label><input id="L" type="number" min="30" value="550"></div>
       <div class="mini-field"><label>Rộng (W), mm</label><input id="W" type="number" min="30" value="310"></div>
@@ -100,7 +98,7 @@ button.sm{padding:5px 9px;font-size:11.5px}
       <div class="mini-field"><label>Cao cánh đáy (mm)</label><input id="botFlapH" type="number" min="0" value="155"></div>
     </div>
     <div class="field" style="margin-top:6px">
-      <label>Khe xẻ rãnh (Slotter gap)</label><input id="slotGap" type="number" min="0" max="15" value="3">
+      <label>Khe xẻ rãnh (Slot gap)</label><input id="slotGap" type="number" min="0" max="15" value="3">
     </div>
     
     <div class="field" style="margin-top:6px">
@@ -117,35 +115,34 @@ button.sm{padding:5px 9px;font-size:11.5px}
     </div>
 
     <div class="actions" style="margin-top:8px">
-      <button id="updateDielineBtn" style="width:100%">1. Cập nhật bản trải phẳng 2D</button>
+      <button id="updateDielineBtn" style="width:100%">1. Cập nhật bản trải phẳng 2D (Reset)</button>
     </div>
   </div>
 
-  <!-- MỤC 2: NẠP FILE & CANH CHỈNH 2D -->
+  <!-- MỤC 2: NẠP FILE & NÚT DỰNG MOCKUP 3D TO RÕ Ở DƯỚI -->
   <div class="section">
-    <h2>2. Nạp file thiết kế (Ảnh / PDF)</h2>
+    <h2>2. Nạp file thiết kế & Dựng 3D</h2>
     <input id="artInput" type="file" accept="image/png,image/jpeg,image/webp,application/pdf">
-    <p class="hint">Sau khi tạo bản trải 2D, tải file artwork lên. File sẽ đè lên bản trải để bạn kéo thả, zoom, dịch chuyển cho khớp hoàn hảo.</p>
+    <p class="hint">Tải ảnh/PDF lên. Dùng chuột kéo thả thân ảnh để di chuyển hoặc kéo <b>4 cạnh/góc viền xanh</b> của ảnh để kéo giãn độc lập cho khớp với dieline.</p>
     
-    <div class="grid-2" style="margin-top:6px">
-      <button class="secondary sm" id="zoomIn2D">🔍 phóng to</button>
-      <button class="secondary sm" id="zoomOut2D">🔍 Thu nhỏ</button>
+    <div class="actions" style="margin-top:10px">
+      <button id="build3DBtn" style="width:100%;background:var(--green);padding:12px;font-size:14px">🚀 DỰNG MOCKUP 3D NGAY</button>
     </div>
-    <button class="secondary sm" id="resetZoom2D" style="width:100%;margin-top:4px">Đặt lại góc nhìn 2D</button>
   </div>
 </aside>
 
 <section class="stage">
   <div class="toolbar">
-    <strong id="stageTitle">Bản trải phẳng 2D (Dieline Studio)</strong>
+    <strong id="stageTitle">Bản trải phẳng 2D (Dieline Studio - Kéo giãn 4 cạnh)</strong>
     <div id="camToolbar" style="display:none;gap:6px">
       <button class="secondary sm" id="camIso">Góc 3/4</button>
       <button class="secondary sm" id="camFront">Mặt chính</button>
       <button class="secondary sm" id="camSide">Mặt hông</button>
       <button class="secondary sm" id="camTop">Nhìn từ trên</button>
       <button class="secondary sm" id="camBottom">Nhìn từ dưới</button>
+      <button class="sm" id="saveBtn" style="background:var(--blue)">Xuất ảnh PNG</button>
     </div>
-    <span class="status" id="statusText">Đã tạo bản trải phẳng 2D chuẩn xác</span>
+    <span class="status" id="statusText">Sẵn sàng canh chỉnh 2D</span>
   </div>
 
   <div id="viewArea">
@@ -173,7 +170,7 @@ button.sm{padding:5px 9px;font-size:11.5px}
   </div>
 
   <div class="foot">
-    <span>💡 Ở chế độ 2D: Kéo thả chuột để di chuyển bản vẽ, cuộn chuột để zoom. Khớp artwork rồi bấm "Dựng Mockup 3D".</span>
+    <span>💡 Kéo thả bên trong ảnh để dịch chuyển, kéo 4 góc/cạnh viền xanh để kéo giãn độc lập chiều dài & rộng cho khớp dieline.</span>
     <span>Chuẩn RSC / FEFCO 0201</span>
   </div>
 </section>
@@ -192,13 +189,13 @@ button.sm{padding:5px 9px;font-size:11.5px}
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-// --- BIẾN TOÀN CỤC QUẢN LÝ 2D & 3D ---
-let currentMode = '2d'; // '2d' hoặc '3d'
+let currentMode = '2d';
 let loadedArtImg = null;
 
-// Trạng thái pan/zoom của artwork trên bản trải 2D
-let artTransform = { x: 0, y: 0, scale: 1.0 };
-let isDragging2D = false, dragStart2D = { x: 0, y: 0 };
+// Trạng thái biến đổi 2D cho phép kéo giãn 4 cạnh/góc độc lập: { x, y, w, h } tính theo px trên canvas 2D
+let artRect = { x: 50, y: 50, w: 500, h: 300 };
+let activeHandle = null; // 'tl', 'tr', 'bl', 'br', 'l', 'r', 't', 'b', 'move'
+let dragStart2D = { x: 0, y: 0 };
 
 const viewArea = document.getElementById('viewArea');
 const canvas2D = document.getElementById('dieline2DCanvas');
@@ -217,14 +214,23 @@ function getDims() {
   };
 }
 
-// Tính toán kích thước tổng thể bản trải 2D
 function getDielineGeometry(d) {
   const totalW = d.TS + d.L + d.W + d.L + d.W;
   const totalH = d.topFlapH + d.H + d.botFlapH;
   return { totalW, totalH };
 }
 
-// --- VẼ BẢN TRẢI PHẲNG 2D (DIELINE 2D) ---
+// Tính toán tọa độ và scale để vẽ bản trải 2D vừa khung nhìn
+function getLayoutMetrics(d) {
+  const cw = canvas2D.width, ch = canvas2D.height;
+  const geom = getDielineGeometry(d);
+  const padding = 60;
+  const scale = Math.min((cw - padding * 2) / geom.totalW, (ch - padding * 2) / geom.totalH);
+  const startX = (cw - geom.totalW * scale) / 2;
+  const startY = (ch - geom.totalH * scale) / 2;
+  return { scale, startX, startY };
+}
+
 function render2DDieline() {
   const d = getDims();
   const cw = viewArea.clientWidth - 40;
@@ -235,112 +241,180 @@ function render2DDieline() {
   ctx2D.clearRect(0, 0, canvas2D.width, canvas2D.height);
 
   const geom = getDielineGeometry(d);
+  const metrics = getLayoutMetrics(d);
+  const { scale, startX, startY } = metrics;
   const paperColor = document.getElementById('paperColorPicker').value;
-
-  // Scale fit canvas
-  const padding = 60;
-  const scaleX = (canvas2D.width - padding * 2) / geom.totalW;
-  const scaleY = (canvas2D.height - padding * 2) / geom.totalH;
-  const scale = Math.min(scaleX, scaleY);
-
-  const startX = (canvas2D.width - geom.totalW * scale) / 2;
-  const startY = (canvas2D.height - geom.totalH * scale) / 2;
 
   ctx2D.save();
   ctx2D.translate(startX, startY);
 
-  // 1. Vẽ nền màu giấy kraft cho toàn bộ dieline
+  // 1. Vẽ nền màu giấy kraft cho tổng thể dieline
   ctx2D.fillStyle = paperColor;
   ctx2D.fillRect(0, 0, geom.totalW * scale, geom.totalH * scale);
 
-  // 2. Nếu có artwork, vẽ artwork đè lên với transform (pan/zoom)
+  // 2. Vẽ ảnh artwork nếu có (với khả năng kéo giãn 4 cạnh độc lập)
   if (loadedArtImg) {
-    ctx2D.save();
-    ctx2D.translate(artTransform.x, artTransform.y);
-    ctx2D.scale(artTransform.scale, artTransform.scale);
-    ctx2D.drawImage(loadedArtImg, 0, 0, geom.totalW * scale, geom.totalH * scale);
-    ctx2D.restore();
+    ctx2D.drawImage(loadedArtImg, artRect.x, artRect.y, artRect.w, artRect.h);
+
+    // Vẽ khung viền xanh và các tay nắm (handles) để kéo giãn 4 cạnh/góc
+    ctx2D.strokeStyle = '#2563eb';
+    ctx2D.lineWidth = 1.5;
+    ctx2D.strokeRect(artRect.x, artRect.y, artRect.w, artRect.h);
+
+    const handles = getHandles();
+    ctx2D.fillStyle = '#2563eb';
+    Object.values(handles).forEach(h => {
+      ctx2D.fillRect(h.x - 4, h.y - 4, 8, 8);
+    });
   }
 
-  // 3. Vẽ đường cấn gấp (Crease lines - màu hồng/đỏ) & đường cắt (Cut lines - màu đen/đậm)
+  // 3. Vẽ cấu trúc dieline chuẩn kỹ thuật (Hiển thị đầy đủ chiều cao cánh trên, chiều cao thùng H, cánh đáy)
   ctx2D.strokeStyle = '#ec4899'; // Đường cấn gấp hồng
   ctx2D.lineWidth = 1.5;
 
-  // Đường cấn ngang trên & dưới thân
-  const bodyTopY = d.topFlapH * scale;
-  const bodyBotY = (d.topFlapH + d.H) * scale;
+  const topH_px = d.topFlapH * scale;
+  const h_px = d.H * scale;
+  const botH_px = d.botFlapH * scale;
+  const totalH_px = topH_px + h_px + botH_px;
+  const totalW_px = geom.totalW * scale;
+
+  // Đường cấn ngang phân định Nắp trên - Thân - Nắp đáy
   ctx2D.beginPath();
-  ctx2D.moveTo(0, bodyTopY); ctx2D.lineTo(geom.totalW * scale, bodyTopY);
-  ctx2D.moveTo(0, bodyBotY); ctx2D.lineTo(geom.totalW * scale, bodyBotY);
+  ctx2D.moveTo(0, topH_px); ctx2D.lineTo(totalW_px, topH_px);
+  ctx2D.moveTo(0, topH_px + h_px); ctx2D.lineTo(totalW_px, topH_px + h_px);
   ctx2D.stroke();
 
   // Các đường cấn dọc chia mặt (TS, L1, W1, L2, W2)
   let curX = d.TS * scale;
   const panelWidths = [d.L, d.W, d.L, d.W];
-  
-  // Vẽ lưỡi gà TS bên trái
-  ctx2D.strokeRect(0, bodyTopY, d.TS * scale, d.H * scale);
+
+  // Lưỡi gà TS
+  ctx2D.strokeRect(0, 0, d.TS * scale, totalH_px);
+  ctx2D.fillStyle = 'rgba(15, 23, 42, 0.85)';
+  ctx2D.font = 'bold 11px sans-serif';
+  ctx2D.fillText(`TS (${d.TS}mm)`, 4, topH_px + h_px / 2);
 
   panelWidths.forEach((pw, idx) => {
     const nextX = curX + pw * scale;
-    // Đường dọc phân chia mặt
     if (idx > 0) {
       ctx2D.beginPath();
-      ctx2D.moveTo(curX, 0); ctx2D.lineTo(curX, geom.totalH * scale);
+      ctx2D.moveTo(curX, 0); ctx2D.lineTo(curX, totalH_px);
       ctx2D.stroke();
     }
 
-    // Nhãn tên mặt trên 2D
-    ctx2D.fillStyle = 'rgba(15, 23, 42, 0.75)';
+    // Hiển thị tên mặt và kích thước chiều cao rõ ràng trên bản 2D
+    ctx2D.fillStyle = 'rgba(15, 23, 42, 0.85)';
     ctx2D.font = 'bold 12px sans-serif';
-    ctx2D.fillText(idx % 2 === 0 ? `L${idx/2+1} (${pw}mm)` : `W${(idx+1)/2} (${pw}mm)`, curX + 10, bodyTopY + 30);
+    const panelName = idx % 2 === 0 ? `L${idx/2+1} (${pw}mm)` : `W${(idx+1)/2} (${pw}mm)`;
+    ctx2D.fillText(panelName, curX + 12, topH_px + 22);
 
-    // Khe xẻ rãnh (Slotter gap) đen tại các góc cánh nắp
+    // Ký hiệu chiều cao cánh trên, chiều cao thùng H, cánh đáy
+    ctx2D.font = '10px sans-serif';
+    ctx2D.fillStyle = '#b45309';
+    if (d.topFlapH > 0) ctx2D.fillText(`Cánh trên: ${d.topFlapH}mm`, curX + 12, topH_px - 8);
+    ctx2D.fillText(`Cao H: ${d.H}mm`, curX + 12, topH_px + h_px / 2);
+    if (d.botFlapH > 0) ctx2D.fillText(`Cánh đáy: ${d.botFlapH}mm`, curX + 12, topH_px + h_px + 16);
+
+    // Khe xẻ rãnh (Slot gap) đen
     if (d.slotGap > 0) {
       ctx2D.fillStyle = '#0f172a';
       const gapPx = d.slotGap * scale;
-      if (idx < 4) {
-        ctx2D.fillRect(curX - gapPx/2, bodyTopY - 2, gapPx, 4);
-        ctx2D.fillRect(curX - gapPx/2, bodyBotY - 2, gapPx, 4);
-      }
+      ctx2D.fillRect(curX - gapPx / 2, topH_px - 2, gapPx, 4);
+      ctx2D.fillRect(curX - gapPx / 2, topH_px + h_px - 2, gapPx, 4);
     }
 
     curX = nextX;
   });
 
-  // Khung bao ngoài cùng của dieline
+  // Khung viền tổng thể dieline
   ctx2D.strokeStyle = '#0f172a';
   ctx2D.lineWidth = 2;
-  ctx2D.strokeRect(0, 0, geom.totalW * scale, geom.totalH * scale);
+  ctx2D.strokeRect(0, 0, totalW_px, totalH_px);
 
   ctx2D.restore();
 }
 
-// Tương tác chuột kéo thả & zoom trên bản 2D
-canvas2D.addEventListener('pointerdown', e => {
-  if (currentMode !== '2d') return;
-  isDragging2D = true;
-  dragStart2D = { x: e.clientX - artTransform.x, y: e.clientY - artTransform.y };
-  canvas2D.setPointerCapture(e.pointerId);
-});
-canvas2D.addEventListener('pointermove', e => {
-  if (!isDragging2D || currentMode !== '2d') return;
-  artTransform.x = e.clientX - dragStart2D.x;
-  artTransform.y = e.clientY - dragStart2D.y;
-  render2DDieline();
-});
-canvas2D.addEventListener('pointerup', () => { isDragging2D = false; });
-canvas2D.addEventListener('wheel', e => {
-  if (currentMode !== '2d') return;
-  e.preventDefault();
-  const factor = e.deltaY < 0 ? 1.1 : 0.9;
-  artTransform.scale = Math.max(0.2, Math.min(10, artTransform.scale * factor));
-  render2DDieline();
-}, { passive: false });
+function getHandles() {
+  return {
+    tl: { x: artRect.x, y: artRect.y },
+    tr: { x: artRect.x + artRect.w, y: artRect.y },
+    bl: { x: artRect.x, y: artRect.y + artRect.h },
+    br: { x: artRect.x + artRect.w, y: artRect.y + artRect.h },
+    t: { x: artRect.x + artRect.w / 2, y: artRect.y },
+    b: { x: artRect.x + artRect.w / 2, y: artRect.y + artRect.h },
+    l: { x: artRect.x, y: artRect.y + artRect.h / 2 },
+    r: { x: artRect.x + artRect.w, y: artRect.y + artRect.h / 2 }
+  };
+}
 
-document.getElementById('zoomIn2D').onclick = () => { artTransform.scale *= 1.2; render2DDieline(); };
-document.getElementById('zoomOut2D').onclick = () => { artTransform.scale /= 1.2; render2DDieline(); };
-document.getElementById('resetZoom2D').onclick = () => { artTransform = { x: 0, y: 0, scale: 1.0 }; render2DDieline(); };
+function getMousePosOnCanvas(e) {
+  const rect = canvas2D.getBoundingClientRect();
+  const metrics = getLayoutMetrics(getDims());
+  return {
+    x: e.clientX - rect.left - metrics.startX,
+    y: e.clientY - rect.top - metrics.startY
+  };
+}
+
+// Xương sống tương tác kéo giãn 4 cạnh/góc của ảnh artwork trên bản 2D
+canvas2D.addEventListener('pointerdown', e => {
+  if (currentMode !== '2d' || !loadedArtImg) return;
+  const m = getMousePosOnCanvas(e);
+  const handles = getHandles();
+
+  // Kiểm tra click vào các handle (tay nắm 4 góc/cạnh) trước
+  for (let [key, pos] of Object.entries(handles)) {
+    if (Math.hypot(m.x - pos.x, m.y - pos.y) < 10) {
+      activeHandle = key;
+      dragStart2D = { x: m.x, y: m.y, rect: { ...artRect } };
+      canvas2D.setPointerCapture(e.pointerId);
+      return;
+    }
+  }
+
+  // Kiểm tra click vào bên trong ảnh để di chuyển (pan)
+  if (m.x >= artRect.x && m.x <= artRect.x + artRect.w && m.y >= artRect.y && m.y <= artRect.y + artRect.h) {
+    activeHandle = 'move';
+    dragStart2D = { x: m.x, y: m.y, rect: { ...artRect } };
+    canvas2D.setPointerCapture(e.pointerId);
+  }
+});
+
+canvas2D.addEventListener('pointermove', e => {
+  if (currentMode !== '2d' || !loadedArtImg || !activeHandle) return;
+  const m = getMousePosOnCanvas(e);
+  const dx = m.x - dragStart2D.x;
+  const dy = m.y - dragStart2D.y;
+  const r = dragStart2D.rect;
+
+  if (activeHandle === 'move') {
+    artRect.x = r.x + dx;
+    artRect.y = r.y + dy;
+  } else if (activeHandle === 'tl') {
+    artRect.x = r.x + dx; artRect.w = r.w - dx;
+    artRect.y = r.y + dy; artRect.h = r.h - dy;
+  } else if (activeHandle === 'tr') {
+    artRect.w = r.w + dx;
+    artRect.y = r.y + dy; artRect.h = r.h - dy;
+  } else if (activeHandle === 'bl') {
+    artRect.x = r.x + dx; artRect.w = r.w - dx;
+    artRect.h = r.h + dy;
+  } else if (activeHandle === 'br') {
+    artRect.w = r.w + dx;
+    artRect.h = r.h + dy;
+  } else if (activeHandle === 't') {
+    artRect.y = r.y + dy; artRect.h = r.h - dy;
+  } else if (activeHandle === 'b') {
+    artRect.h = r.h + dy;
+  } else if (activeHandle === 'l') {
+    artRect.x = r.x + dx; artRect.w = r.w - dx;
+  } else if (activeHandle === 'r') {
+    artRect.w = r.w + dx;
+  }
+  render2DDieline();
+});
+
+canvas2D.addEventListener('pointerup', () => { activeHandle = null; });
 
 // --- KHỞI TẠO THREE.JS CHO MÔ HÌNH 3D ---
 const threeContainer = document.getElementById('threeCanvas');
@@ -381,7 +455,6 @@ shadowFloor.position.y = -0.5;
 shadowFloor.receiveShadow = true;
 scene.add(shadowFloor);
 
-// Tạo texture giấy kraft
 function createPaperTexture(hexColor) {
   const c = document.createElement('canvas'); c.width = 512; c.height = 512;
   const ctx = c.getContext('2d');
@@ -420,7 +493,6 @@ scene.add(cartonRoot);
 let flapControllers = [];
 let tapeMesh = null;
 
-// Ánh xạ từ ảnh 2D đã canh chỉnh lên bề mặt 3D
 function createPanelMaterial3D(panelIdx, regionType, d) {
   const texCanvas = document.createElement('canvas');
   texCanvas.width = 1024; texCanvas.height = 1024;
@@ -431,8 +503,7 @@ function createPanelMaterial3D(panelIdx, regionType, d) {
   ctx.fillRect(0, 0, 1024, 1024);
 
   if (loadedArtImg) {
-    const geom = getDielineGeometry(d);
-    // Lấy tọa độ tương ứng trên bản trải 2D đã dịch chuyển
+    const metrics = getLayoutMetrics(d);
     let panelX = d.TS;
     if (panelIdx === 1) panelX = d.TS + d.L;
     else if (panelIdx === 2) panelX = d.TS + d.L + d.W;
@@ -445,13 +516,12 @@ function createPanelMaterial3D(panelIdx, regionType, d) {
 
     ctx.save();
     ctx.globalCompositeOperation = 'multiply';
-    // Đưa transform từ 2D sang canvas 3D texture
-    const scaleFactor = 1024 / geom.totalW;
-    ctx.drawImage(loadedArtImg, 
-      (panelX - artTransform.x / scaleFactor), 
-      (regionY - artTransform.y / scaleFactor), 
-      pw * scaleFactor / artTransform.scale, 
-      rh * scaleFactor / artTransform.scale, 
+    const scaleFactor = metrics.scale;
+    ctx.drawImage(loadedArtImg,
+      (panelX * scaleFactor + metrics.startX - artRect.x) * (loadedArtImg.width / artRect.w),
+      (regionY * scaleFactor + metrics.startY - artRect.y) * (loadedArtImg.height / artRect.h),
+      (pw * scaleFactor) * (loadedArtImg.width / artRect.w),
+      (rh * scaleFactor) * (loadedArtImg.height / artRect.h),
       0, 0, 1024, 1024
     );
     ctx.restore();
@@ -575,14 +645,18 @@ function focusCamera(preset = 'iso') {
   controls.update();
 }
 
-// --- CHUYỂN ĐỔI GIỮA 2D & 3D ---
+// --- SỰ KIỆN GIAO DIỆN ---
 document.getElementById('updateDielineBtn').onclick = () => {
   currentMode = '2d';
   canvas2D.style.display = 'block';
   threeContainer.style.display = 'none';
   document.getElementById('camToolbar').style.display = 'none';
   document.getElementById('controls3DPanel').style.display = 'none';
-  document.getElementById('stageTitle').textContent = 'Bản trải phẳng 2D (Dieline Studio)';
+  document.getElementById('stageTitle').textContent = 'Bản trải phẳng 2D (Dieline Studio - Kéo giãn 4 cạnh)';
+  
+  // Reset lại nội dung artwork như yêu cầu
+  loadedArtImg = null;
+  document.getElementById('artInput').value = '';
   render2DDieline();
 };
 
@@ -593,7 +667,8 @@ document.getElementById('build3DBtn').onclick = () => {
   document.getElementById('camToolbar').style.display = 'flex';
   document.getElementById('controls3DPanel').style.display = 'block';
   document.getElementById('stageTitle').textContent = 'Khung nhìn Mockup 3D';
-  build3D();
+  buildCarton3D();
+  focusCamera('iso');
 };
 
 document.getElementById('switchMode2D').onclick = () => {
@@ -602,14 +677,9 @@ document.getElementById('switchMode2D').onclick = () => {
   threeContainer.style.display = 'none';
   document.getElementById('camToolbar').style.display = 'none';
   document.getElementById('controls3DPanel').style.display = 'none';
-  document.getElementById('stageTitle').textContent = 'Bản trải phẳng 2D (Dieline Studio)';
+  document.getElementById('stageTitle').textContent = 'Bản trải phẳng 2D (Dieline Studio - Kéo giãn 4 cạnh)';
   render2DDieline();
 };
-
-function build3D() {
-  buildCarton3D();
-  focusCamera('iso');
-}
 
 // --- NẠP FILE ẢNH/PDF ---
 document.getElementById('artInput').addEventListener('change', e => {
@@ -619,18 +689,23 @@ document.getElementById('artInput').addEventListener('change', e => {
   const img = new Image();
   img.onload = () => {
     loadedArtImg = img;
-    artTransform = { x: 0, y: 0, scale: 1.0 };
-    if (currentMode === '2d') render2DDieline();
-    else build3D();
+    // Đặt kích thước mặc định ban đầu cho ảnh vừa khớp với kích thước dieline trên màn hình
+    const geom = getDielineGeometry(getDims());
+    const metrics = getLayoutMetrics(getDims());
+    artRect = {
+      x: metrics.startX,
+      y: metrics.startY,
+      w: geom.totalW * metrics.scale,
+      h: geom.totalH * metrics.scale
+    };
+    render2DDieline();
   };
   img.src = url;
 });
 
-// Sự kiện giao diện khác
 ['glueTS', 'topFlapH', 'botFlapH', 'slotGap', 'paperColorPicker'].forEach(id => {
   document.getElementById(id).onchange = () => {
     if (currentMode === '2d') render2DDieline();
-    else build3D();
   };
 });
 
@@ -649,6 +724,14 @@ document.getElementById('camFront').onclick = () => focusCamera('front');
 document.getElementById('camSide').onclick = () => focusCamera('side');
 document.getElementById('camTop').onclick = () => focusCamera('top');
 document.getElementById('camBottom').onclick = () => focusCamera('bottom');
+
+document.getElementById('saveBtn').onclick = () => {
+  renderer.render(scene, camera);
+  const a = document.createElement('a');
+  a.download = `carton-mockup-${getDims().L}x${getDims().W}x${getDims().H}.png`;
+  a.href = renderer.domElement.toDataURL('image/png');
+  a.click();
+};
 
 document.getElementById('toggleOverlay').onclick = () => {
   const c = document.getElementById('overlayContent');
@@ -675,7 +758,7 @@ function animate() {
   }
 }
 
-// Khởi chạy mặc định hiển thị bản trải 2D
+// Khởi chạy ban đầu
 render2DDieline();
 animate();
 </script>
