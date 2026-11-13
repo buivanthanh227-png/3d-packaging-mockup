@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>3D Packaging Mockup Studio V0.1</title>
+<style>
+:root{--bg:#eef1f5;--panel:#fff;--ink:#172033;--muted:#687386;--line:#dce2ea;--blue:#1769d2;--blue2:#eaf2ff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 Arial,Helvetica,sans-serif}
+header{background:#111c30;color:#fff;padding:15px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+header h1{font-size:18px;margin:0;letter-spacing:.2px}header small{color:#b8c5d8}
+main{max-width:1500px;margin:auto;padding:16px;display:grid;grid-template-columns:340px minmax(0,1fr);gap:16px}
+.panel,.stage{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:0 3px 12px #16243a0b}
+.panel{padding:16px;align-self:start}.panel h2{font-size:15px;margin:0 0 12px}.section{padding-bottom:14px;margin-bottom:14px;border-bottom:1px solid var(--line)}
+.field{display:grid;grid-template-columns:1fr 110px;align-items:center;gap:8px;margin:9px 0}.field label{color:#344054}.field input,.field select{width:100%;padding:8px;border:1px solid #cbd3df;border-radius:7px;background:#fff;color:var(--ink)}
+input[type=file]{width:100%;font-size:12px}.hint{font-size:12px;color:var(--muted);margin:7px 0}
+button{border:0;border-radius:8px;background:var(--blue);color:white;padding:9px 12px;font-weight:600;cursor:pointer}button.secondary{background:#e9edf3;color:#243047}button:disabled{opacity:.5;cursor:not-allowed}
+.actions{display:flex;gap:8px;flex-wrap:wrap}.stage{min-height:660px;overflow:hidden;display:flex;flex-direction:column}
+.toolbar{padding:11px 14px;border-bottom:1px solid var(--line);display:flex;gap:8px;align-items:center;flex-wrap:wrap}.toolbar .status{margin-left:auto;color:var(--muted);font-size:12px}
+#view{height:590px;position:relative;background:radial-gradient(ellipse at 50% 40%,#fff 0,#f1f4f8 68%,#e8edf3 100%)}
+#view canvas{display:block;width:100%;height:100%}.foot{padding:10px 14px;color:var(--muted);font-size:12px;border-top:1px solid var(--line)}
+.notice{background:#fff8e8;border:1px solid #f1d99b;color:#76520c;padding:10px;border-radius:8px;font-size:12px}
+.badge{display:inline-block;background:#e7f6ed;color:#17663b;border-radius:20px;padding:3px 8px;font-size:11px;font-weight:700}
+#flatPreview{width:100%;max-height:150px;object-fit:contain;background:#f5f6f8;border:1px dashed #cbd3df;border-radius:7px;margin-top:8px}
+@media(max-width:900px){main{grid-template-columns:1fr}.stage{min-height:520px}#view{height:480px}}
+</style>
+</head>
+<body>
+<header><div><h1>3D PACKAGING MOCKUP STUDIO</h1><small>V0.1 · Thùng carton nắp đối (RSC / FEFCO 0201) · Bản thử nghiệm</small></div><span class="badge">BETA</span></header>
+<main>
+<aside class="panel">
+  <div class="section">
+    <h2>1. Kích thước thùng</h2>
+    <div class="field"><label>Dài (L), mm</label><input id="L" type="number" min="20" value="300"></div>
+    <div class="field"><label>Rộng (W), mm</label><input id="W" type="number" min="20" value="200"></div>
+    <div class="field"><label>Cao (H), mm</label><input id="H" type="number" min="20" value="180"></div>
+    <div class="field"><label>Lưỡi gà nối, mm</label><input id="glue" type="number" min="10" value="35"></div>
+    <div class="field"><label>Độ dày carton, mm</label><input id="thick" type="number" min="1" step=".5" value="3"></div>
+    <div class="hint">Quy ước bản trải: lưỡi gà + mặt dài + hông + mặt dài + hông. Hai mặt dài có cánh lớn; hai hông có cánh nhỏ.</div>
+    <button id="rebuild">Cập nhật mô hình</button>
+  </div>
+  <div class="section">
+    <h2>2. Artwork trải phẳng</h2>
+    <input id="art" type="file" accept="image/png,image/jpeg,image/webp">
+    <p class="hint">Tải PNG/JPG xuất từ Illustrator hoặc Corel. Ảnh cần cắt sát vùng bản trải, theo đúng tỷ lệ kích thước đã nhập. V0.1 dùng ảnh raster làm texture; chưa đọc trực tiếp AI/CDR/PDF hoặc tự nhận diện đường bế.</p>
+    <img id="flatPreview" alt="Xem trước artwork" hidden>
+    <div class="field"><label>Chế độ artwork</label><select id="artMode"><option value="mapped">Ánh artwork theo tọa độ bản trải</option><option value="kraft">Carton kraft trơn</option></select></div>
+  </div>
+  <div class="section">
+    <h2>3. Điều khiển nắp</h2>
+    <div class="field"><label>Độ mở nắp trên</label><input id="topOpen" type="range" min="0" max="110" value="0"></div>
+    <div class="field"><label>Độ mở nắp dưới</label><input id="bottomOpen" type="range" min="0" max="110" value="0"></div>
+    <div class="actions"><button class="secondary" id="closed">Đóng hộp</button><button class="secondary" id="opened">Mở nắp</button></div>
+  </div>
+  <div class="section">
+    <h2>4. Hiển thị</h2>
+    <div class="field"><label>Chế độ xem</label><select id="viewMode"><option value="real">Phối cảnh 3D</option><option value="technical">Màu kỹ thuật</option></select></div>
+    <div class="actions"><button class="secondary" id="reset">Đặt lại góc nhìn</button><button id="save">Xuất PNG</button></div>
+  </div>
+  <div class="notice">Lưu ý: V0.1 dựng kết cấu RSC cơ bản theo kích thước nhập. Đây là bản kiểm tra quy trình và hình học sơ bộ, chưa thay thế kiểm tra bế mẫu, bù trừ độ dày, khe hở cánh, tai dán và sai số sản xuất.</div>
+</aside>
+<section class="stage">
+  <div class="toolbar"><strong>Mô hình 3D</strong><button class="secondary" id="front">Mặt trước</button><button class="secondary" id="topview">Nhìn từ trên</button><button class="secondary" id="sideview">Hông</button><span class="status" id="status">Sẵn sàng · Kéo chuột để xoay, lăn chuột để zoom</span></div>
+  <div id="view"></div>
+  <div class="foot">Kéo chuột trái: xoay · Lăn chuột: phóng to/thu nhỏ · Chuột phải: di chuyển khung nhìn. Xuất PNG lưu ảnh khung 3D hiện tại.</div>
+</section>
+</main>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js';
+
+const host=document.getElementById('view');
+const scene=new THREE.Scene(); scene.background=new THREE.Color(0xf0f3f7);
+const camera=new THREE.PerspectiveCamera(38,host.clientWidth/host.clientHeight,.1,5000);
+camera.position.set(520,390,560);
+const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.setSize(host.clientWidth,host.clientHeight);
+renderer.outputColorSpace=THREE.SRGBColorSpace; renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+host.appendChild(renderer.domElement);
+const controls=new OrbitControls(camera,renderer.domElement); controls.enableDamping=true; controls.dampingFactor=.07; controls.target.set(0,80,0);
+scene.add(new THREE.HemisphereLight(0xffffff,0x8c98a8,2));
+const key=new THREE.DirectionalLight(0xffffff,2.2); key.position.set(-350,600,450); key.castShadow=true; scene.add(key);
+const fill=new THREE.DirectionalLight(0xffffff,.8); fill.position.set(400,250,-350); scene.add(fill);
+const floor=new THREE.Mesh(new THREE.PlaneGeometry(4000,4000),new THREE.MeshStandardMaterial({color:0xf0f2f5,roughness:1}));
+floor.rotation.x=-Math.PI/2; floor.position.y=-2; floor.receiveShadow=true; scene.add(floor);
+let model=new THREE.Group(); scene.add(model); let artTexture=null, artImage=null, flapGroups=[];
+const kraft=new THREE.MeshStandardMaterial({color:0xc8ad82,roughness:.88,side:THREE.DoubleSide});
+const techColors=[0x2687bd,0x149b9b,0xe77b45,0x8b8277,0x5b8c57,0x9474b8];
+function dims(){return {L:+L.value,W:+W.value,H:+H.value,G:+glue.value,T:+thick.value}}
+function matFor(panelIndex, box){
+  if(viewMode.value==='technical') return new THREE.MeshStandardMaterial({color:techColors[panelIndex%techColors.length],roughness:.8,side:THREE.DoubleSide});
+  if(artMode.value==='kraft'||!artTexture) return kraft;
+  const {L,W,H,G}=box;
+  // crop artwork coordinate rectangle (mm) into a canvas texture, then orient on each plane
+  const c=document.createElement('canvas'); c.width=512;c.height=512;const ctx=c.getContext('2d');
+  const panelWidths=[L,W,L,W], start=G+panelWidths.slice(0,panelIndex).reduce((a,b)=>a+b,0), pw=panelWidths[panelIndex];
+  const sx=start/netWidth*artImage.width, sw=pw/netWidth*artImage.width;
+  const sy=flapDepthTop/netHeight*artImage.height, sh=H/netHeight*artImage.height;
+  ctx.drawImage(artImage,sx,sy,sw,sh,0,0,512,512);
+  const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;return new THREE.MeshStandardMaterial({map:tex,roughness:.85,side:THREE.DoubleSide});
+}
+let netWidth=0,netHeight=0,flapDepthTop=0,flapDepthBottom=0;
+function plane(w,h,material){const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),material);m.castShadow=true;m.receiveShadow=true;return m}
+function addFlap(parent,panelW,depth,hingeY,z,rotSign,material,top,idx){
+  const g=new THREE.Group();g.position.set(0,hingeY,z); parent.add(g);
+  const m=plane(panelW,depth,material);m.position.set(0,rotSign*depth/2,0);g.add(m);
+  // At closed position flap lies horizontal. Plane initially lies XY; rotate around X.
+  g.rotation.x=top? -Math.PI/2:Math.PI/2;
+  flapGroups.push({g,top,base:g.rotation.x,depth});
+  return g;
+}
+function build(){
+ const d=dims(); if([d.L,d.W,d.H,d.G,d.T].some(v=>!Number.isFinite(v)||v<=0)){alert('Vui lòng nhập kích thước lớn hơn 0.');return}
+ model.traverse(o=>{if(o.geometry)o.geometry.dispose(); if(o.material){if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());else o.material.dispose()}});
+ scene.remove(model);model=new THREE.Group();scene.add(model);flapGroups=[];
+ const {L,W,H,G}=d;
+ // panel sequence: glue + long + short + long + short
+ const widths=[L,W,L,W]; const total=L*2+W*2;
+ const xStarts=[-total/2,-total/2+L,-total/2+L+W,-total/2+2*L+W];
+ const zFront=W/2, zBack=-W/2;
+ netWidth=G+total; flapDepthTop=L/2; flapDepthBottom=L/2; netHeight=H+2*L/2;
+ // body panels positioned around rectangular perimeter
+ const centers=[
+  [0,0,zFront,0], // front long
+  [L/2,0,0,Math.PI/2], // right short
+  [0,0,zBack,Math.PI], // back long
+  [-L/2,0,0,-Math.PI/2] // left short
+ ];
+ const order=[0,1,2,3], panels=[];
+ for(let i=0;i<4;i++){
+   const [cx,cy,cz,ry]=centers[i],pw=widths[i];
+   const mat=matFor(i,d);
+   const p=plane(pw,H,mat);p.position.set(cx,H/2,cz);p.rotation.y=ry;model.add(p);panels.push(p);
+ }
+ // top and bottom flaps: main flaps on long walls, small flaps on side walls.
+ const sideDepth=L/2, longDepth=W/2;
+ // Use groups whose local XY plane hinges at body edge. rotation about local X; horizontal at 90deg.
+ for(let i=0;i<4;i++){
+   const isLong=(i%2===0), pw=isLong?L:W, depth=isLong?W/2:L/2;
+   const cx=centers[i][0],cz=centers[i][2],ry=centers[i][3];
+   for(const top of [true,false]){
+     const hingeY=top?H:0;
+     const g=new THREE.Group();g.position.set(cx,hingeY,cz);g.rotation.y=ry;model.add(g);
+     const flapMat=(viewMode.value==='technical')?new THREE.MeshStandardMaterial({color:techColors[(i+2)%techColors.length],side:THREE.DoubleSide}):kraft;
+     const flap=plane(pw,depth,flapMat);
+     // Plane XY; local y extends outward from hinge. Rotate to horizontal toward box center.
+     flap.position.y=(top?1:-1)*depth/2;
+     g.add(flap);
+     const closedAngle=-Math.PI/2;
+     g.rotation.x=closedAngle;
+     flapGroups.push({g,top,closedAngle,depth});
+   }
+ }
+ // floor and top inner panel as subtle planes
+ const base=new THREE.Mesh(new THREE.PlaneGeometry(L,W),new THREE.MeshStandardMaterial({color:0xb99d73,roughness:.95,side:THREE.DoubleSide}));
+ base.rotation.x=-Math.PI/2;base.position.set(0,.5,0);model.add(base);
+ applyOpenAngles();
+ const max=Math.max(L,W,H);camera.position.set(max*2.5,max*1.9,max*2.8);controls.target.set(0,H/2,0);controls.update();
+ document.getElementById('status').textContent='Đã dựng RSC · '+L+' × '+W+' × '+H+' mm';
+}
+function applyOpenAngles(){
+ const t=THREE.MathUtils.degToRad(+topOpen.value),b=THREE.MathUtils.degToRad(+bottomOpen.value);
+ flapGroups.forEach(f=>{const a=f.top?t:b; f.g.rotation.x=f.closedAngle+(f.top?-a:a)});
+}
+function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)}animate();
+function resize(){const w=host.clientWidth,h=host.clientHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h)}
+new ResizeObserver(resize).observe(host);
+document.getElementById('rebuild').onclick=build;
+document.getElementById('topOpen').oninput=applyOpenAngles;document.getElementById('bottomOpen').oninput=applyOpenAngles;
+document.getElementById('closed').onclick=()=>{topOpen.value=0;bottomOpen.value=0;applyOpenAngles()};
+document.getElementById('opened').onclick=()=>{topOpen.value=95;bottomOpen.value=95;applyOpenAngles()};
+document.getElementById('viewMode').onchange=build;document.getElementById('artMode').onchange=build;
+document.getElementById('reset').onclick=()=>{build()};
+document.getElementById('front').onclick=()=>{const d=dims();camera.position.set(0,d.H*.9,d.L*2.5);controls.target.set(0,d.H/2,0);controls.update()};
+document.getElementById('topview').onclick=()=>{const d=dims();camera.position.set(0,d.H*4,1);controls.target.set(0,d.H/2,0);controls.update()};
+document.getElementById('sideview').onclick=()=>{const d=dims();camera.position.set(d.L*2.5,d.H*.9,0);controls.target.set(0,d.H/2,0);controls.update()};
+document.getElementById('save').onclick=()=>{renderer.render(scene,camera);const a=document.createElement('a');a.download='mockup-3d-carton.png';a.href=renderer.domElement.toDataURL('image/png');a.click()};
+document.getElementById('art').onchange=e=>{
+ const file=e.target.files[0];if(!file)return;
+ const url=URL.createObjectURL(file),img=new Image();
+ img.onload=()=>{artImage=img;artTexture=new THREE.Texture(img);artTexture.colorSpace=THREE.SRGBColorSpace;flatPreview.src=url;flatPreview.hidden=false;build()};
+ img.onerror=()=>alert('Không đọc được ảnh. Hãy dùng PNG hoặc JPG.');img.src=url;
+};
+build();
+</script>
+</body></html>
