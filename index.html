@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AUTO MOCKUP 3D - Carton Studio V0.9 PRO</title>
+<title>AUTO MOCKUP 3D - Carton Studio V1.0 PRO</title>
 <style>
 :root{
   --bg:#f1f5f9;--panel:#fff;--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;
@@ -71,11 +71,8 @@ button.sm{padding:5px 9px;font-size:11.5px}
 
 <header>
   <div>
-    <h1><span class="logo-badge">AM3D PRO</span> AUTO MOCKUP 3D STUDIO <span style="background:#059669;color:#fff;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700">V0.9</span></h1>
+    <h1><span class="logo-badge">AM3D PRO</span> AUTO MOCKUP 3D STUDIO <span style="background:#059669;color:#fff;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700">V1.0</span></h1>
     <small>Hệ thống tự động hóa mô phỏng bao bì carton thông minh · Không cần Photoshop</small>
-  </div>
-  <div class="actions" style="margin:0">
-    <button class="secondary sm" id="switchMode2D">⬅ Quay lại chỉnh 2D</button>
   </div>
 </header>
 
@@ -130,9 +127,9 @@ button.sm{padding:5px 9px;font-size:11.5px}
 
   <!-- MỤC 2: CÀI ĐẶT BĂNG KEO & NẠP FILE -->
   <div class="section">
-    <h2>2. Băng keo niêm phong</h2>
+    <h2>2. Băng keo niêm phong (Gập mép hông)</h2>
     <div class="field"><label>Bản rộng băng keo (mm)</label><input id="tapeWidthMm" type="number" min="20" max="100" value="60"></div>
-    <div class="field"><label>Đoạn dán tràn hông (mm)</label><input id="tapeOverlapMm" type="number" min="0" max="150" value="50"></div>
+    <div class="field"><label>Đoạn gập tràn hông (mm)</label><input id="tapeOverlapMm" type="number" min="0" max="150" value="60"></div>
     <div class="field"><label>Loại & Màu keo</label><select id="tapeMode"><option value="none">Không dán</option><option value="clear">Băng keo trong</option><option value="color">Băng keo màu tùy chỉnh</option></select></div>
     <div id="tapeColorRow" class="field" style="display:none"><label>Chọn màu keo</label><input type="color" id="tapeColorPicker" value="#facc15" style="width:100%;height:26px;border:0;cursor:pointer;padding:0"></div>
   </div>
@@ -230,7 +227,7 @@ function getDims() {
     slotGap: Math.max(0, +document.getElementById('slotGap').value || 6),
     fluteLayers: parseInt(document.getElementById('fluteLayers').value || 5),
     tapeWidthMm: Math.max(10, +document.getElementById('tapeWidthMm').value || 60),
-    tapeOverlapMm: Math.max(0, +document.getElementById('tapeOverlapMm').value || 50)
+    tapeOverlapMm: Math.max(0, +document.getElementById('tapeOverlapMm').value || 60)
   };
 }
 
@@ -452,7 +449,6 @@ canvas2D.addEventListener('pointermove', e => {
 
 canvas2D.addEventListener('pointerup', () => { activeHandle = null; });
 
-// Thuật toán Zoom 2D bám theo vị trí con chuột (Mouse-centered Zoom)
 canvas2D.addEventListener('wheel', e => {
   if (currentMode !== '2d') return;
   e.preventDefault();
@@ -464,7 +460,6 @@ canvas2D.addEventListener('wheel', e => {
   const factor = e.deltaY < 0 ? 1.15 : 0.85;
   const newZoom = Math.max(0.2, Math.min(10, zoom2D * factor));
 
-  // Tính toán dịch chuyển pan để giữ nguyên điểm dưới con chuột
   const cw = canvas2D.width, ch = canvas2D.height;
   const worldX = (mouseX - (cw / 2 + pan2D.x)) / zoom2D;
   const worldY = (mouseY - (ch / 2 + pan2D.y)) / zoom2D;
@@ -590,7 +585,7 @@ function createCorrugatedEdgeTexture(hexColor, layers = 5) {
 let cartonRoot = new THREE.Group();
 scene.add(cartonRoot);
 let flapControllers = [];
-let topTapeMesh = null, botTapeMesh = null;
+let topTapeGroup = null, botTapeGroup = null;
 
 function createPanelMaterial3D(panelIdx, regionType, d) {
   const texCanvas = document.createElement('canvas');
@@ -616,7 +611,7 @@ function createPanelMaterial3D(panelIdx, regionType, d) {
     ctx.save();
     ctx.globalCompositeOperation = 'multiply';
     const scaleFactor = metrics.scale;
-    // Khớp tuyệt đối tọa độ 3D với 2D
+    // Đồng bộ chính xác tọa độ chuẩn 100% không bị lệch
     ctx.drawImage(loadedArtImg,
       (panelX * scaleFactor + metrics.startX - artRect.x) * (loadedArtImg.width / artRect.w),
       (regionY * scaleFactor + metrics.startY - artRect.y) * (loadedArtImg.height / artRect.h),
@@ -697,24 +692,44 @@ function buildCarton3D() {
     cartonRoot.add(glueTab);
   }
 
-  // Băng keo niêm phong cho cả nắp trên và đáy (tràn sang mặt hông một đoạn tapeOverlapMm)
-  const createTapeMesh = (yPos, isTop) => {
-    const tapeGeo = new THREE.PlaneGeometry(L + tapeOverlapMm * 2, tapeWidthMm);
+  // Băng keo gập mép ôm vòng qua mặt phụ thực tế
+  const createFoldedTapeGroup = (yPos, isTop) => {
+    const group = new THREE.Group();
     const isClear = document.getElementById('tapeMode').value === 'clear';
     const tapeColor = document.getElementById('tapeColorPicker').value || '#facc15';
     const tapeMat = new THREE.MeshPhysicalMaterial({
       color: isClear ? 0xfff8e7 : tapeColor,
       transparent: true, opacity: isClear ? 0.35 : 0.92, roughness: 0.18, side: THREE.DoubleSide
     });
-    const mesh = new THREE.Mesh(tapeGeo, tapeMat);
-    mesh.rotation.x = isTop ? -Math.PI / 2 : Math.PI / 2;
-    mesh.position.set(0, yPos, 0);
-    cartonRoot.add(mesh);
-    return mesh;
+
+    // Đoạn trên mặt chính
+    const mainGeo = new THREE.PlaneGeometry(L, tapeWidthMm);
+    const mainMesh = new THREE.Mesh(mainGeo, tapeMat);
+    mainMesh.rotation.x = isTop ? -Math.PI / 2 : Math.PI / 2;
+    mainMesh.position.set(0, yPos, W / 2 + T + 0.3);
+    group.add(mainMesh);
+
+    // Đoạn gập ôm vòng sang 2 mặt hông (phụ) trái và phải
+    const sideGeo = new THREE.PlaneGeometry(tapeOverlapMm, tapeWidthMm);
+    
+    const leftMesh = new THREE.Mesh(sideGeo, tapeMat);
+    leftMesh.rotation.x = isTop ? -Math.PI / 2 : Math.PI / 2;
+    leftMesh.rotation.z = isTop ? Math.PI / 2 : -Math.PI / 2;
+    leftMesh.position.set(-L / 2 - tapeOverlapMm / 2, yPos, W / 2);
+    group.add(leftMesh);
+
+    const rightMesh = new THREE.Mesh(sideGeo, tapeMat);
+    rightMesh.rotation.x = isTop ? -Math.PI / 2 : Math.PI / 2;
+    rightMesh.rotation.z = isTop ? -Math.PI / 2 : Math.PI / 2;
+    rightMesh.position.set(L / 2 + tapeOverlapMm / 2, yPos, W / 2);
+    group.add(rightMesh);
+
+    cartonRoot.add(group);
+    return group;
   };
 
-  if (topFlapH > 0) topTapeMesh = createTapeMesh(H + T + 0.5, true);
-  if (botFlapH > 0) botTapeMesh = createTapeMesh(-H - T - 0.5, false);
+  if (topFlapH > 0) topTapeGroup = createFoldedTapeGroup(H + T + 0.5, true);
+  if (botFlapH > 0) botTapeGroup = createFoldedTapeGroup(-H - T - 0.5, false);
 
   applyFlapAngles();
 }
@@ -736,11 +751,13 @@ function applyFlapAngles() {
   const isClear = mode === 'clear';
   const tapeColor = document.getElementById('tapeColorPicker').value || '#facc15';
 
-  [topTapeMesh, botTapeMesh].forEach(mesh => {
-    if (!mesh) return;
-    mesh.material.color.set(isClear ? 0xfff8e7 : tapeColor);
-    mesh.material.opacity = isClear ? 0.35 : 0.92;
-    mesh.visible = (mode !== 'none' && topMainDeg === 0 && topSideDeg === 0);
+  [topTapeGroup, botTapeGroup].forEach(group => {
+    if (!group) return;
+    group.visible = (mode !== 'none' && topMainDeg === 0 && topSideDeg === 0);
+    group.children.forEach(mesh => {
+      mesh.material.color.set(isClear ? 0xfff8e7 : tapeColor);
+      mesh.material.opacity = isClear ? 0.35 : 0.92;
+    });
   });
 }
 
@@ -797,7 +814,6 @@ const switchTo2D = () => {
   resizeCanvas2D();
 };
 
-document.getElementById('switchMode2D').onclick = switchTo2D;
 document.getElementById('switchMode2D_bottom').onclick = switchTo2D;
 
 // --- NẠP FILE ẢNH/PDF ---
