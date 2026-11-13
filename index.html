@@ -3,185 +3,824 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>3D Packaging Mockup Studio V0.1</title>
+<title>3D Packaging Mockup Studio V0.2 - Online Carton Generator</title>
 <style>
-:root{--bg:#eef1f5;--panel:#fff;--ink:#172033;--muted:#687386;--line:#dce2ea;--blue:#1769d2;--blue2:#eaf2ff}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 Arial,Helvetica,sans-serif}
-header{background:#111c30;color:#fff;padding:15px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-header h1{font-size:18px;margin:0;letter-spacing:.2px}header small{color:#b8c5d8}
-main{max-width:1500px;margin:auto;padding:16px;display:grid;grid-template-columns:340px minmax(0,1fr);gap:16px}
-.panel,.stage{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:0 3px 12px #16243a0b}
-.panel{padding:16px;align-self:start}.panel h2{font-size:15px;margin:0 0 12px}.section{padding-bottom:14px;margin-bottom:14px;border-bottom:1px solid var(--line)}
-.field{display:grid;grid-template-columns:1fr 110px;align-items:center;gap:8px;margin:9px 0}.field label{color:#344054}.field input,.field select{width:100%;padding:8px;border:1px solid #cbd3df;border-radius:7px;background:#fff;color:var(--ink)}
-input[type=file]{width:100%;font-size:12px}.hint{font-size:12px;color:var(--muted);margin:7px 0}
-button{border:0;border-radius:8px;background:var(--blue);color:white;padding:9px 12px;font-weight:600;cursor:pointer}button.secondary{background:#e9edf3;color:#243047}button:disabled{opacity:.5;cursor:not-allowed}
-.actions{display:flex;gap:8px;flex-wrap:wrap}.stage{min-height:660px;overflow:hidden;display:flex;flex-direction:column}
-.toolbar{padding:11px 14px;border-bottom:1px solid var(--line);display:flex;gap:8px;align-items:center;flex-wrap:wrap}.toolbar .status{margin-left:auto;color:var(--muted);font-size:12px}
-#view{height:590px;position:relative;background:radial-gradient(ellipse at 50% 40%,#fff 0,#f1f4f8 68%,#e8edf3 100%)}
-#view canvas{display:block;width:100%;height:100%}.foot{padding:10px 14px;color:var(--muted);font-size:12px;border-top:1px solid var(--line)}
-.notice{background:#fff8e8;border:1px solid #f1d99b;color:#76520c;padding:10px;border-radius:8px;font-size:12px}
-.badge{display:inline-block;background:#e7f6ed;color:#17663b;border-radius:20px;padding:3px 8px;font-size:11px;font-weight:700}
-#flatPreview{width:100%;max-height:150px;object-fit:contain;background:#f5f6f8;border:1px dashed #cbd3df;border-radius:7px;margin-top:8px}
-@media(max-width:900px){main{grid-template-columns:1fr}.stage{min-height:520px}#view{height:480px}}
+:root{
+  --bg:#eef1f5;--panel:#fff;--ink:#172033;--muted:#64748b;--line:#dce2ea;
+  --blue:#1769d2;--blue-hover:#1254aa;--blue-light:#eaf2ff;--accent:#e11d48;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:13.5px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+header{background:#0f172a;color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid #1e293b}
+header h1{font-size:17px;margin:0;letter-spacing:.3px;display:flex;align-items:center;gap:8px}
+header small{color:#94a3b8;display:block;font-size:12px;margin-top:2px}
+.badge{background:#10b98122;color:#34d399;border:1px solid #10b98155;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700}
+
+main{max-width:1600px;margin:auto;padding:14px;display:grid;grid-template-columns:380px minmax(0,1fr);gap:14px}
+.panel,.stage{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:0 4px 16px #0f172a0a}
+.panel{padding:14px;max-height:calc(100vh - 86px);overflow-y:auto}
+.panel h2{font-size:14px;margin:0 0 10px;color:#0f172a;display:flex;align-items:center;justify-content:space-between}
+.section{padding-bottom:13px;margin-bottom:13px;border-bottom:1px solid var(--line)}
+.section:last-child{border-bottom:0;margin-bottom:0;padding-bottom:0}
+
+.field{display:grid;grid-template-columns:1fr 115px;align-items:center;gap:8px;margin:7px 0}
+.field label{color:#334155;font-size:13px}
+.field input[type=number],.field select{width:100%;padding:6px 8px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;color:var(--ink);font-size:13px}
+.field input[type=range]{width:100%;accent-color:var(--blue)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mini-field{display:flex;flex-direction:column;gap:3px}
+.mini-field label{font-size:11.5px;color:var(--muted)}
+.mini-field input{width:100%;padding:5px 7px;border:1px solid #cbd5e1;border-radius:6px;font-size:12.5px}
+
+input[type=file]{width:100%;font-size:12px;padding:6px;border:1px dashed #94a3b8;border-radius:8px;background:#f8fafc;cursor:pointer}
+.hint{font-size:11.5px;color:var(--muted);margin:6px 0;line-height:1.4}
+
+button{border:0;border-radius:7px;background:var(--blue);color:#fff;padding:8px 12px;font-weight:600;font-size:13px;cursor:pointer;transition:.15s}
+button:hover{background:var(--blue-hover)}
+button.secondary{background:#e2e8f0;color:#1e293b}
+button.secondary:hover{background:#cbd5e1}
+button.sm{padding:5px 9px;font-size:12px}
+.actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+
+/* Dieline Calibration Canvas */
+.calibrator-wrap{margin-top:8px;border:1px solid #cbd5e1;border-radius:8px;background:#1e293b;overflow:hidden;position:relative}
+#dielineCanvas{display:block;width:100%;height:auto;cursor:move;touch-action:none}
+.calibrator-bar{background:#f1f5f9;padding:6px 8px;font-size:11px;color:#475569;display:flex;justify-content:space-between;align-items:center;border-top:1px solid #cbd5e1}
+
+.stage{min-height:680px;height:calc(100vh - 86px);overflow:hidden;display:flex;flex-direction:column}
+.toolbar{padding:10px 14px;border-bottom:1px solid var(--line);display:flex;gap:6px;align-items:center;flex-wrap:wrap;background:#f8fafc}
+.toolbar .status{margin-left:auto;color:var(--muted);font-size:12px;font-weight:500}
+#view{flex:1;position:relative;background:radial-gradient(circle at 50% 42%,#ffffff 0%,#eef2f6 65%,#dde4ec 100%)}
+#view canvas{display:block;width:100%;height:100%}
+.foot{padding:8px 14px;color:var(--muted);font-size:11.5px;border-top:1px solid var(--line);background:#fff;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+@media(max-width:960px){
+  main{grid-template-columns:1fr}
+  .panel{max-height:none}
+  .stage{height:560px;min-height:500px}
+}
 </style>
 </head>
 <body>
-<header><div><h1>3D PACKAGING MOCKUP STUDIO</h1><small>V0.1 · Thùng carton nắp đối (RSC / FEFCO 0201) · Bản thử nghiệm</small></div><span class="badge">BETA</span></header>
+
+<header>
+  <div>
+    <h1>3D PACKAGING MOCKUP STUDIO <span class="badge">V0.2 REALISTIC</span></h1>
+    <small>Tạo mockup thùng carton 3D trực tuyến từ file thiết kế phẳng · Không cần Photoshop</small>
+  </div>
+  <div class="actions" style="margin:0">
+    <button class="secondary sm" id="loadSampleBtn">Nạp bản vẽ mẫu thử</button>
+    <button class="sm" id="saveBtn">Xuất ảnh PNG 3D</button>
+  </div>
+</header>
+
 <main>
 <aside class="panel">
+  <!-- BƯỚC 1 -->
   <div class="section">
-    <h2>1. Kích thước thùng</h2>
-    <div class="field"><label>Dài (L), mm</label><input id="L" type="number" min="20" value="300"></div>
-    <div class="field"><label>Rộng (W), mm</label><input id="W" type="number" min="20" value="200"></div>
-    <div class="field"><label>Cao (H), mm</label><input id="H" type="number" min="20" value="180"></div>
-    <div class="field"><label>Lưỡi gà nối, mm</label><input id="glue" type="number" min="10" value="35"></div>
-    <div class="field"><label>Độ dày carton, mm</label><input id="thick" type="number" min="1" step=".5" value="3"></div>
-    <div class="hint">Quy ước bản trải: lưỡi gà + mặt dài + hông + mặt dài + hông. Hai mặt dài có cánh lớn; hai hông có cánh nhỏ.</div>
-    <button id="rebuild">Cập nhật mô hình</button>
+    <h2>1. Kích thước thùng (mm)</h2>
+    <div class="grid-2">
+      <div class="mini-field"><label>Dài (L) - Mặt chính</label><input id="L" type="number" min="30" value="550"></div>
+      <div class="mini-field"><label>Rộng (W) - Mặt hông</label><input id="W" type="number" min="30" value="310"></div>
+      <div class="mini-field"><label>Cao (H)</label><input id="H" type="number" min="30" value="420"></div>
+      <div class="mini-field"><label>Độ dày sóng giấy</label><input id="thick" type="number" min="1" max="15" step="0.5" value="4"></div>
+    </div>
+    <div class="field" style="margin-top:8px">
+      <label>Chất liệu giấy</label>
+      <select id="paperType">
+        <option value="kraft">Carton Kraft Vàng (Tự nhiên)</option>
+        <option value="white">Carton Trắng (White Duplex)</option>
+        <option value="tech">Chế độ màu kỹ thuật (Kiểm tra mặt)</option>
+      </select>
+    </div>
+    <div class="actions">
+      <button id="rebuildBtn" style="width:100%">Cập nhật kích thước 3D</button>
+    </div>
   </div>
+
+  <!-- BƯỚC 2 -->
   <div class="section">
-    <h2>2. Artwork trải phẳng</h2>
-    <input id="art" type="file" accept="image/png,image/jpeg,image/webp">
-    <p class="hint">Tải PNG/JPG xuất từ Illustrator hoặc Corel. Ảnh cần cắt sát vùng bản trải, theo đúng tỷ lệ kích thước đã nhập. V0.1 dùng ảnh raster làm texture; chưa đọc trực tiếp AI/CDR/PDF hoặc tự nhận diện đường bế.</p>
-    <img id="flatPreview" alt="Xem trước artwork" hidden>
-    <div class="field"><label>Chế độ artwork</label><select id="artMode"><option value="mapped">Ánh artwork theo tọa độ bản trải</option><option value="kraft">Carton kraft trơn</option></select></div>
+    <h2>2. Nạp bản vẽ & Khớp nếp gấp (Dieline)</h2>
+    <input id="artInput" type="file" accept="image/png,image/jpeg,image/webp">
+    <p class="hint">Tải ảnh chụp/xuất từ AI, Corel, PDF. <b>Kéo trực tiếp khung lưới đỏ</b> trên ảnh dưới đây để khớp vùng bản trải (Lưỡi gà + Chính 1 + Hông 1 + Chính 2 + Hông 2).</p>
+    
+    <div class="calibrator-wrap" id="calibratorWrap" style="display:none">
+      <canvas id="dielineCanvas" width="340" height="220"></canvas>
+      <div class="calibrator-bar">
+        <span>Kéo khung lưới để khớp nếp gấp</span>
+        <button class="secondary sm" id="autoFitBtn" style="padding:2px 7px;font-size:11px">Khớp toàn ảnh</button>
+      </div>
+    </div>
+
+    <div id="cropControls" style="display:none;margin-top:8px">
+      <div class="grid-2">
+        <div class="mini-field"><label>Lề trái X (%)</label><input id="cropX" type="number" step="0.5" value="0"></div>
+        <div class="mini-field"><label>Lề trên Y (%)</label><input id="cropY" type="number" step="0.5" value="0"></div>
+        <div class="mini-field"><label>Rộng bản trải (%)</label><input id="cropW" type="number" step="0.5" value="100"></div>
+        <div class="mini-field"><label>Cao bản trải (%)</label><input id="cropH" type="number" step="0.5" value="100"></div>
+      </div>
+      <div class="field" style="margin-top:6px">
+        <label>Lưỡi gà dán (Glue flap)</label>
+        <select id="glueSide">
+          <option value="left">Nằm bên trái (Chuẩn)</option>
+          <option value="none">Không có lưỡi gà trong ảnh</option>
+          <option value="right">Nằm bên phải</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Mặt chính hướng ra trước</label>
+        <select id="frontFaceSelect">
+          <option value="0">Mặt L1 (Mặt dài thứ nhất)</option>
+          <option value="2">Mặt L2 (Mặt dài thứ hai)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Hòa trộn mực in lên giấy</label>
+        <select id="blendMode">
+          <option value="multiply">In Offset/Flexo thực tế (Multiply)</option>
+          <option value="normal">Giữ nguyên màu gốc ảnh</option>
+        </select>
+      </div>
+    </div>
   </div>
+
+  <!-- BƯỚC 3 -->
   <div class="section">
-    <h2>3. Điều khiển nắp</h2>
-    <div class="field"><label>Độ mở nắp trên</label><input id="topOpen" type="range" min="0" max="110" value="0"></div>
-    <div class="field"><label>Độ mở nắp dưới</label><input id="bottomOpen" type="range" min="0" max="110" value="0"></div>
-    <div class="actions"><button class="secondary" id="closed">Đóng hộp</button><button class="secondary" id="opened">Mở nắp</button></div>
+    <h2>3. Góc mở nắp & Trình diễn</h2>
+    <div class="field"><label>Mở cánh trên lớn (Mặt L)</label><input id="topMainOpen" type="range" min="0" max="135" value="32"></div>
+    <div class="field"><label>Mở cánh trên nhỏ (Mặt W)</label><input id="topSideOpen" type="range" min="0" max="115" value="12"></div>
+    <div class="field"><label>Mở cánh đáy</label><input id="bottomOpen" type="range" min="0" max="110" value="0"></div>
+    <div class="field"><label>Băng keo niêm phong</label><select id="tapeMode"><option value="none">Không dán băng keo</option><option value="clear">Băng keo trong (Khi đóng nắp)</option></select></div>
+    <div class="actions">
+      <button class="secondary sm" id="presetStudio">Góc mở tự nhiên</button>
+      <button class="secondary sm" id="presetClosed">Đóng kín thùng</button>
+      <button class="secondary sm" id="presetOpen">Mở rộng nắp</button>
+    </div>
   </div>
-  <div class="section">
-    <h2>4. Hiển thị</h2>
-    <div class="field"><label>Chế độ xem</label><select id="viewMode"><option value="real">Phối cảnh 3D</option><option value="technical">Màu kỹ thuật</option></select></div>
-    <div class="actions"><button class="secondary" id="reset">Đặt lại góc nhìn</button><button id="save">Xuất PNG</button></div>
-  </div>
-  <div class="notice">Lưu ý: V0.1 dựng kết cấu RSC cơ bản theo kích thước nhập. Đây là bản kiểm tra quy trình và hình học sơ bộ, chưa thay thế kiểm tra bế mẫu, bù trừ độ dày, khe hở cánh, tai dán và sai số sản xuất.</div>
 </aside>
+
 <section class="stage">
-  <div class="toolbar"><strong>Mô hình 3D</strong><button class="secondary" id="front">Mặt trước</button><button class="secondary" id="topview">Nhìn từ trên</button><button class="secondary" id="sideview">Hông</button><span class="status" id="status">Sẵn sàng · Kéo chuột để xoay, lăn chuột để zoom</span></div>
+  <div class="toolbar">
+    <strong>Khung nhìn 3D</strong>
+    <button class="secondary sm" id="camIso">Góc 3/4 Chuẩn</button>
+    <button class="secondary sm" id="camFront">Mặt chính (L)</button>
+    <button class="secondary sm" id="camSide">Mặt hông (W)</button>
+    <button class="secondary sm" id="camTop">Nhìn từ trên</button>
+    <span class="status" id="statusText">Sẵn sàng</span>
+  </div>
   <div id="view"></div>
-  <div class="foot">Kéo chuột trái: xoay · Lăn chuột: phóng to/thu nhỏ · Chuột phải: di chuyển khung nhìn. Xuất PNG lưu ảnh khung 3D hiện tại.</div>
+  <div class="foot">
+    <span>🖱️ Chuột trái: Xoay 360° · Cuộn chuột: Phóng to/thu nhỏ · Chuột phải: Di chuyển</span>
+    <span>Chú thích lưới: <b>L1, L2</b> = Mặt chính dài · <b>W1, W2</b> = Mặt hông</span>
+  </div>
 </section>
 </main>
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
-<script type="module">
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
-import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js';
 
-const host=document.getElementById('view');
-const scene=new THREE.Scene(); scene.background=new THREE.Color(0xf0f3f7);
-const camera=new THREE.PerspectiveCamera(38,host.clientWidth/host.clientHeight,.1,5000);
-camera.position.set(520,390,560);
-const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});
-renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.setSize(host.clientWidth,host.clientHeight);
-renderer.outputColorSpace=THREE.SRGBColorSpace; renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-host.appendChild(renderer.domElement);
-const controls=new OrbitControls(camera,renderer.domElement); controls.enableDamping=true; controls.dampingFactor=.07; controls.target.set(0,80,0);
-scene.add(new THREE.HemisphereLight(0xffffff,0x8c98a8,2));
-const key=new THREE.DirectionalLight(0xffffff,2.2); key.position.set(-350,600,450); key.castShadow=true; scene.add(key);
-const fill=new THREE.DirectionalLight(0xffffff,.8); fill.position.set(400,250,-350); scene.add(fill);
-const floor=new THREE.Mesh(new THREE.PlaneGeometry(4000,4000),new THREE.MeshStandardMaterial({color:0xf0f2f5,roughness:1}));
-floor.rotation.x=-Math.PI/2; floor.position.y=-2; floor.receiveShadow=true; scene.add(floor);
-let model=new THREE.Group(); scene.add(model); let artTexture=null, artImage=null, flapGroups=[];
-const kraft=new THREE.MeshStandardMaterial({color:0xc8ad82,roughness:.88,side:THREE.DoubleSide});
-const techColors=[0x2687bd,0x149b9b,0xe77b45,0x8b8277,0x5b8c57,0x9474b8];
-function dims(){return {L:+L.value,W:+W.value,H:+H.value,G:+glue.value,T:+thick.value}}
-function matFor(panelIndex, box){
-  if(viewMode.value==='technical') return new THREE.MeshStandardMaterial({color:techColors[panelIndex%techColors.length],roughness:.8,side:THREE.DoubleSide});
-  if(artMode.value==='kraft'||!artTexture) return kraft;
-  const {L,W,H,G}=box;
-  // crop artwork coordinate rectangle (mm) into a canvas texture, then orient on each plane
-  const c=document.createElement('canvas'); c.width=512;c.height=512;const ctx=c.getContext('2d');
-  const panelWidths=[L,W,L,W], start=G+panelWidths.slice(0,panelIndex).reduce((a,b)=>a+b,0), pw=panelWidths[panelIndex];
-  const sx=start/netWidth*artImage.width, sw=pw/netWidth*artImage.width;
-  const sy=flapDepthTop/netHeight*artImage.height, sh=H/netHeight*artImage.height;
-  ctx.drawImage(artImage,sx,sy,sw,sh,0,0,512,512);
-  const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;return new THREE.MeshStandardMaterial({map:tex,roughness:.85,side:THREE.DoubleSide});
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
 }
-let netWidth=0,netHeight=0,flapDepthTop=0,flapDepthBottom=0;
-function plane(w,h,material){const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),material);m.castShadow=true;m.receiveShadow=true;return m}
-function addFlap(parent,panelW,depth,hingeY,z,rotSign,material,top,idx){
-  const g=new THREE.Group();g.position.set(0,hingeY,z); parent.add(g);
-  const m=plane(panelW,depth,material);m.position.set(0,rotSign*depth/2,0);g.add(m);
-  // At closed position flap lies horizontal. Plane initially lies XY; rotate around X.
-  g.rotation.x=top? -Math.PI/2:Math.PI/2;
-  flapGroups.push({g,top,base:g.rotation.x,depth});
-  return g;
-}
-function build(){
- const d=dims(); if([d.L,d.W,d.H,d.G,d.T].some(v=>!Number.isFinite(v)||v<=0)){alert('Vui lòng nhập kích thước lớn hơn 0.');return}
- model.traverse(o=>{if(o.geometry)o.geometry.dispose(); if(o.material){if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());else o.material.dispose()}});
- scene.remove(model);model=new THREE.Group();scene.add(model);flapGroups=[];
- const {L,W,H,G}=d;
- // panel sequence: glue + long + short + long + short
- const widths=[L,W,L,W]; const total=L*2+W*2;
- const xStarts=[-total/2,-total/2+L,-total/2+L+W,-total/2+2*L+W];
- const zFront=W/2, zBack=-W/2;
- netWidth=G+total; flapDepthTop=L/2; flapDepthBottom=L/2; netHeight=H+2*L/2;
- // body panels positioned around rectangular perimeter
- const centers=[
-  [0,0,zFront,0], // front long
-  [L/2,0,0,Math.PI/2], // right short
-  [0,0,zBack,Math.PI], // back long
-  [-L/2,0,0,-Math.PI/2] // left short
- ];
- const order=[0,1,2,3], panels=[];
- for(let i=0;i<4;i++){
-   const [cx,cy,cz,ry]=centers[i],pw=widths[i];
-   const mat=matFor(i,d);
-   const p=plane(pw,H,mat);p.position.set(cx,H/2,cz);p.rotation.y=ry;model.add(p);panels.push(p);
- }
- // top and bottom flaps: main flaps on long walls, small flaps on side walls.
- const sideDepth=L/2, longDepth=W/2;
- // Use groups whose local XY plane hinges at body edge. rotation about local X; horizontal at 90deg.
- for(let i=0;i<4;i++){
-   const isLong=(i%2===0), pw=isLong?L:W, depth=isLong?W/2:L/2;
-   const cx=centers[i][0],cz=centers[i][2],ry=centers[i][3];
-   for(const top of [true,false]){
-     const hingeY=top?H:0;
-     const g=new THREE.Group();g.position.set(cx,hingeY,cz);g.rotation.y=ry;model.add(g);
-     const flapMat=(viewMode.value==='technical')?new THREE.MeshStandardMaterial({color:techColors[(i+2)%techColors.length],side:THREE.DoubleSide}):kraft;
-     const flap=plane(pw,depth,flapMat);
-     // Plane XY; local y extends outward from hinge. Rotate to horizontal toward box center.
-     flap.position.y=(top?1:-1)*depth/2;
-     g.add(flap);
-     const closedAngle=-Math.PI/2;
-     g.rotation.x=closedAngle;
-     flapGroups.push({g,top,closedAngle,depth});
-   }
- }
- // floor and top inner panel as subtle planes
- const base=new THREE.Mesh(new THREE.PlaneGeometry(L,W),new THREE.MeshStandardMaterial({color:0xb99d73,roughness:.95,side:THREE.DoubleSide}));
- base.rotation.x=-Math.PI/2;base.position.set(0,.5,0);model.add(base);
- applyOpenAngles();
- const max=Math.max(L,W,H);camera.position.set(max*2.5,max*1.9,max*2.8);controls.target.set(0,H/2,0);controls.update();
- document.getElementById('status').textContent='Đã dựng RSC · '+L+' × '+W+' × '+H+' mm';
-}
-function applyOpenAngles(){
- const t=THREE.MathUtils.degToRad(+topOpen.value),b=THREE.MathUtils.degToRad(+bottomOpen.value);
- flapGroups.forEach(f=>{const a=f.top?t:b; f.g.rotation.x=f.closedAngle+(f.top?-a:a)});
-}
-function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)}animate();
-function resize(){const w=host.clientWidth,h=host.clientHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h)}
-new ResizeObserver(resize).observe(host);
-document.getElementById('rebuild').onclick=build;
-document.getElementById('topOpen').oninput=applyOpenAngles;document.getElementById('bottomOpen').oninput=applyOpenAngles;
-document.getElementById('closed').onclick=()=>{topOpen.value=0;bottomOpen.value=0;applyOpenAngles()};
-document.getElementById('opened').onclick=()=>{topOpen.value=95;bottomOpen.value=95;applyOpenAngles()};
-document.getElementById('viewMode').onchange=build;document.getElementById('artMode').onchange=build;
-document.getElementById('reset').onclick=()=>{build()};
-document.getElementById('front').onclick=()=>{const d=dims();camera.position.set(0,d.H*.9,d.L*2.5);controls.target.set(0,d.H/2,0);controls.update()};
-document.getElementById('topview').onclick=()=>{const d=dims();camera.position.set(0,d.H*4,1);controls.target.set(0,d.H/2,0);controls.update()};
-document.getElementById('sideview').onclick=()=>{const d=dims();camera.position.set(d.L*2.5,d.H*.9,0);controls.target.set(0,d.H/2,0);controls.update()};
-document.getElementById('save').onclick=()=>{renderer.render(scene,camera);const a=document.createElement('a');a.download='mockup-3d-carton.png';a.href=renderer.domElement.toDataURL('image/png');a.click()};
-document.getElementById('art').onchange=e=>{
- const file=e.target.files[0];if(!file)return;
- const url=URL.createObjectURL(file),img=new Image();
- img.onload=()=>{artImage=img;artTexture=new THREE.Texture(img);artTexture.colorSpace=THREE.SRGBColorSpace;flatPreview.src=url;flatPreview.hidden=false;build()};
- img.onerror=()=>alert('Không đọc được ảnh. Hãy dùng PNG hoặc JPG.');img.src=url;
-};
-build();
 </script>
-</body></html>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+// --- 1. KHỞI TẠO SCENE & ÁNH SÁNG STUDIO THỰC TẾ ---
+const viewEl = document.getElementById('view');
+const scene = new THREE.Scene();
+
+const camera = new THREE.PerspectiveCamera(35, viewEl.clientWidth / viewEl.clientHeight, 1, 10000);
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(viewEl.clientWidth, viewEl.clientHeight);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.08;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+viewEl.appendChild(renderer.domElement);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.06;
+controls.maxPolarAngle = Math.PI * 0.495;
+
+// Hệ thống đèn Studio 3 điểm + Bóng đổ mềm
+const hemiLight = new THREE.HemisphereLight(0xffffff, 0xd8dee9, 1.35);
+scene.add(hemiLight);
+
+const keyLight = new THREE.DirectionalLight(0xfffaf2, 1.85);
+keyLight.position.set(550, 950, 650);
+keyLight.castShadow = true;
+keyLight.shadow.mapSize.set(2048, 2048);
+keyLight.shadow.camera.near = 100;
+keyLight.shadow.camera.far = 3000;
+const dCam = 750;
+keyLight.shadow.camera.left = -dCam;
+keyLight.shadow.camera.right = dCam;
+keyLight.shadow.camera.top = dCam;
+keyLight.shadow.camera.bottom = -dCam;
+keyLight.shadow.bias = -0.0005;
+keyLight.shadow.radius = 4;
+scene.add(keyLight);
+
+const fillLight = new THREE.DirectionalLight(0xeef4ff, 0.75);
+fillLight.position.set(-600, 400, -450);
+scene.add(fillLight);
+
+// Sàn nhận bóng mềm (Shadow Catcher) giúp thùng đứng trên nền sáng chân thực
+const shadowFloor = new THREE.Mesh(
+  new THREE.PlaneGeometry(5000, 5000),
+  new THREE.ShadowMaterial({ opacity: 0.16 })
+);
+shadowFloor.rotation.x = -Math.PI / 2;
+shadowFloor.position.y = -0.5;
+shadowFloor.receiveShadow = true;
+scene.add(shadowFloor);
+
+// --- 2. TẠO VÂN GIẤY KRAFT & SÓNG CARTON BẰNG CANVAS (KHÔNG CẦN FILE NGOÀI) ---
+function createPaperTexture(type = 'kraft') {
+  const c = document.createElement('canvas');
+  c.width = 512; c.height = 512;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = type === 'white' ? '#f4f5f7' : '#c6a276';
+  ctx.fillRect(0, 0, 512, 512);
+
+  // Sợi giấy li ti
+  for (let i = 0; i < 9000; i++) {
+    const x = Math.random() * 512;
+    const y = Math.random() * 512;
+    const len = 1 + Math.random() * 3;
+    ctx.fillStyle = Math.random() > 0.5
+      ? (type === 'white' ? 'rgba(200,205,215,0.22)' : 'rgba(110,75,38,0.16)')
+      : (type === 'white' ? 'rgba(255,255,255,0.4)' : 'rgba(235,205,165,0.16)');
+    ctx.fillRect(x, y, len, 1);
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(2, 2);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
+function createCorrugatedEdgeTexture(type = 'kraft') {
+  const c = document.createElement('canvas');
+  c.width = 128; c.height = 32;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = type === 'white' ? '#d8dde6' : '#8c6841';
+  ctx.fillRect(0, 0, 128, 32);
+  // Lớp sóng hình sin ở giữa
+  ctx.strokeStyle = type === 'white' ? '#94a3b8' : '#573c20';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  for (let x = 0; x <= 128; x += 2) {
+    const y = 16 + Math.sin((x / 128) * Math.PI * 8) * 10;
+    if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+  const tex = new THREE.CanvasTexture(c);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(16, 1);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
+let kraftBaseTex = createPaperTexture('kraft');
+let whiteBaseTex = createPaperTexture('white');
+let kraftEdgeTex = createCorrugatedEdgeTexture('kraft');
+let whiteEdgeTex = createCorrugatedEdgeTexture('white');
+
+// --- 3. BỘ CĂN CHỈNH BẢN VẼ DIELINE (CALIBRATOR) ---
+let loadedArtImg = null;
+const cropState = { x: 0, y: 0, w: 100, h: 100 }; // % so với ảnh gốc
+const dielineCanvas = document.getElementById('dielineCanvas');
+const dCtx = dielineCanvas.getContext('2d');
+
+function getDims() {
+  return {
+    L: Math.max(30, +document.getElementById('L').value || 550),
+    W: Math.max(30, +document.getElementById('W').value || 310),
+    H: Math.max(30, +document.getElementById('H').value || 420),
+    T: Math.max(1, +document.getElementById('thick').value || 4),
+    glueMm: 35
+  };
+}
+
+// Tính tọa độ chuẩn hóa [0..1] của từng mặt & cánh trên bản trải phẳng
+function getNetLayout(d) {
+  const glueSide = document.getElementById('glueSide').value;
+  const gLeft = glueSide === 'left' ? d.glueMm : 0;
+  const gRight = glueSide === 'right' ? d.glueMm : 0;
+  const flapH = d.W / 2; // Chiều cao cánh nắp chuẩn RSC = W/2
+  const totalW = gLeft + d.L + d.W + d.L + d.W + gRight;
+  const totalH = flapH + d.H + flapH;
+
+  // 4 mặt thân: 0=L1, 1=W1, 2=L2, 3=W2
+  const panels = [
+    { name: 'L1 (Chính 1)', x: gLeft, w: d.L },
+    { name: 'W1 (Hông 1)', x: gLeft + d.L, w: d.W },
+    { name: 'L2 (Chính 2)', x: gLeft + d.L + d.W, w: d.L },
+    { name: 'W2 (Hông 2)', x: gLeft + d.L + d.W + d.L, w: d.W }
+  ];
+
+  return { totalW, totalH, flapH, gLeft, gRight, panels };
+}
+
+function drawDielineOverlay() {
+  if (!loadedArtImg) return;
+  const maxW = 350;
+  const ratio = loadedArtImg.height / loadedArtImg.width;
+  dielineCanvas.width = maxW;
+  dielineCanvas.height = Math.round(maxW * ratio);
+
+  dCtx.clearRect(0, 0, dielineCanvas.width, dielineCanvas.height);
+  dCtx.drawImage(loadedArtImg, 0, 0, dielineCanvas.width, dielineCanvas.height);
+
+  // Vùng chọn bản trải (px trên canvas)
+  const rx = (cropState.x / 100) * dielineCanvas.width;
+  const ry = (cropState.y / 100) * dielineCanvas.height;
+  const rw = (cropState.w / 100) * dielineCanvas.width;
+  const rh = (cropState.h / 100) * dielineCanvas.height;
+
+  // Làm tối vùng ngoài bản trải
+  dCtx.fillStyle = 'rgba(15, 23, 42, 0.55)';
+  dCtx.fillRect(0, 0, dielineCanvas.width, ry);
+  dCtx.fillRect(0, ry + rh, dielineCanvas.width, dielineCanvas.height - (ry + rh));
+  dCtx.fillRect(0, ry, rx, rh);
+  dCtx.fillRect(rx + rw, ry, dielineCanvas.width - (rx + rw), rh);
+
+  // Vẽ lưới nếp gấp chuẩn theo kích thước L, W, H
+  const d = getDims();
+  const net = getNetLayout(d);
+  const topFlapY = ry + (net.flapH / net.totalH) * rh;
+  const botFlapY = ry + ((net.flapH + d.H) / net.totalH) * rh;
+
+  dCtx.strokeStyle = '#ef4444';
+  dCtx.lineWidth = 1.5;
+  dCtx.strokeRect(rx, ry, rw, rh);
+
+  // Đường cấn ngang (Nếp gấp nắp trên & đáy)
+  dCtx.setLineDash([4, 3]);
+  dCtx.beginPath();
+  dCtx.moveTo(rx, topFlapY); dCtx.lineTo(rx + rw, topFlapY);
+  dCtx.moveTo(rx, botFlapY); dCtx.lineTo(rx + rw, botFlapY);
+  dCtx.stroke();
+
+  // Đường cấn dọc (Ranh giới các mặt L1, W1, L2, W2)
+  dCtx.font = 'bold 10px sans-serif';
+  net.panels.forEach((p, idx) => {
+    const px = rx + (p.x / net.totalW) * rw;
+    const pw = (p.w / net.totalW) * rw;
+    dCtx.beginPath();
+    dCtx.moveTo(px, ry); dCtx.lineTo(px, ry + rh);
+    dCtx.stroke();
+
+    // Nhãn nhận diện mặt
+    dCtx.fillStyle = 'rgba(225, 29, 72, 0.85)';
+    dCtx.fillRect(px + 2, topFlapY + 3, Math.min(pw - 4, 48), 14);
+    dCtx.fillStyle = '#fff';
+    dCtx.fillText(idx % 2 === 0 ? `L${idx/2+1}` : `W${(idx+1)/2}`, px + 5, topFlapY + 13);
+  });
+  dCtx.setLineDash([]);
+}
+
+// Kéo thả khung lưới trực tiếp trên canvas
+let isDragging = false, dragStart = { x: 0, y: 0 }, startCrop = { ...cropState };
+dielineCanvas.addEventListener('pointerdown', e => {
+  isDragging = true;
+  dragStart = { x: e.clientX, y: e.clientY };
+  startCrop = { ...cropState };
+  dielineCanvas.setPointerCapture(e.pointerId);
+});
+dielineCanvas.addEventListener('pointermove', e => {
+  if (!isDragging) return;
+  const dx = ((e.clientX - dragStart.x) / dielineCanvas.width) * 100;
+  const dy = ((e.clientY - dragStart.y) / dielineCanvas.height) * 100;
+  cropState.x = Math.max(-20, Math.min(95, +(startCrop.x + dx).toFixed(1)));
+  cropState.y = Math.max(-20, Math.min(95, +(startCrop.y + dy).toFixed(1)));
+  syncCropInputs();
+  drawDielineOverlay();
+});
+dielineCanvas.addEventListener('pointerup', () => {
+  if (isDragging) { isDragging = false; buildCarton3D(); }
+});
+
+function syncCropInputs() {
+  document.getElementById('cropX').value = cropState.x;
+  document.getElementById('cropY').value = cropState.y;
+  document.getElementById('cropW').value = cropState.w;
+  document.getElementById('cropH').value = cropState.h;
+}
+
+['cropX', 'cropY', 'cropW', 'cropH'].forEach(id => {
+  document.getElementById(id).addEventListener('change', () => {
+    cropState.x = +document.getElementById('cropX').value;
+    cropState.y = +document.getElementById('cropY').value;
+    cropState.w = Math.max(5, +document.getElementById('cropW').value);
+    cropState.h = Math.max(5, +document.getElementById('cropH').value);
+    drawDielineOverlay();
+    buildCarton3D();
+  });
+});
+
+document.getElementById('autoFitBtn').onclick = () => {
+  Object.assign(cropState, { x: 0, y: 0, w: 100, h: 100 });
+  syncCropInputs();
+  drawDielineOverlay();
+  buildCarton3D();
+};
+
+// --- 4. CẮT & ÁNH XẠ ARTWORK LÊN TỪNG MẶT VÀ CÁNH NẮP ---
+function createPanelMaterial(panelIdx, regionType, d) {
+  const paperType = document.getElementById('paperType').value;
+  const techColors = [0x2563eb, 0x0d9488, 0xea580c, 0x7c3aed];
+
+  if (paperType === 'tech') {
+    const shade = regionType === 'body' ? techColors[panelIdx] : 0x64748b;
+    return new THREE.MeshStandardMaterial({ color: shade, roughness: 0.75 });
+  }
+
+  const basePaperTex = paperType === 'white' ? whiteBaseTex : kraftBaseTex;
+  if (!loadedArtImg) {
+    return new THREE.MeshStandardMaterial({ map: basePaperTex, roughness: 0.88, metalness: 0.02 });
+  }
+
+  // Tạo texture riêng cho mặt/cánh này với vân giấy + mực in hòa trộn
+  const texCanvas = document.createElement('canvas');
+  texCanvas.width = 1024;
+  texCanvas.height = 1024;
+  const ctx = texCanvas.getContext('2d');
+
+  // Lớp 1: Nền giấy carton thật
+  ctx.fillStyle = paperType === 'white' ? '#f4f5f7' : '#c6a276';
+  ctx.fillRect(0, 0, 1024, 1024);
+  for (let i = 0; i < 6000; i++) {
+    ctx.fillStyle = Math.random() > 0.5 ? 'rgba(90,60,30,0.12)' : 'rgba(255,245,230,0.12)';
+    ctx.fillRect(Math.random() * 1024, Math.random() * 1024, 2, 1);
+  }
+
+  // Tính tọa độ vùng cắt trên ảnh gốc
+  const net = getNetLayout(d);
+  const pInfo = net.panels[panelIdx];
+
+  // Vùng bản trải tính theo pixel ảnh gốc
+  const netPxX = (cropState.x / 100) * loadedArtImg.width;
+  const netPxY = (cropState.y / 100) * loadedArtImg.height;
+  const netPxW = (cropState.w / 100) * loadedArtImg.width;
+  const netPxH = (cropState.h / 100) * loadedArtImg.height;
+
+  const sx = netPxX + (pInfo.x / net.totalW) * netPxW;
+  const sw = (pInfo.w / net.totalW) * netPxW;
+
+  let sy, sh;
+  if (regionType === 'top') {
+    sy = netPxY;
+    sh = (net.flapH / net.totalH) * netPxH;
+  } else if (regionType === 'bottom') {
+    sy = netPxY + ((net.flapH + d.H) / net.totalH) * netPxH;
+    sh = (net.flapH / net.totalH) * netPxH;
+  } else {
+    sy = netPxY + (net.flapH / net.totalH) * netPxH;
+    sh = (d.H / net.totalH) * netPxH;
+  }
+
+  // Lớp 2: Vẽ phần artwork tương ứng với chế độ hòa trộn mực in
+  ctx.save();
+  if (document.getElementById('blendMode').value === 'multiply') {
+    ctx.globalCompositeOperation = 'multiply';
+  }
+  ctx.drawImage(loadedArtImg, sx, sy, sw, sh, 0, 0, 1024, 1024);
+  ctx.restore();
+
+  const tex = new THREE.CanvasTexture(texCanvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+
+  return new THREE.MeshStandardMaterial({
+    map: tex,
+    roughness: 0.86,
+    metalness: 0.02
+  });
+}
+
+// --- 5. DỰNG MÔ HÌNH 3D CÓ ĐỘ DÀY SÓNG GIẤY & NẾP GẤP THẬT ---
+let cartonRoot = new THREE.Group();
+scene.add(cartonRoot);
+let flapControllers = [];
+let tapeMesh = null;
+
+// Tạo tấm bìa carton có độ dày T thật, mặt ngoài in artwork, mặt trong giấy kraft, cạnh lộ sóng
+function createCorrugatedBoard(width, height, depthT, outerMat, innerMat, edgeMat) {
+  const geo = new THREE.BoxGeometry(width, height, depthT);
+  // BoxGeometry faces: +X(right), -X(left), +Y(top), -Y(bottom), +Z(front/outer), -Z(back/inner)
+  const mats = [edgeMat, edgeMat, edgeMat, edgeMat, outerMat, innerMat];
+  const mesh = new THREE.Mesh(geo, mats);
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  return mesh;
+}
+
+function buildCarton3D() {
+  // Dọn bộ nhớ cũ
+  cartonRoot.traverse(obj => {
+    if (obj.geometry) obj.geometry.dispose();
+    if (obj.material) {
+      const arr = Array.isArray(obj.material) ? obj.material : [obj.material];
+      arr.forEach(m => { if (m.map && m.map !== kraftBaseTex && m.map !== whiteBaseTex) m.map.dispose(); m.dispose(); });
+    }
+  });
+  scene.remove(cartonRoot);
+  cartonRoot = new THREE.Group();
+  scene.add(cartonRoot);
+  flapControllers = [];
+
+  const d = getDims();
+  const { L, W, H, T } = d;
+  const paperType = document.getElementById('paperType').value;
+  const frontChoice = +document.getElementById('frontFaceSelect').value; // 0 (L1) hoặc 2 (L2)
+
+  const innerMat = new THREE.MeshStandardMaterial({
+    map: paperType === 'white' ? whiteBaseTex : kraftBaseTex,
+    color: paperType === 'white' ? 0xeef0f3 : 0xb89265,
+    roughness: 0.92
+  });
+  const edgeMat = new THREE.MeshStandardMaterial({
+    map: paperType === 'white' ? whiteEdgeTex : kraftEdgeTex,
+    roughness: 0.95
+  });
+
+  // Sắp xếp thứ tự 4 mặt quanh hộp theo lựa chọn mặt chính hướng ra +Z
+  // Mặc định: front=L1(0), right=W1(1), back=L2(2), left=W2(3)
+  const order = frontChoice === 0 ? [0, 1, 2, 3] : [2, 3, 0, 1];
+
+  const wallConfigs = [
+    { panelIdx: order[0], w: L, pos: [0, H / 2, W / 2 - T / 2], rotY: 0, isLong: true },
+    { panelIdx: order[1], w: W - T * 2, pos: [L / 2 - T / 2, H / 2, 0], rotY: Math.PI / 2, isLong: false },
+    { panelIdx: order[2], w: L, pos: [0, H / 2, -W / 2 + T / 2], rotY: Math.PI, isLong: true },
+    { panelIdx: order[3], w: W - T * 2, pos: [-L / 2 + T / 2, H / 2, 0], rotY: -Math.PI / 2, isLong: false }
+  ];
+
+  const flapDepth = W / 2 - 1.5; // Khe hở kỹ thuật 3mm giữa 2 cánh đối diện giống thùng thật
+
+  wallConfigs.forEach((cfg, wallIdx) => {
+    const wallGroup = new THREE.Group();
+    wallGroup.position.set(...cfg.pos);
+    wallGroup.rotation.y = cfg.rotY;
+    cartonRoot.add(wallGroup);
+
+    // 1. Thân thùng
+    const bodyOuterMat = createPanelMaterial(cfg.panelIdx, 'body', d);
+    const bodyBoard = createCorrugatedBoard(cfg.w, H, T, bodyOuterMat, innerMat, edgeMat);
+    wallGroup.add(bodyBoard);
+
+    // 2. Cánh trên & Cánh dưới (Hinge đặt tại mép ngoài của nếp gấp)
+    ['top', 'bottom'].forEach(side => {
+      const isTop = side === 'top';
+      const hinge = new THREE.Group();
+      // Đặt trục xoay tại mép ngoài để khi gập 90 độ không bị đâm xuyên vào thân
+      hinge.position.set(0, isTop ? H / 2 : -H / 2, T / 2);
+      wallGroup.add(hinge);
+
+      const flapW = cfg.w - 2; // Khe hở thoát góc bế (slotter gap) 2mm
+      const flapOuterMat = createPanelMaterial(cfg.panelIdx, side, d);
+      const flapBoard = createCorrugatedBoard(flapW, flapDepth, T, flapOuterMat, innerMat, edgeMat);
+
+      // Dịch tâm cánh ra khỏi trục xoay một đoạn flapDepth/2
+      flapBoard.position.set(0, isTop ? flapDepth / 2 : -flapDepth / 2, -T / 2);
+      hinge.add(flapBoard);
+
+      flapControllers.push({
+        hinge,
+        isTop,
+        isLong: cfg.isLong,
+        wallIdx
+      });
+    });
+  });
+
+  // Lưỡi gà nối bên trong góc hộp (tăng độ chân thực khi nhìn từ trên vào lòng thùng)
+  const glueTab = new THREE.Mesh(
+    new THREE.BoxGeometry(d.glueMm, H - 6, T * 0.8),
+    innerMat
+  );
+  glueTab.position.set(-L / 2 + d.glueMm / 2 + T, H / 2, W / 2 - T * 1.4);
+  cartonRoot.add(glueTab);
+
+  // Băng keo trong niêm phong nắp trên
+  const tapeGeo = new THREE.PlaneGeometry(L + 50, 48);
+  const tapeMat = new THREE.MeshPhysicalMaterial({
+    color: 0xfff8e7,
+    transparent: true,
+    opacity: 0.34,
+    roughness: 0.18,
+    metalness: 0.05,
+    side: THREE.DoubleSide
+  });
+  tapeMesh = new THREE.Mesh(tapeGeo, tapeMat);
+  tapeMesh.rotation.x = -Math.PI / 2;
+  tapeMesh.position.set(0, H + T + 0.5, 0);
+  cartonRoot.add(tapeMesh);
+
+  applyFlapAngles();
+  document.getElementById('statusText').textContent = `Đã dựng: ${L} × ${W} × ${H} mm (Sóng ${T}mm)`;
+}
+
+function applyFlapAngles() {
+  const topMainDeg = +document.getElementById('topMainOpen').value;
+  const topSideDeg = +document.getElementById('topSideOpen').value;
+  const botDeg = +document.getElementById('bottomOpen').value;
+  const T = getDims().T;
+
+  flapControllers.forEach(fc => {
+    let openDeg = fc.isTop ? (fc.isLong ? topMainDeg : topSideDeg) : botDeg;
+    // Khi gập kín (openDeg = 0): cánh gập vào trong 90 độ (-PI/2 cho nắp trên, +PI/2 cho đáy)
+    // Cánh chính nằm đè lên trên cánh hông một khoảng dày T để không bị chớp hình (z-fighting)
+    const sign = fc.isTop ? -1 : 1;
+    const closedRad = sign * (Math.PI / 2);
+    const openOffsetRad = -sign * THREE.MathUtils.degToRad(openDeg);
+    fc.hinge.rotation.x = closedRad + openOffsetRad;
+
+    // Bù trừ độ cao lớp cánh đè lên nhau khi đóng
+    const layerOffset = fc.isLong ? T : 0.2;
+    fc.hinge.position.y = (fc.isTop ? 1 : -1) * (getDims().H / 2 + (openDeg < 5 ? layerOffset : 0));
+  });
+
+  if (tapeMesh) {
+    const showTape = document.getElementById('tapeMode').value === 'clear' && topMainDeg === 0 && topSideDeg === 0;
+    tapeMesh.visible = showTape;
+  }
+}
+
+function focusCamera(preset = 'iso') {
+  const { L, W, H } = getDims();
+  const maxDim = Math.max(L, W, H);
+  controls.target.set(0, H * 0.48, 0);
+
+  if (preset === 'front') camera.position.set(0, H * 0.55, maxDim * 2.2);
+  else if (preset === 'side') camera.position.set(maxDim * 2.2, H * 0.55, 0);
+  else if (preset === 'top') camera.position.set(0, maxDim * 2.4, 10);
+  else camera.position.set(maxDim * 1.65, maxDim * 1.25, maxDim * 1.85); // Góc 3/4 studio
+
+  controls.update();
+}
+
+// --- 6. TẠO BẢN VẼ MẪU THỬ (DEMO) ĐỂ TEST NGAY KHÔNG CẦN FILE ---
+function generateSampleArtwork() {
+  const c = document.createElement('canvas');
+  c.width = 1600; c.height = 900;
+  const ctx = c.getContext('2d');
+
+  // Nền trắng giả lập bản xuất từ Illustrator có lề trắng xung quanh
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, 1600, 900);
+
+  // Vùng bản trải nằm gọn bên trong (để test tính năng khớp nếp gấp)
+  const bx = 120, by = 90, bw = 1360, bh = 720;
+  ctx.fillStyle = '#d4b288';
+  ctx.fillRect(bx, by, bw, bh);
+
+  // Vẽ thông tin in ấn lên 2 mặt chính L1 và L2
+  const drawShippingMark = (x, y, w, h, title) => {
+    ctx.strokeStyle = '#111';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(x + 25, y + 25, w - 50, h - 50);
+
+    // Biểu tượng ly vỡ / chống ẩm
+    ctx.fillStyle = '#111';
+    ctx.font = 'bold 28px Arial';
+    ctx.fillText('☂  🍷  ⬆⬆', x + 45, y + 75);
+
+    ctx.fillStyle = '#dc2626';
+    ctx.font = 'bold 42px Arial';
+    ctx.fillText('← 55 CM', x + w - 210, y + 80);
+
+    ctx.fillStyle = '#111';
+    ctx.font = 'bold 24px Arial';
+    ctx.fillText(title, x + 45, y + 135);
+    ctx.font = '20px Arial';
+    ctx.fillText('ITEM: PLUSH TOY COLLECTOR EDITION', x + 45, y + 175);
+    ctx.fillText('QTY: 12 PCS / EXPORT CARTON', x + 45, y + 210);
+    ctx.fillText('CARTON SIZE: 55 × 31 × 42 CM', x + 45, y + 245);
+    ctx.fillText('MADE IN VIETNAM', x + 45, y + 280);
+  };
+
+  // Chia tỷ lệ gần đúng: Glue(35) + L1(550) + W1(310) + L2(550) + W2(310) = 1755
+  const u = bw / 1755;
+  const bodyY = by + bh * (155 / 730);
+  const bodyH = bh * (420 / 730);
+
+  drawShippingMark(bx + 35 * u, bodyY, 550 * u, bodyH, 'MẶT CHÍNH 1 (FRONT)');
+  drawShippingMark(bx + (35 + 550 + 310) * u, bodyY, 550 * u, bodyH, 'MẶT CHÍNH 2 (BACK)');
+
+  // Ký hiệu trên mặt hông
+  ctx.fillStyle = '#111';
+  ctx.font = 'bold 26px Arial';
+  ctx.fillText('SIDE PANEL W1', bx + (35 + 550 + 40) * u, bodyY + 120);
+  ctx.fillText('SIDE PANEL W2', bx + (35 + 550 + 310 + 550 + 40) * u, bodyY + 120);
+
+  // Chữ trên cánh nắp
+  ctx.fillStyle = '#dc2626';
+  ctx.font = 'bold 26px Arial';
+  ctx.fillText('TOP FLAP - THIS SIDE UP', bx + 120 * u, by + 70);
+
+  const img = new Image();
+  img.onload = () => {
+    loadedArtImg = img;
+    // Tự động đặt khung lưới khớp vào vùng bx, by, bw, bh
+    cropState.x = +(bx / 1600 * 100).toFixed(1);
+    cropState.y = +(by / 900 * 100).toFixed(1);
+    cropState.w = +(bw / 1600 * 100).toFixed(1);
+    cropState.h = +(bh / 900 * 100).toFixed(1);
+    document.getElementById('calibratorWrap').style.display = 'block';
+    document.getElementById('cropControls').style.display = 'block';
+    syncCropInputs();
+    drawDielineOverlay();
+    buildCarton3D();
+    focusCamera('iso');
+  };
+  img.src = c.toDataURL('image/png');
+}
+
+// --- 7. SỰ KIỆN GIAO DIỆN ---
+document.getElementById('artInput').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const url = URL.createObjectURL(file);
+  const img = new Image();
+  img.onload = () => {
+    loadedArtImg = img;
+    document.getElementById('calibratorWrap').style.display = 'block';
+    document.getElementById('cropControls').style.display = 'block';
+    drawDielineOverlay();
+    buildCarton3D();
+  };
+  img.src = url;
+});
+
+document.getElementById('rebuildBtn').onclick = () => { drawDielineOverlay(); buildCarton3D(); focusCamera('iso'); };
+document.getElementById('loadSampleBtn').onclick = generateSampleArtwork;
+
+['paperType', 'glueSide', 'frontFaceSelect', 'blendMode'].forEach(id => {
+  document.getElementById(id).onchange = () => { drawDielineOverlay(); buildCarton3D(); };
+});
+
+['topMainOpen', 'topSideOpen', 'bottomOpen', 'tapeMode'].forEach(id => {
+  document.getElementById(id).oninput = applyFlapAngles;
+});
+
+document.getElementById('presetStudio').onclick = () => {
+  document.getElementById('topMainOpen').value = 32;
+  document.getElementById('topSideOpen').value = 12;
+  document.getElementById('bottomOpen').value = 0;
+  applyFlapAngles();
+};
+document.getElementById('presetClosed').onclick = () => {
+  document.getElementById('topMainOpen').value = 0;
+  document.getElementById('topSideOpen').value = 0;
+  document.getElementById('bottomOpen').value = 0;
+  applyFlapAngles();
+};
+document.getElementById('presetOpen').onclick = () => {
+  document.getElementById('topMainOpen').value = 115;
+  document.getElementById('topSideOpen').value = 105;
+  document.getElementById('bottomOpen').value = 0;
+  applyFlapAngles();
+};
+
+document.getElementById('camIso').onclick = () => focusCamera('iso');
+document.getElementById('camFront').onclick = () => focusCamera('front');
+document.getElementById('camSide').onclick = () => focusCamera('side');
+document.getElementById('camTop').onclick = () => focusCamera('top');
+
+document.getElementById('saveBtn').onclick = () => {
+  renderer.render(scene, camera);
+  const a = document.createElement('a');
+  a.download = `carton-mockup-${getDims().L}x${getDims().W}x${getDims().H}.png`;
+  a.href = renderer.domElement.toDataURL('image/png');
+  a.click();
+};
+
+new ResizeObserver(() => {
+  const w = viewEl.clientWidth, h = viewEl.clientHeight;
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  renderer.setSize(w, h);
+}).observe(viewEl);
+
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+// Khởi chạy lần đầu
+buildCarton3D();
+focusCamera('iso');
+animate();
+</script>
+</body>
+</html>
