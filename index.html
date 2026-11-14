@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AUTO MOCKUP 3D STUDIO - V1.8 PRO</title>
+<title>AUTO MOCKUP 3D STUDIO - V1.9 PRO</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700;800;900&family=Montserrat:wght@600;700;800;900&family=Roboto+Mono:wght@600;700&display=swap" rel="stylesheet">
@@ -232,7 +232,7 @@ button.sm{padding:5px 9px;font-size:11.5px}
           <line x1="12" y1="22.08" x2="12" y2="12"></line>
         </svg>
       </div>
-      <h1 class="brand-title">AUTO MOCKUP 3D STUDIO <span class="ver-pill">V1.8 PRO</span></h1>
+      <h1 class="brand-title">AUTO MOCKUP 3D STUDIO <span class="ver-pill">V1.9 PRO</span></h1>
     </div>
 
     <div class="brand-divider" aria-hidden="true"></div>
@@ -1361,8 +1361,9 @@ function buildCarton3D() {
   const innerMat = new THREE.MeshStandardMaterial({ map: createPaperTexture(paperColor), roughness: 0.92 });
   const edgeMat = new THREE.MeshStandardMaterial({ map: createCorrugatedEdgeTexture(paperColor, fluteLayers), roughness: 0.95 });
 
-  // Hàm tạo một cụm vách + cánh trên + cánh dưới theo hệ tọa độ bản trải phẳng:
-  // Mặt ngoài (in) hướng +Z, mặt trong hướng -Z, chiều rộng nằm dọc trục X [0 .. panelW]
+  // Hàm tạo cụm vách + cánh:
+  // Đặt tâm thân thùng tại z = 0 (trục trung tâm bề dày giấy T). Do đó bodyBox có z = 0.
+  // Các trục bản lề nắp được đặt chính xác tại mép trong z = -T/2 (hoặc z = 0 tùy theo lớp gấp) để tuyệt đối không bị lòi mép ra ngoài hay hở.
   const createWallAssembly = (panelIdx, panelW, isLong) => {
     const group = new THREE.Group();
     const bodyMat = createPanelMaterial3D(panelIdx, 'body', d);
@@ -1370,18 +1371,18 @@ function buildCarton3D() {
       new THREE.BoxGeometry(panelW, H, T),
       [edgeMat, edgeMat, edgeMat, edgeMat, bodyMat, innerMat]
     );
-    bodyBox.position.set(panelW / 2, H / 2, -T / 2);
+    // Tâm thân thùng nằm ở z = 0
+    bodyBox.position.set(panelW / 2, H / 2, 0);
     bodyBox.castShadow = true;
     bodyBox.receiveShadow = true;
     group.add(bodyBox);
 
-    // Chiều rộng cánh cắt khít theo chuẩn công nghiệp để 2 cánh đối diện chạm khít ở tâm, không hở
     const flapW = Math.max(10, panelW - slotGap);
 
     if (topFlapH > 0) {
       const hinge = new THREE.Group();
-      // Trục bản lề đặt tại đỉnh thân thùng (y = H) và mép trong (z = -T)
-      hinge.position.set(panelW / 2, H, -T);
+      // Đặt trục bản lề nắp tại đỉnh thân thùng (y = H) và mép trong (z = -T/2)
+      hinge.position.set(panelW / 2, H, -T / 2);
       group.add(hinge);
 
       const flapMat = createPanelMaterial3D(panelIdx, 'top', d);
@@ -1389,8 +1390,7 @@ function buildCarton3D() {
         new THREE.BoxGeometry(flapW, topFlapH, T),
         [edgeMat, edgeMat, edgeMat, edgeMat, flapMat, innerMat]
       );
-      // Khi openDeg = 90° (rotX = 0): cánh dựng thẳng đứng y in [0..topFlapH], z in [0..T] (nằm trên thành thùng)
-      // Khi openDeg = 0° (rotX = -90°): cánh nằm ngang hướng vào tâm thùng (-Z), mặt ngoài hướng +Y
+      // Khi gập ngang (0°), cánh nằm phẳng phiu trên mặt trên của thân thùng, không bị đội lên hay hở
       flapBox.position.set(0, topFlapH / 2, T / 2);
       flapBox.castShadow = true;
       flapBox.receiveShadow = true;
@@ -1400,8 +1400,8 @@ function buildCarton3D() {
 
     if (botFlapH > 0) {
       const hinge = new THREE.Group();
-      // Trục bản lề đặt tại đáy thân thùng (y = 0) và mép trong (z = -T)
-      hinge.position.set(panelW / 2, 0, -T);
+      // Đặt trục bản lề đáy tại y = 0 và mép trong (z = -T/2)
+      hinge.position.set(panelW / 2, 0, -T / 2);
       group.add(hinge);
 
       const flapMat = createPanelMaterial3D(panelIdx, 'bottom', d);
@@ -1409,8 +1409,6 @@ function buildCarton3D() {
         new THREE.BoxGeometry(flapW, botFlapH, T),
         [edgeMat, edgeMat, edgeMat, edgeMat, flapMat, innerMat]
       );
-      // Khi openDeg = 90° (rotX = 0): cánh thẳng đứng xuống y in [-botFlapH..0], z in [0..T]
-      // Khi openDeg = 0° (rotX = +90°): cánh nằm ngang hướng vào tâm thùng (-Z), mặt ngoài hướng -Y
       flapBox.position.set(0, -botFlapH / 2, T / 2);
       flapBox.castShadow = true;
       flapBox.receiveShadow = true;
@@ -1421,31 +1419,29 @@ function buildCarton3D() {
     return group;
   };
 
-  // Xây dựng chuỗi liên kết kinematic đúng theo bản trải phẳng 2D:
-  // [Mối nối TS] --(bản lề trái L1)-- [Mặt chính L1] -- [Mặt phụ W1] -- [Mặt chính L2] -- [Mặt phụ cuối W2]
-  // Khi dựng thành hình hộp:
-  // - L1 nằm mặt trước: X in [-L/2, L/2], Z_out = W/2
-  // - W1 nằm mặt phải:   X_out = L/2, Z in [-W/2, W/2]
-  // - L2 nằm mặt sau:    X in [-L/2, L/2], Z_out = -W/2
-  // - W2 nằm mặt trái:   X_out = -L/2, Z in [-W/2, W/2] -> đầu mút W2 tiến sát mép trái L1 để dán vào mối nối TS!
+  // Hệ tọa độ các vách thân thùng khi ghép kín hình hộp:
+  // Tâm thân thùng đi qua các góc hình chữ nhật:
+  // L1: X từ -L/2 đến L/2, Z = W/2 - T/2
+  // W1: X = L/2, Z từ W/2 đến -W/2
+  // L2: X từ L/2 đến -L/2, Z = -W/2 + T/2
+  // W2: X = -L/2, Z từ -W/2 đến W/2 -> Đầu mút W2 dán khít vào mối nối TS trên L1!
 
   const wallL1 = createWallAssembly(0, L, true);
-  wallL1.position.set(-L / 2, 0, W / 2);
+  wallL1.position.set(-L / 2, 0, W / 2 - T / 2);
   cartonRoot.add(wallL1);
 
-  // Mối nối TS gắn trực tiếp ở mép trái mặt chính L1 (x = 0 trong hệ L1)
+  // Mối nối TS gắn ở mép trái mặt chính L1 (x = 0 trong hệ L1)
   if (TS > 0 && H > 6) {
-    const effectiveTS = Math.min(TS, Math.max(8, W - T * 2.5));
-    const tabDepth = T * 0.65;
+    const effectiveTS = Math.min(TS, Math.max(8, W - T * 2));
+    const tabDepth = T * 0.9;
     tsHinge = new THREE.Group();
-    // Đặt trục bản lề tại mép trái trong của L1 (x = T, z = -T) để khi gập 90° nằm áp sát mặt trong của mặt phụ cuối cùng W2
-    tsHinge.position.set(T, H / 2, -T);
+    // Trục đặt tại x = T/2, z = -T/2 bên trong mặt chính L1 để khi gập 90° nằm gọn lỏn ở mặt trong, KHÔNG LÒI RA NGOÀI
+    tsHinge.position.set(T / 2, H / 2, -T / 2);
     wallL1.add(tsHinge);
 
     const shape = new THREE.Shape();
     const tw = effectiveTS, th = H - 6;
     const bevel = Math.min(th * 0.12, 18);
-    // Vẽ tai nối từ x = -tw về x = 0 (nằm bên trái L1 khi trải phẳng)
     shape.moveTo(-tw, -th / 2 + bevel);
     shape.lineTo(0, -th / 2);
     shape.lineTo(0, th / 2);
@@ -1459,7 +1455,7 @@ function buildCarton3D() {
     tsHinge.add(tabMesh);
   }
 
-  // Bản lề 1: Nối mép phải L1 (x = L) với Mặt phụ W1
+  // Bản lề vách 1 (W1 tại góc phải L1)
   const hingeW1 = new THREE.Group();
   hingeW1.position.set(L, 0, 0);
   wallL1.add(hingeW1);
@@ -1467,7 +1463,7 @@ function buildCarton3D() {
   hingeW1.add(wallW1);
   wallHinges.push(hingeW1);
 
-  // Bản lề 2: Nối mép phải W1 (x = W) với Mặt chính L2
+  // Bản lề vách 2 (L2 tại góc sau W1)
   const hingeL2 = new THREE.Group();
   hingeL2.position.set(W, 0, 0);
   wallW1.add(hingeL2);
@@ -1475,7 +1471,7 @@ function buildCarton3D() {
   hingeL2.add(wallL2);
   wallHinges.push(hingeL2);
 
-  // Bản lề 3: Nối mép phải L2 (x = L) với Mặt phụ cuối cùng W2 (mặt này sẽ gập cuối cùng để dán khít vào mối nối TS của L1)
+  // Bản lề vách 3 (W2 tại góc trái L2, dán vào TS của L1)
   const hingeW2 = new THREE.Group();
   hingeW2.position.set(L, 0, 0);
   wallL2.add(hingeW2);
@@ -1483,7 +1479,7 @@ function buildCarton3D() {
   hingeW2.add(wallW2);
   wallHinges.push(hingeW2);
 
-  // Băng keo niêm phong nằm phẳng trên bề mặt ngoài cùng của 2 cánh chính (L)
+  // Băng keo niêm phong
   const createFoldedTapeGroup = (isTop) => {
     const group = new THREE.Group();
     const isClear = document.getElementById('tapeMode').value === 'clear';
@@ -1493,10 +1489,8 @@ function buildCarton3D() {
       transparent: true, opacity: isClear ? 0.35 : 0.92, roughness: 0.18, side: THREE.DoubleSide
     });
 
-    const eps = 0.5;
-    // Khi đóng kín: mặt ngoài cánh phụ ở H + T, mặt ngoài cánh chính đè lên ở H + 2*T (hoặc H + T nếu cánh phụ = 0)
-    const stackThickness = (topFlapH > 0 && isTop) || (botFlapH > 0 && !isTop) ? T : 0;
-    const outerSurfaceY = isTop ? (H + stackThickness + eps) : -(stackThickness + eps);
+    const eps = 0.4;
+    const outerSurfaceY = isTop ? (H + T + eps) : -(T + eps);
 
     const mainGeo = new THREE.PlaneGeometry(L + eps * 2, tapeWidthMm);
     const mainMesh = new THREE.Mesh(mainGeo, tapeMat);
@@ -1526,19 +1520,16 @@ function buildCarton3D() {
   if (topFlapH > 0) topTapeGroup = createFoldedTapeGroup(true);
   if (botFlapH > 0) botTapeGroup = createFoldedTapeGroup(false);
 
-  // Mặc định ở trạng thái dựng 3D tĩnh: thân thùng đã dựng vuông góc 90° khép kín
   setBodyFoldFactor(1.0);
   applyFlapAngles();
 }
 
 function setBodyFoldFactor(factor) {
-  // factor = 0: trải phẳng hoàn toàn; factor = 1: dựng vuông góc 90° thành hình hộp khép kín
   const f = Math.max(0, Math.min(1, factor));
   wallHinges.forEach(h => {
     h.rotation.y = f * (Math.PI / 2);
   });
   if (tsHinge) {
-    // Mối nối TS gắn ở mặt chính L1 gập vuông góc 90° vào lòng thùng để đón mặt phụ cuối cùng W2 dán vào
     tsHinge.rotation.y = f * (Math.PI / 2);
   }
 }
@@ -1574,12 +1565,12 @@ function applyFlapAngles() {
     const sign = fc.isTop ? -1 : 1;
     const openRad = THREE.MathUtils.degToRad(openDeg);
 
-    // openDeg = 90° => rotX = 0 (thẳng đứng tiếp nối thân thùng); openDeg = 0° => rotX = ±90° (gập ngang 90° vuông góc thân thùng)
+    // Xoay cánh nắp quanh trục bản lề
     fc.hinge.rotation.x = sign * (Math.PI / 2 - openRad);
 
-    // Khi đóng (openDeg -> 0°):
-    // - Cánh phụ (isLong=false) nằm khít ngay trên mép thân thùng: Y_in = H (trên) và Y_in = 0 (dưới), chiếm lớp [H, H+T] và [-T, 0] -> KHÔNG HỞ!
-    // - Cánh chính (isLong=true) nâng đúng 1 lớp độ dày giấy (+T) khi gập ngang để nằm khít ngay trên bề mặt cánh phụ, chiếm lớp [H+T, H+2T] và [-2T, -T]
+    // Kỹ thuật phân lớp chồng khít tuyệt đối chuẩn công nghiệp (thứ tự gấp):
+    // - Cánh phụ (isLong = false) gập trước: nằm trực tiếp ở lớp đáy sát mép thân thùng (y = baseY, offset = 0).
+    // - Cánh chính (isLong = true) gập sau: nằm đè lên trên cánh phụ, nâng cao chính xác 1 lớp độ dày giấy (+T) để không bị đội hay cấn.
     const closeFactor = Math.max(0, Math.cos(openRad));
     const layerOffsetY = fc.isLong ? (T * closeFactor) : 0;
     fc.hinge.position.y = fc.baseY + (fc.isTop ? 1 : -1) * layerOffsetY;
@@ -1608,10 +1599,6 @@ function applyFlapAngles() {
 }
 
 // --- CLIP RÁP THÙNG 4 GIAI ĐOẠN CHUẨN KỸ THUẬT ---
-// 1. Gập mối nối TS ở mặt chính (L1) & dựng 4 mặt thân thùng (W2 cuối cùng dán khít vào TS)
-// 2. Gập 2 cánh mặt phụ (W) vào trước (nằm khít sát mép thân thùng, không hở)
-// 3. Gập 2 cánh mặt chính (L) đè khít lên trên 2 cánh phụ
-// 4. Dán băng keo niêm phong
 let isAnimating = false;
 let animProgress = 0;
 let animDuration = 7.0;
@@ -1637,37 +1624,37 @@ function setAnimationProgress(prog) {
   let mainOpenAngle = 90;
 
   if (animProgress <= 0.32) {
-    // Giai đoạn 1 (0% -> 32%): Gập mối nối TS ở mặt chính L1 và dựng thân thùng -> mặt phụ cuối cùng W2 dán khít vào TS
+    // Giai đoạn 1 (0% -> 32%): Dựng thân thùng & dán mối nối TS vào mặt phụ cuối cùng W2
     const tBody = smoothstep(0.0, 0.32, animProgress);
     setBodyFoldFactor(tBody);
     sideOpenAngle = 90;
     mainOpenAngle = 90;
     animTapeProgress = 0;
-    phaseLabel = 'Dán nối TS & W2';
+    phaseLabel = 'Dán mối nối TS & W2';
   } else if (animProgress <= 0.62) {
-    // Giai đoạn 2 (32% -> 62%): Gập 2 cánh mặt phụ (W) vào trước từ 90° về 0° (khít sát thân thùng)
+    // Giai đoạn 2 (32% -> 62%): Gập 2 cánh mặt phụ (W) vào trước (nằm sát đáy thân thùng)
     setBodyFoldFactor(1.0);
     const tSide = smoothstep(0.32, 0.62, animProgress);
     sideOpenAngle = (1.0 - tSide) * 90;
     mainOpenAngle = 90;
     animTapeProgress = 0;
-    phaseLabel = 'Gập 2 cánh phụ';
+    phaseLabel = 'Gập 2 cánh phụ W';
   } else if (animProgress <= 0.90) {
-    // Giai đoạn 3 (62% -> 90%): Gập 2 cánh mặt chính (L) từ 90° về 0° đè khít lên trên 2 cánh phụ
+    // Giai đoạn 3 (62% -> 90%): Gập 2 cánh mặt chính (L) đè khít lên trên 2 cánh phụ
     setBodyFoldFactor(1.0);
     const tMain = smoothstep(0.62, 0.90, animProgress);
     sideOpenAngle = 0;
     mainOpenAngle = (1.0 - tMain) * 90;
     animTapeProgress = 0;
-    phaseLabel = 'Gập 2 cánh chính';
+    phaseLabel = 'Gập 2 cánh chính L';
   } else {
-    // Giai đoạn 4 (90% -> 100%): Cả 4 cánh khép kín hoàn toàn, dán băng keo
+    // Giai đoạn 4 (90% -> 100%): Hoàn tất đóng thùng & dán băng keo niêm phong
     setBodyFoldFactor(1.0);
     const tTape = smoothstep(0.90, 1.0, animProgress);
     sideOpenAngle = 0;
     mainOpenAngle = 0;
     animTapeProgress = tTape;
-    phaseLabel = 'Hoàn tất đóng thùng';
+    phaseLabel = 'Dán băng keo niêm phong';
   }
 
   animTimeStatus.textContent = `${(animProgress * animDuration).toFixed(1)}s • ${phaseLabel}`;
