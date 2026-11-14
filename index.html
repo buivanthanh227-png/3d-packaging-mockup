@@ -1379,6 +1379,14 @@ function buildCarton3D() {
     group.add(bodyBox);
 
     const flapW = Math.max(10, panelW - slotGap - 2 * T);
+    // Chiều sâu cánh gập được giới hạn theo khoảng cách giữa hai vách đối diện.
+    // Hai cánh chính (gắn trên vách dài) dừng trước tâm một khe nhỏ;
+    // hai cánh phụ cũng không vượt quá nửa khẩu độ còn lại.
+    const seamGap = Math.max(1.5, Math.min(4, T * 0.35));
+    const flapDepth = Math.max(8, Math.min(
+      panelW === L ? (W - seamGap) / 2 : (L - seamGap) / 2,
+      topFlapH || botFlapH || panelW
+    ));
 
     if (topFlapH > 0) {
       const hinge = new THREE.Group();
@@ -1387,10 +1395,10 @@ function buildCarton3D() {
 
       const flapMat = createPanelMaterial3D(panelIdx, 'top', d);
       const flapBox = new THREE.Mesh(
-        new THREE.BoxGeometry(flapW, topFlapH, T),
+        new THREE.BoxGeometry(flapW, flapDepth, T),
         [edgeMat, edgeMat, edgeMat, edgeMat, flapMat, innerMat]
       );
-      flapBox.position.set(0, topFlapH / 2, T / 2);
+      flapBox.position.set(0, flapDepth / 2, T / 2);
       flapBox.castShadow = true;
       flapBox.receiveShadow = true;
       hinge.add(flapBox);
@@ -1404,10 +1412,10 @@ function buildCarton3D() {
 
       const flapMat = createPanelMaterial3D(panelIdx, 'bottom', d);
       const flapBox = new THREE.Mesh(
-        new THREE.BoxGeometry(flapW, botFlapH, T),
+        new THREE.BoxGeometry(flapW, flapDepth, T),
         [edgeMat, edgeMat, edgeMat, edgeMat, flapMat, innerMat]
       );
-      flapBox.position.set(0, -botFlapH / 2, T / 2);
+      flapBox.position.set(0, -flapDepth / 2, T / 2);
       flapBox.castShadow = true;
       flapBox.receiveShadow = true;
       hinge.add(flapBox);
@@ -1433,8 +1441,8 @@ function buildCarton3D() {
     const tw = effectiveTS, th = H - 6;
     const bevel = Math.min(th * 0.12, 18);
     shape.moveTo(0, -th / 2);
-    shape.lineTo(tw, -th / 2 + bevel);
-    shape.lineTo(tw, th / 2 - bevel);
+    shape.lineTo(-tw, -th / 2 + bevel);
+    shape.lineTo(-tw, th / 2 - bevel);
     shape.lineTo(0, th / 2);
     shape.closePath();
 
@@ -1443,7 +1451,8 @@ function buildCarton3D() {
       bevelEnabled: false
     });
     const tabMesh = new THREE.Mesh(tabGeo, innerMat);
-    // Chồng lưỡi gà vào mặt trong của tấm W2.
+    // Lưỡi gà nằm ngoài mép trái L1 khi trải phẳng; khi gập chuỗi vách,
+    // nó quay vào trong và áp vào mặt trong vách cuối để tạo mối dán.
     tabMesh.position.set(0, 0, -tabDepth);
     tabMesh.castShadow = true;
     tsHinge.add(tabMesh);
