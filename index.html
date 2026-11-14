@@ -207,7 +207,10 @@ let loadedArtImg = null;
 
 let zoom2D = 1.0;
 let pan2D = { x: 0, y: 0 };
-let artRect = { x: 50, y: 50, w: 500, h: 300 };
+// QUAN TRỌNG: artRect lưu theo đơn vị mm THẬT của hộp (không phải theo pixel canvas).
+// Nhờ vậy vị trí/kích thước ảnh luôn khớp tuyệt đối dù canvas bị resize, zoom hay
+// khi dựng 3D (không còn phụ thuộc vào scale/startX/startY tại thời điểm vẽ).
+let artRect = { x: 0, y: 0, w: 300, h: 200 };
 let activeHandle = null;
 let dragStart2D = { x: 0, y: 0 };
 
@@ -247,6 +250,13 @@ function getLayoutMetrics(d) {
   return { scale, startX, startY };
 }
 
+// Quy đổi artRect (mm) sang pixel canvas hiện tại — chỉ dùng để VẼ và BẮT ĐIỂM CHUỘT.
+// Dữ liệu gốc (artRect) không bao giờ đổi đơn vị, nên không bị trôi lệch khi scale đổi.
+function getArtRectPx() {
+  const scale = getLayoutMetrics(getDims()).scale;
+  return { x: artRect.x * scale, y: artRect.y * scale, w: artRect.w * scale, h: artRect.h * scale, scale };
+}
+
 function resizeCanvas2D() {
   if (!viewArea) return;
   canvas2D.width = viewArea.clientWidth || 900;
@@ -278,11 +288,12 @@ function render2DDieline() {
   ctx2D.fillRect(0, 0, geom.totalW * scale, geom.totalH * scale);
 
   if (loadedArtImg) {
-    ctx2D.drawImage(loadedArtImg, artRect.x, artRect.y, artRect.w, artRect.h);
+    const rpx = getArtRectPx();
+    ctx2D.drawImage(loadedArtImg, rpx.x, rpx.y, rpx.w, rpx.h);
 
     ctx2D.strokeStyle = '#22c55e';
     ctx2D.lineWidth = 1.5;
-    ctx2D.strokeRect(artRect.x, artRect.y, artRect.w, artRect.h);
+    ctx2D.strokeRect(rpx.x, rpx.y, rpx.w, rpx.h);
 
     const handles = getHandles();
     ctx2D.fillStyle = '#22c55e';
@@ -351,15 +362,16 @@ function render2DDieline() {
 }
 
 function getHandles() {
+  const r = getArtRectPx();
   return {
-    tl: { x: artRect.x, y: artRect.y },
-    tr: { x: artRect.x + artRect.w, y: artRect.y },
-    bl: { x: artRect.x, y: artRect.y + artRect.h },
-    br: { x: artRect.x + artRect.w, y: artRect.y + artRect.h },
-    t: { x: artRect.x + artRect.w / 2, y: artRect.y },
-    b: { x: artRect.x + artRect.w / 2, y: artRect.y + artRect.h },
-    l: { x: artRect.x, y: artRect.y + artRect.h / 2 },
-    r: { x: artRect.x + artRect.w, y: artRect.y + artRect.h / 2 }
+    tl: { x: r.x, y: r.y },
+    tr: { x: r.x + r.w, y: r.y },
+    bl: { x: r.x, y: r.y + r.h },
+    br: { x: r.x + r.w, y: r.y + r.h },
+    t: { x: r.x + r.w / 2, y: r.y },
+    b: { x: r.x + r.w / 2, y: r.y + r.h },
+    l: { x: r.x, y: r.y + r.h / 2 },
+    r: { x: r.x + r.w, y: r.y + r.h / 2 }
   };
 }
 
@@ -390,15 +402,16 @@ canvas2D.addEventListener('pointerdown', e => {
     for (let [key, pos] of Object.entries(handles)) {
       if (Math.hypot(m.x - pos.x, m.y - pos.y) < 12 / zoom2D) {
         activeHandle = key;
-        dragStart2D = { x: m.x, y: m.y, rect: { ...artRect } };
+        dragStart2D = { x: m.x, y: m.y, scale: getArtRectPx().scale, rect: { ...artRect } };
         canvas2D.setPointerCapture(e.pointerId);
         return;
       }
     }
 
-    if (m.x >= artRect.x && m.x <= artRect.x + artRect.w && m.y >= artRect.y && m.y <= artRect.y + artRect.h) {
+    const rpx = getArtRectPx();
+    if (m.x >= rpx.x && m.x <= rpx.x + rpx.w && m.y >= rpx.y && m.y <= rpx.y + rpx.h) {
       activeHandle = 'move';
-      dragStart2D = { x: m.x, y: m.y, rect: { ...artRect } };
+      dragStart2D = { x: m.x, y: m.y, scale: rpx.scale, rect: { ...artRect } };
       canvas2D.setPointerCapture(e.pointerId);
       return;
     }
@@ -421,8 +434,10 @@ canvas2D.addEventListener('pointermove', e => {
 
   if (!loadedArtImg) return;
   const m = getCanvasWorldPos(e);
-  const dx = m.x - dragStart2D.x;
-  const dy = m.y - dragStart2D.y;
+  // m và dragStart2D.x/y đang ở hệ pixel canvas; quy đổi độ lệch chuột (px) sang
+  // mm bằng scale lúc bắt đầu kéo, rồi áp dụng lên artRect (đang lưu theo mm).
+  const dx = (m.x - dragStart2D.x) / dragStart2D.scale;
+  const dy = (m.y - dragStart2D.y) / dragStart2D.scale;
   const r = dragStart2D.rect;
 
   if (activeHandle === 'move') {
@@ -444,6 +459,9 @@ canvas2D.addEventListener('pointermove', e => {
   } else if (activeHandle === 'r') {
     artRect.w = r.w + dx;
   }
+  // Giữ kích thước ảnh tối thiểu 5mm để tránh chia cho 0 khi map sang texture 3D.
+  artRect.w = Math.max(5, artRect.w);
+  artRect.h = Math.max(5, artRect.h);
   render2DDieline();
 });
 
@@ -597,7 +615,6 @@ function createPanelMaterial3D(panelIdx, regionType, d) {
   ctx.fillRect(0, 0, 1024, 1024);
 
   if (loadedArtImg) {
-    const metrics = getLayoutMetrics(d);
     let panelX = d.TS;
     if (panelIdx === 1) panelX = d.TS + d.L;
     else if (panelIdx === 2) panelX = d.TS + d.L + d.W;
@@ -610,13 +627,17 @@ function createPanelMaterial3D(panelIdx, regionType, d) {
 
     ctx.save();
     ctx.globalCompositeOperation = 'multiply';
-    const scaleFactor = metrics.scale;
-    // Đồng bộ chính xác tọa độ chuẩn 100% không bị lệch
+    // artRect lưu theo mm thật (cùng hệ quy chiếu với panelX/regionY ở đây), nên
+    // chỉ cần trừ trực tiếp — không còn cần biết scale hay kích thước canvas.
+    // Vì vậy kết quả luôn khớp 100% với những gì người dùng canh ở bản 2D, bất kể
+    // canvas có bị resize hay kích thước hộp có thay đổi sau khi đặt ảnh hay không.
+    const pxPerMmX = loadedArtImg.width / artRect.w;
+    const pxPerMmY = loadedArtImg.height / artRect.h;
     ctx.drawImage(loadedArtImg,
-      (panelX * scaleFactor + metrics.startX - artRect.x) * (loadedArtImg.width / artRect.w),
-      (regionY * scaleFactor + metrics.startY - artRect.y) * (loadedArtImg.height / artRect.h),
-      (pw * scaleFactor) * (loadedArtImg.width / artRect.w),
-      (rh * scaleFactor) * (loadedArtImg.height / artRect.h),
+      (panelX - artRect.x) * pxPerMmX,
+      (regionY - artRect.y) * pxPerMmY,
+      pw * pxPerMmX,
+      rh * pxPerMmY,
       0, 0, 1024, 1024
     );
     ctx.restore();
@@ -692,8 +713,8 @@ function buildCarton3D() {
     cartonRoot.add(glueTab);
   }
 
-  // Băng keo gập mép ôm vòng qua mặt phụ thực tế
-  const createFoldedTapeGroup = (yPos, isTop) => {
+  // Băng keo dán dọc theo đường nối cánh (giữa hộp) rồi gập vòng xuống 2 mặt hông (W) ở hai đầu
+  const createFoldedTapeGroup = (isTop) => {
     const group = new THREE.Group();
     const isClear = document.getElementById('tapeMode').value === 'clear';
     const tapeColor = document.getElementById('tapeColorPicker').value || '#facc15';
@@ -702,34 +723,39 @@ function buildCarton3D() {
       transparent: true, opacity: isClear ? 0.35 : 0.92, roughness: 0.18, side: THREE.DoubleSide
     });
 
-    // Đoạn trên mặt chính
+    const eps = 0.3; // khoảng hở nhỏ để không bị xuyên lớp (z-fighting) với mặt giấy
+    // Mặt trên hộp ở y=H, mặt đáy ở y=0 (xem wallConfigs). Đoạn băng keo chính nằm
+    // ngay tâm đường nối 2 cánh (z=0), không phải ở mép ngoài vách L.
+    const mainY = isTop ? (H + eps) : -eps;
+
+    // Đoạn chính chạy dọc suốt chiều dài L, ngay trên/dưới đường nối giữa hộp
     const mainGeo = new THREE.PlaneGeometry(L, tapeWidthMm);
     const mainMesh = new THREE.Mesh(mainGeo, tapeMat);
     mainMesh.rotation.x = isTop ? -Math.PI / 2 : Math.PI / 2;
-    mainMesh.position.set(0, yPos, W / 2 + T + 0.3);
+    mainMesh.position.set(0, mainY, 0);
     group.add(mainMesh);
 
-    // Đoạn gập ôm vòng sang 2 mặt hông (phụ) trái và phải
-    const sideGeo = new THREE.PlaneGeometry(tapeOverlapMm, tapeWidthMm);
-    
+    // 2 đoạn gập tràn, ôm vòng xuống đúng mặt hông (vách W) ở hai đầu hộp.
+    // wrapY: mép đầu băng (sát mặt trên/đáy) rồi "đổ" xuống đúng tapeOverlapMm
+    const wrapY = isTop ? (H - tapeOverlapMm / 2) : (tapeOverlapMm / 2);
+    const sideGeo = new THREE.PlaneGeometry(tapeWidthMm, tapeOverlapMm);
+
     const leftMesh = new THREE.Mesh(sideGeo, tapeMat);
-    leftMesh.rotation.x = isTop ? -Math.PI / 2 : Math.PI / 2;
-    leftMesh.rotation.z = isTop ? Math.PI / 2 : -Math.PI / 2;
-    leftMesh.position.set(-L / 2 - tapeOverlapMm / 2, yPos, W / 2);
+    leftMesh.rotation.y = Math.PI / 2;
+    leftMesh.position.set(-(L / 2 + eps), wrapY, 0);
     group.add(leftMesh);
 
     const rightMesh = new THREE.Mesh(sideGeo, tapeMat);
-    rightMesh.rotation.x = isTop ? -Math.PI / 2 : Math.PI / 2;
-    rightMesh.rotation.z = isTop ? -Math.PI / 2 : Math.PI / 2;
-    rightMesh.position.set(L / 2 + tapeOverlapMm / 2, yPos, W / 2);
+    rightMesh.rotation.y = Math.PI / 2;
+    rightMesh.position.set(L / 2 + eps, wrapY, 0);
     group.add(rightMesh);
 
     cartonRoot.add(group);
     return group;
   };
 
-  if (topFlapH > 0) topTapeGroup = createFoldedTapeGroup(H + T + 0.5, true);
-  if (botFlapH > 0) botTapeGroup = createFoldedTapeGroup(-H - T - 0.5, false);
+  if (topFlapH > 0) topTapeGroup = createFoldedTapeGroup(true);
+  if (botFlapH > 0) botTapeGroup = createFoldedTapeGroup(false);
 
   applyFlapAngles();
 }
@@ -751,9 +777,11 @@ function applyFlapAngles() {
   const isClear = mode === 'clear';
   const tapeColor = document.getElementById('tapeColorPicker').value || '#facc15';
 
+  if (topTapeGroup) topTapeGroup.visible = (mode !== 'none' && topMainDeg === 0 && topSideDeg === 0);
+  if (botTapeGroup) botTapeGroup.visible = (mode !== 'none' && botDeg === 0);
+
   [topTapeGroup, botTapeGroup].forEach(group => {
     if (!group) return;
-    group.visible = (mode !== 'none' && topMainDeg === 0 && topSideDeg === 0);
     group.children.forEach(mesh => {
       mesh.material.color.set(isClear ? 0xfff8e7 : tapeColor);
       mesh.material.opacity = isClear ? 0.35 : 0.92;
@@ -774,6 +802,11 @@ function focusCamera(preset = 'iso') {
 }
 
 // --- SỰ KIỆN GIAO DIỆN ---
+function setStatus(text) {
+  const el = document.getElementById('statusText');
+  if (el) el.textContent = text;
+}
+
 document.getElementById('updateDielineBtn').onclick = () => {
   currentMode = '2d';
   canvas2D.style.display = 'block';
@@ -784,6 +817,7 @@ document.getElementById('updateDielineBtn').onclick = () => {
   
   loadedArtImg = null;
   document.getElementById('artInput').value = '';
+  setStatus('Đã làm mới bản 2D — vui lòng nạp lại ảnh thiết kế');
   resizeCanvas2D();
 };
 
@@ -794,6 +828,7 @@ document.getElementById('build3DBtn').onclick = () => {
   document.getElementById('camToolbar').style.display = 'flex';
   document.getElementById('controls3DPanel').style.display = 'block';
   document.getElementById('stageTitle').textContent = 'Khung nhìn Mockup 3D';
+  setStatus('Đang xem Mockup 3D');
   
   const w = viewArea.clientWidth, h = viewArea.clientHeight;
   camera.aspect = w / h;
@@ -811,6 +846,7 @@ const switchTo2D = () => {
   document.getElementById('camToolbar').style.display = 'none';
   document.getElementById('controls3DPanel').style.display = 'none';
   document.getElementById('stageTitle').textContent = 'Bản trải phẳng 2D (Dieline Studio - Mouse Zoom)';
+  setStatus(loadedArtImg ? 'Đã quay lại chỉnh 2D' : 'Sẵn sàng canh chỉnh 2D');
   resizeCanvas2D();
 };
 
@@ -825,26 +861,30 @@ document.getElementById('artInput').addEventListener('change', e => {
   img.onload = () => {
     loadedArtImg = img;
     const geom = getDielineGeometry(getDims());
-    const metrics = getLayoutMetrics(getDims());
-    artRect = {
-      x: metrics.startX,
-      y: metrics.startY,
-      w: geom.totalW * metrics.scale,
-      h: geom.totalH * metrics.scale
-    };
+    // Đặt ảnh phủ khít toàn bộ bản trải (0,0) -> (totalW, totalH) THEO MM THẬT,
+    // không còn lệ thuộc scale/startX của canvas tại thời điểm nạp ảnh.
+    artRect = { x: 0, y: 0, w: geom.totalW, h: geom.totalH };
     zoom2D = 1.0;
     pan2D = { x: 0, y: 0 };
+    setStatus('Đã nạp ảnh thiết kế — kéo/co giãn để canh khớp dieline');
     render2DDieline();
   };
   img.src = url;
 });
 
-['glueTS', 'topFlapH', 'botFlapH', 'slotGap', 'paperColorPicker', 'fluteLayers', 'tapeWidthMm', 'tapeOverlapMm'].forEach(id => {
+['L', 'W', 'H', 'thick', 'glueTS', 'topFlapH', 'botFlapH', 'slotGap', 'paperColorPicker', 'fluteLayers', 'tapeWidthMm', 'tapeOverlapMm'].forEach(id => {
   document.getElementById(id).onchange = () => {
     if (currentMode === '2d') render2DDieline();
     else buildCarton3D();
   };
 });
+
+// Preset màu giấy: chọn trong danh sách sẽ đồng bộ sang ô chọn màu rồi vẽ lại ngay
+document.getElementById('paperPreset').onchange = e => {
+  document.getElementById('paperColorPicker').value = e.target.value;
+  if (currentMode === '2d') render2DDieline();
+  else buildCarton3D();
+};
 
 ['topMainOpen', 'topSideOpen', 'bottomOpen'].forEach(id => {
   document.getElementById(id).oninput = applyFlapAngles;
