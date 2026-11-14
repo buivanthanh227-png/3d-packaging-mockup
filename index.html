@@ -3,62 +3,113 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AUTO MOCKUP 3D - Carton Studio V1.0 PRO</title>
+<title>AUTO MOCKUP 3D - Carton Studio V1.1 PRO</title>
 <style>
 :root{
-  --bg:#f1f5f9;--panel:#fff;--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;
-  --primary:#4f46e5;--primary-hover:#4338ca;--accent:#f43f5e;--success:#059669;--success-hover:#047857;
+  --bg:#0b1120;--panel:#ffffff;--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;
+  --primary:#0284c7;--primary-hover:#0369a1;--accent:#f97316;--accent-hover:#ea580c;
+  --danger:#ef4444;--danger-hover:#dc2626;--success:#10b981;
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:13px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
-header{background:linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);color:#fff;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:2px solid #4338ca}
-header h1{font-size:17px;margin:0;letter-spacing:.4px;display:flex;align-items:center;gap:10px}
-header small{color:#c7d2fe;display:block;font-size:11.5px;margin-top:2px}
-.logo-badge{background:linear-gradient(135deg, #ffb703, #fb8500);color:#0f172a;border-radius:6px;padding:4px 10px;font-size:12px;font-weight:900;letter-spacing:.5px;box-shadow:0 2px 6px rgba(251,183,3,0.4)}
+body{margin:0;background:#f1f5f9;color:var(--ink);font:13.5px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
 
-main{max-width:1750px;margin:auto;padding:12px;display:grid;grid-template-columns:410px minmax(0,1fr);gap:12px}
-.panel,.stage{background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 4px 20px rgba(15,23,42,0.06)}
-.panel{padding:14px;max-height:calc(100vh - 78px);overflow-y:auto}
-.panel h2{font-size:13.5px;margin:0 0 10px;color:var(--primary);display:flex;align-items:center;justify-content:space-between;font-weight:700;border-bottom:2px solid #e0e7ff;padding-bottom:5px}
-.section{padding-bottom:12px;margin-bottom:12px;border-bottom:1px solid var(--line)}
+/* Banner & Header mới hiện đại, tinh tế */
+header{
+  background:linear-gradient(125deg, #090d16 0%, #172554 55%, #0c4a6e 100%);
+  color:#fff;padding:12px 22px;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  border-bottom:2px solid #0284c7;box-shadow:0 4px 16px rgba(2,132,199,0.2);
+}
+.brand-box{display:flex;align-items:center;gap:14px}
+.brand-logo{
+  width:42px;height:42px;border-radius:10px;
+  background:linear-gradient(135deg, #38bdf8, #0284c7);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 12px rgba(56,189,248,0.4);flex-shrink:0;
+}
+.brand-title{display:flex;align-items:center;gap:10px;margin:0;font-size:18px;font-weight:800;letter-spacing:.5px;color:#f8fafc}
+.ver-pill{background:rgba(16,185,129,0.2);border:1px solid #10b981;color:#34d399;border-radius:20px;padding:2px 9px;font-size:11px;font-weight:700}
+.brand-sub{color:#94a3b8;font-size:12px;margin-top:2px;display:block}
+.author-credit{
+  font-size:10.5px;color:#cbd5e1;letter-spacing:.4px;text-align:right;
+  background:rgba(255,255,255,0.06);padding:5px 11px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);
+}
+
+main{max-width:1800px;margin:auto;padding:14px;display:grid;grid-template-columns:410px minmax(0,1fr);gap:14px}
+.panel,.stage{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:0 6px 24px rgba(15,23,42,0.06)}
+.panel{padding:16px;max-height:calc(100vh - 92px);overflow-y:auto}
+.panel h2{
+  font-size:14px;margin:0 0 12px;color:#0f172a;display:flex;align-items:center;gap:8px;
+  font-weight:800;border-bottom:2px solid #e0f2fe;padding-bottom:6px;text-transform:uppercase;letter-spacing:.3px;
+}
+.section{padding-bottom:14px;margin-bottom:14px;border-bottom:1px solid var(--line)}
 .section:last-child{border-bottom:0;margin-bottom:0;padding-bottom:0}
 
-.field{display:grid;grid-template-columns:1fr 110px;align-items:center;gap:8px;margin:6px 0}
-.field label{color:#334155;font-size:12.5px;font-weight:500}
-.field input[type=number],.field select{width:100%;padding:5px 8px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;color:var(--ink);font-size:12.5px}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.mini-field{display:flex;flex-direction:column;gap:2px}
-.mini-field label{font-size:11px;color:var(--muted);font-weight:500}
-.mini-field input{width:100%;padding:5px 7px;border:1px solid #cbd5e1;border-radius:6px;font-size:12px}
+.field{display:grid;grid-template-columns:1fr 115px;align-items:center;gap:8px;margin:7px 0}
+.field label{color:#334155;font-size:13px;font-weight:600}
+.field input[type=number],.field select{
+  width:100%;padding:6px 9px;border:1px solid #cbd5e1;border-radius:7px;background:#f8fafc;
+  color:var(--ink);font-size:13px;font-weight:500;transition:.15s;
+}
+.field input[type=number]:focus,.field select:focus{outline:none;border-color:var(--primary);background:#fff;box-shadow:0 0 0 3px rgba(2,132,199,0.15)}
 
-input[type=file]{width:100%;font-size:11.5px;padding:6px;border:1px dashed #6366f1;border-radius:8px;background:#eef2ff;cursor:pointer;color:#4f46e5;font-weight:500}
-.hint{font-size:11px;color:var(--muted);margin:5px 0;line-height:1.35}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mini-field{display:flex;flex-direction:column;gap:3px}
+.mini-field label{font-size:11.5px;color:var(--muted);font-weight:600}
+.mini-field input{
+  width:100%;padding:6px 8px;border:1px solid #cbd5e1;border-radius:7px;background:#f8fafc;
+  font-size:13px;font-weight:500;transition:.15s;
+}
+.mini-field input:focus{outline:none;border-color:var(--primary);background:#fff;box-shadow:0 0 0 3px rgba(2,132,199,0.15)}
 
-button{border:0;border-radius:6px;background:var(--primary);color:#fff;padding:8px 12px;font-weight:600;font-size:12.5px;cursor:pointer;transition:.15s;box-shadow:0 2px 5px rgba(79,70,229,0.2)}
-button:hover{background:var(--primary-hover)}
+.file-row{display:flex;gap:6px;align-items:center}
+input[type=file]{
+  flex:1;font-size:12px;padding:7px;border:1.5px dashed #0284c7;border-radius:8px;
+  background:#f0f9ff;cursor:pointer;color:#0369a1;font-weight:600;transition:.15s;
+}
+input[type=file]:hover{background:#e0f2fe}
+
+/* Nút bấm & hiệu ứng tương tác */
+button{
+  border:0;border-radius:8px;background:var(--primary);color:#fff;padding:9px 14px;
+  font-weight:700;font-size:13px;cursor:pointer;transition:all .15s ease;
+  box-shadow:0 2px 6px rgba(2,132,199,0.25);display:inline-flex;align-items:center;justify-content:center;gap:6px;
+}
+button:hover{background:var(--primary-hover);transform:translateY(-1px);box-shadow:0 4px 10px rgba(2,132,199,0.35)}
+button:active{transform:scale(0.97) translateY(0)}
+
 button.secondary{background:#e2e8f0;color:#1e293b;box-shadow:none}
-button.secondary:hover{background:#cbd5e1}
-button.sm{padding:5px 9px;font-size:11.5px}
-.actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+button.secondary:hover{background:#cbd5e1;transform:translateY(-1px)}
+button.secondary:active{transform:scale(0.97)}
 
-.stage{min-height:700px;height:calc(100vh - 78px);overflow:hidden;display:flex;flex-direction:column;position:relative}
-.toolbar{padding:8px 12px;border-bottom:1px solid var(--line);display:flex;gap:6px;align-items:center;flex-wrap:wrap;background:#f8fafc;z-index:2}
-.toolbar .status{margin-left:auto;color:var(--muted);font-size:11.5px;font-weight:500}
+button.danger{background:var(--danger);color:#fff;box-shadow:0 2px 6px rgba(239,68,68,0.25);padding:8px 11px}
+button.danger:hover{background:var(--danger-hover)}
+
+button.cta-3d{
+  width:100%;background:linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  color:#fff;padding:13px 16px;font-size:14.5px;font-weight:800;letter-spacing:.3px;
+  box-shadow:0 4px 14px rgba(234,88,12,0.38);border:1px solid #fb923c;
+}
+button.cta-3d:hover{background:linear-gradient(135deg, #ea580c 0%, #c2410c 100%);box-shadow:0 6px 18px rgba(234,88,12,0.48)}
+button.sm{padding:6px 10px;font-size:12px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+
+.stage{min-height:700px;height:calc(100vh - 92px);overflow:hidden;display:flex;flex-direction:column;position:relative}
+.toolbar{padding:10px 14px;border-bottom:1px solid var(--line);display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:#f8fafc;z-index:2}
+.toolbar strong{font-size:13.5px;color:#0f172a}
+.toolbar .status{margin-left:auto;color:var(--primary);font-size:12px;font-weight:600;background:#e0f2fe;padding:3px 10px;border-radius:20px}
 
 #viewArea{flex:1;position:relative;background:#0f172a;overflow:hidden;display:flex;align-items:center;justify-content:center}
-#dieline2DCanvas{background:#1e293b;cursor:crosshair;box-shadow:0 10px 30px rgba(0,0,0,0.6)}
+#dieline2DCanvas{background:#1e293b;cursor:crosshair;box-shadow:0 12px 32px rgba(0,0,0,0.65)}
 #threeCanvas{display:none;width:100%;height:100%}
 
 /* Bảng điều khiển nổi thao tác 3D */
 .float-panel{
-  position:absolute;top:54px;left:12px;background:rgba(255,255,255,0.96);backdrop-filter:blur(8px);
-  border:1px solid var(--line);border-radius:8px;padding:12px;width:315px;z-index:10;
-  box-shadow:0 10px 25px rgba(15,23,42,0.18);font-size:12px;
+  position:absolute;top:56px;left:14px;background:rgba(255,255,255,0.96);backdrop-filter:blur(10px);
+  border:1px solid var(--line);border-radius:10px;padding:13px;width:320px;z-index:10;
+  box-shadow:0 10px 28px rgba(15,23,42,0.2);font-size:12.5px;
 }
-.float-panel h4{margin:0 0 8px 0;font-size:12.5px;color:var(--primary);display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e0e7ff;padding-bottom:4px}
-.float-panel .field{grid-template-columns:1fr 95px;margin:5px 0}
-
-.foot{padding:6px 12px;color:var(--muted);font-size:11px;border-top:1px solid var(--line);background:#fff;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;z-index:2}
+.float-panel h4{margin:0 0 9px 0;font-size:13px;color:var(--primary);display:flex;justify-content:space-between;align-items:center;border-bottom:1.5px solid #e0f2fe;padding-bottom:5px;font-weight:800}
+.float-panel .field{grid-template-columns:1fr 100px;margin:6px 0}
 
 @media(max-width:1024px){
   main{grid-template-columns:1fr}
@@ -70,10 +121,20 @@ button.sm{padding:5px 9px;font-size:11.5px}
 <body>
 
 <header>
-  <div>
-    <h1><span class="logo-badge">AM3D PRO</span> AUTO MOCKUP 3D STUDIO <span style="background:#059669;color:#fff;border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700">V1.0</span></h1>
-    <small>Hệ thống tự động hóa mô phỏng bao bì carton thông minh · Không cần Photoshop</small>
+  <div class="brand-box">
+    <div class="brand-logo" aria-hidden="true">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+        <line x1="12" y1="22.08" x2="12" y2="12"></line>
+      </svg>
+    </div>
+    <div>
+      <h1 class="brand-title">AUTO MOCKUP 3D STUDIO <span class="ver-pill">V1.1 PRO</span></h1>
+      <span class="brand-sub">Hệ thống mô phỏng bao bì carton 2D & 3D trực quan</span>
+    </div>
   </div>
+  <div class="author-credit">CÔNG CỤ ĐƯỢC PHÁT TRIỂN TỪ Ý TƯỞNG CỦA BÙI VĂN THANH</div>
 </header>
 
 <main>
@@ -87,14 +148,14 @@ button.sm{padding:5px 9px;font-size:11.5px}
       <div class="mini-field"><label>Cao thân (H), mm</label><input id="H" type="number" min="30" value="410"></div>
       <div class="mini-field"><label>Độ dày sóng, mm</label><input id="thick" type="number" min="1" max="25" step="0.5" value="5"></div>
     </div>
-    <div class="field" style="margin-top:6px">
+    <div class="field" style="margin-top:8px">
       <label>Mối nối (TS / Lưỡi gà)</label><input id="glueTS" type="number" min="0" value="35">
     </div>
     <div class="grid-2" style="margin-top:6px">
       <div class="mini-field"><label>Cao cánh trên (mm)</label><input id="topFlapH" type="number" min="0" value="155.5"></div>
       <div class="mini-field"><label>Cao cánh đáy (mm)</label><input id="botFlapH" type="number" min="0" value="155.5"></div>
     </div>
-    <div class="field" style="margin-top:6px">
+    <div class="field" style="margin-top:8px">
       <label>Khe xẻ rãnh (Slot gap)</label><input id="slotGap" type="number" min="0" max="15" value="6">
     </div>
 
@@ -110,7 +171,7 @@ button.sm{padding:5px 9px;font-size:11.5px}
     <div class="field" style="margin-top:6px">
       <label>Màu giấy carton</label>
       <div style="display:flex;gap:6px;align-items:center">
-        <input type="color" id="paperColorPicker" value="#c6a276" style="width:36px;height:28px;border:1px solid #cbd5e1;border-radius:4px;cursor:pointer;padding:0">
+        <input type="color" id="paperColorPicker" value="#c6a276" style="width:36px;height:30px;border:1px solid #cbd5e1;border-radius:6px;cursor:pointer;padding:0">
         <select id="paperPreset" style="flex:1">
           <option value="#c6a276">Kraft Vàng Tự Nhiên</option>
           <option value="#d9b382">Kraft Sáng</option>
@@ -120,71 +181,72 @@ button.sm{padding:5px 9px;font-size:11.5px}
       </div>
     </div>
 
-    <div class="actions" style="margin-top:8px">
-      <button id="updateDielineBtn" style="width:100%">1. Cập nhật bản trải phẳng 2D (Reset)</button>
+    <div class="actions" style="margin-top:10px">
+      <button id="updateDielineBtn" style="width:100%">Cập nhật bản trải phẳng 2D (Reset)</button>
     </div>
   </div>
 
-  <!-- MỤC 2: CÀI ĐẶT BĂNG KEO & NẠP FILE -->
+  <!-- MỤC 2: CÀI ĐẶT BĂNG KEO -->
   <div class="section">
-    <h2>2. Băng keo niêm phong (Gập mép hông)</h2>
+    <h2>2. Băng keo niêm phong</h2>
     <div class="field"><label>Bản rộng băng keo (mm)</label><input id="tapeWidthMm" type="number" min="20" max="100" value="60"></div>
     <div class="field"><label>Đoạn gập tràn hông (mm)</label><input id="tapeOverlapMm" type="number" min="0" max="150" value="60"></div>
     <div class="field"><label>Loại & Màu keo</label><select id="tapeMode"><option value="none">Không dán</option><option value="clear">Băng keo trong</option><option value="color">Băng keo màu tùy chỉnh</option></select></div>
-    <div id="tapeColorRow" class="field" style="display:none"><label>Chọn màu keo</label><input type="color" id="tapeColorPicker" value="#facc15" style="width:100%;height:26px;border:0;cursor:pointer;padding:0"></div>
+    <div id="tapeColorRow" class="field" style="display:none"><label>Chọn màu keo</label><input type="color" id="tapeColorPicker" value="#facc15" style="width:100%;height:28px;border:0;cursor:pointer;padding:0"></div>
   </div>
 
+  <!-- MỤC 3: NẠP FILE & DỰNG 3D -->
   <div class="section">
-    <h2>3. Nạp file thiết kế & Dựng 3D</h2>
-    <input id="artInput" type="file" accept="image/png,image/jpeg,image/webp,application/pdf">
-    <p class="hint">Tải file thiết kế lên. Cuộn chuột để zoom tại vị trí con trỏ. Kéo thả để di chuyển, kéo 4 góc/cạnh xanh để co giãn ảnh khớp dieline.</p>
+    <h2>3. File thiết kế & Dựng 3D</h2>
+    <div class="file-row">
+      <input id="artInput" type="file" accept="image/png,image/jpeg,image/webp,application/pdf">
+      <button type="button" class="danger sm" id="clearArtBtn" title="Xóa tệp thiết kế hiện tại">✕ Xóa</button>
+    </div>
     
-    <div class="actions" style="margin-top:10px; display:flex; flex-direction:column; gap:8px;">
-      <button id="build3DBtn" style="width:100%; background:linear-gradient(135deg, #fbbf24, #f59e0b); color:#0f172a; padding:12px; font-size:14px; font-weight:800; box-shadow:0 4px 14px rgba(245,158,11,0.4)">🚀 ⚡ DỰNG MOCKUP 3D NGAY</button>
-      <button class="secondary sm" id="switchMode2D_bottom" style="width:100%; padding:9px; font-weight:600; background:#e2e8f0; color:#334155">⬅ Quay lại chỉnh 2D</button>
+    <div class="actions" style="margin-top:12px; display:flex; flex-direction:column; gap:8px;">
+      <button id="build3DBtn" class="cta-3d">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+          <polyline points="2 17 12 22 22 17"></polyline>
+          <polyline points="2 12 12 17 22 12"></polyline>
+        </svg>
+        DỰNG MOCKUP 3D NGAY
+      </button>
+      <button class="secondary sm" id="switchMode2D_bottom" style="width:100%; padding:9px; font-weight:700;">⬅ Quay lại chỉnh 2D</button>
     </div>
   </div>
 </aside>
 
 <section class="stage">
   <div class="toolbar">
-    <strong id="stageTitle">Bản trải phẳng 2D (Dieline Studio - Mouse Zoom)</strong>
+    <strong id="stageTitle">Bản trải phẳng 2D (Dieline Studio)</strong>
     <div id="camToolbar" style="display:none;gap:6px">
       <button class="secondary sm" id="camIso">Góc 3/4</button>
       <button class="secondary sm" id="camFront">Mặt chính</button>
       <button class="secondary sm" id="camSide">Mặt hông</button>
       <button class="secondary sm" id="camTop">Nhìn từ trên</button>
       <button class="secondary sm" id="camBottom">Nhìn từ dưới</button>
-      <button class="sm" id="saveBtn" style="background:var(--primary)">Xuất ảnh PNG</button>
+      <button class="sm" id="saveBtn">Xuất ảnh PNG</button>
     </div>
     <span class="status" id="statusText">Sẵn sàng canh chỉnh 2D</span>
   </div>
 
   <div id="viewArea">
-    <!-- KHUNG CANH CHỈNH 2D (DIELINE CANVAS) -->
     <canvas id="dieline2DCanvas"></canvas>
-
-    <!-- KHUNG NHÌN 3D (THREE.JS) -->
     <div id="threeCanvas"></div>
 
-    <!-- BẢNG ĐIỀU KHIỂN NỔI KHI Ở CHẾ ĐỘ 3D -->
     <div class="float-panel" id="controls3DPanel" style="display:none">
-      <h4><span>Điều khiển 3D & Nắp</span> <button class="secondary sm" id="toggleOverlay" style="padding:1px 5px;font-size:10px">Thu gọn</button></h4>
+      <h4><span>Điều khiển 3D & Nắp</span> <button class="secondary sm" id="toggleOverlay" style="padding:2px 7px;font-size:11px">Thu gọn</button></h4>
       <div id="overlayContent">
         <div class="field"><label>Mở nắp trên lớn (L)</label><input id="topMainOpen" type="range" min="0" max="135" value="32"></div>
         <div class="field"><label>Mở nắp trên nhỏ (W)</label><input id="topSideOpen" type="range" min="0" max="115" value="12"></div>
         <div class="field"><label>Mở cánh đáy</label><input id="bottomOpen" type="range" min="0" max="110" value="0"></div>
-        <div class="actions" style="margin-top:6px">
+        <div class="actions" style="margin-top:8px">
           <button class="secondary sm" id="presetStudio" style="flex:1">Mở tự nhiên</button>
           <button class="secondary sm" id="presetClosed" style="flex:1">Đóng kín</button>
         </div>
       </div>
     </div>
-  </div>
-
-  <div class="foot">
-    <span>💡 Lăn chuột tại con trỏ: Zoom tập trung điểm chuột · Kéo 4 góc/cạnh xanh để co giãn ảnh khớp dieline.</span>
-    <span>Chuẩn RSC / FEFCO 0201</span>
   </div>
 </section>
 </main>
@@ -207,9 +269,6 @@ let loadedArtImg = null;
 
 let zoom2D = 1.0;
 let pan2D = { x: 0, y: 0 };
-// QUAN TRỌNG: artRect lưu theo đơn vị mm THẬT của hộp (không phải theo pixel canvas).
-// Nhờ vậy vị trí/kích thước ảnh luôn khớp tuyệt đối dù canvas bị resize, zoom hay
-// khi dựng 3D (không còn phụ thuộc vào scale/startX/startY tại thời điểm vẽ).
 let artRect = { x: 0, y: 0, w: 300, h: 200 };
 let activeHandle = null;
 let dragStart2D = { x: 0, y: 0 };
@@ -250,8 +309,6 @@ function getLayoutMetrics(d) {
   return { scale, startX, startY };
 }
 
-// Quy đổi artRect (mm) sang pixel canvas hiện tại — chỉ dùng để VẼ và BẮT ĐIỂM CHUỘT.
-// Dữ liệu gốc (artRect) không bao giờ đổi đơn vị, nên không bị trôi lệch khi scale đổi.
 function getArtRectPx() {
   const scale = getLayoutMetrics(getDims()).scale;
   return { x: artRect.x * scale, y: artRect.y * scale, w: artRect.w * scale, h: artRect.h * scale, scale };
@@ -291,12 +348,12 @@ function render2DDieline() {
     const rpx = getArtRectPx();
     ctx2D.drawImage(loadedArtImg, rpx.x, rpx.y, rpx.w, rpx.h);
 
-    ctx2D.strokeStyle = '#22c55e';
+    ctx2D.strokeStyle = '#10b981';
     ctx2D.lineWidth = 1.5;
     ctx2D.strokeRect(rpx.x, rpx.y, rpx.w, rpx.h);
 
     const handles = getHandles();
-    ctx2D.fillStyle = '#22c55e';
+    ctx2D.fillStyle = '#10b981';
     Object.values(handles).forEach(h => {
       ctx2D.fillRect(h.x - 5, h.y - 5, 10, 10);
     });
@@ -434,32 +491,56 @@ canvas2D.addEventListener('pointermove', e => {
 
   if (!loadedArtImg) return;
   const m = getCanvasWorldPos(e);
-  // m và dragStart2D.x/y đang ở hệ pixel canvas; quy đổi độ lệch chuột (px) sang
-  // mm bằng scale lúc bắt đầu kéo, rồi áp dụng lên artRect (đang lưu theo mm).
   const dx = (m.x - dragStart2D.x) / dragStart2D.scale;
   const dy = (m.y - dragStart2D.y) / dragStart2D.scale;
   const r = dragStart2D.rect;
+  const aspect = r.w / r.h;
 
   if (activeHandle === 'move') {
     artRect.x = r.x + dx; artRect.y = r.y + dy;
-  } else if (activeHandle === 'tl') {
-    artRect.x = r.x + dx; artRect.w = r.w - dx; artRect.y = r.y + dy; artRect.h = r.h - dy;
-  } else if (activeHandle === 'tr') {
-    artRect.w = r.w + dx; artRect.y = r.y + dy; artRect.h = r.h - dy;
-  } else if (activeHandle === 'bl') {
-    artRect.x = r.x + dx; artRect.w = r.w - dx; artRect.h = r.h + dy;
-  } else if (activeHandle === 'br') {
-    artRect.w = r.w + dx; artRect.h = r.h + dy;
-  } else if (activeHandle === 't') {
-    artRect.y = r.y + dy; artRect.h = r.h - dy;
-  } else if (activeHandle === 'b') {
-    artRect.h = r.h + dy;
-  } else if (activeHandle === 'l') {
-    artRect.x = r.x + dx; artRect.w = r.w - dx;
-  } else if (activeHandle === 'r') {
-    artRect.w = r.w + dx;
+  } else if (e.shiftKey && ['tl', 'tr', 'bl', 'br'].includes(activeHandle)) {
+    // Co giãn đều giữ nguyên tỷ lệ (giống phím Shift trong Adobe Illustrator)
+    if (activeHandle === 'br') {
+      const newW = Math.max(5, r.w + dx);
+      const newH = newW / aspect;
+      artRect.w = newW; artRect.h = newH;
+    } else if (activeHandle === 'tl') {
+      const newW = Math.max(5, r.w - dx);
+      const newH = newW / aspect;
+      artRect.x = r.x + (r.w - newW);
+      artRect.y = r.y + (r.h - newH);
+      artRect.w = newW; artRect.h = newH;
+    } else if (activeHandle === 'tr') {
+      const newW = Math.max(5, r.w + dx);
+      const newH = newW / aspect;
+      artRect.y = r.y + (r.h - newH);
+      artRect.w = newW; artRect.h = newH;
+    } else if (activeHandle === 'bl') {
+      const newW = Math.max(5, r.w - dx);
+      const newH = newW / aspect;
+      artRect.x = r.x + (r.w - newW);
+      artRect.w = newW; artRect.h = newH;
+    }
+  } else {
+    // Co giãn tự do 4 cạnh / 4 góc
+    if (activeHandle === 'tl') {
+      artRect.x = r.x + dx; artRect.w = r.w - dx; artRect.y = r.y + dy; artRect.h = r.h - dy;
+    } else if (activeHandle === 'tr') {
+      artRect.w = r.w + dx; artRect.y = r.y + dy; artRect.h = r.h - dy;
+    } else if (activeHandle === 'bl') {
+      artRect.x = r.x + dx; artRect.w = r.w - dx; artRect.h = r.h + dy;
+    } else if (activeHandle === 'br') {
+      artRect.w = r.w + dx; artRect.h = r.h + dy;
+    } else if (activeHandle === 't') {
+      artRect.y = r.y + dy; artRect.h = r.h - dy;
+    } else if (activeHandle === 'b') {
+      artRect.h = r.h + dy;
+    } else if (activeHandle === 'l') {
+      artRect.x = r.x + dx; artRect.w = r.w - dx;
+    } else if (activeHandle === 'r') {
+      artRect.w = r.w + dx;
+    }
   }
-  // Giữ kích thước ảnh tối thiểu 5mm để tránh chia cho 0 khi map sang texture 3D.
   artRect.w = Math.max(5, artRect.w);
   artRect.h = Math.max(5, artRect.h);
   render2DDieline();
@@ -627,10 +708,6 @@ function createPanelMaterial3D(panelIdx, regionType, d) {
 
     ctx.save();
     ctx.globalCompositeOperation = 'multiply';
-    // artRect lưu theo mm thật (cùng hệ quy chiếu với panelX/regionY ở đây), nên
-    // chỉ cần trừ trực tiếp — không còn cần biết scale hay kích thước canvas.
-    // Vì vậy kết quả luôn khớp 100% với những gì người dùng canh ở bản 2D, bất kể
-    // canvas có bị resize hay kích thước hộp có thay đổi sau khi đặt ảnh hay không.
     const pxPerMmX = loadedArtImg.width / artRect.w;
     const pxPerMmY = loadedArtImg.height / artRect.h;
     ctx.drawImage(loadedArtImg,
@@ -713,7 +790,8 @@ function buildCarton3D() {
     cartonRoot.add(glueTab);
   }
 
-  // Băng keo dán dọc theo đường nối cánh (giữa hộp) rồi gập vòng xuống 2 mặt hông (W) ở hai đầu
+  // Băng keo niêm phong nằm trên bề mặt ngoài cùng của 2 cánh chính (L) khi đóng lại (cao độ H + 2*T)
+  // và gập 2 đầu tràn xuống mặt hông (W) một đoạn tapeOverlapMm
   const createFoldedTapeGroup = (isTop) => {
     const group = new THREE.Group();
     const isClear = document.getElementById('tapeMode').value === 'clear';
@@ -723,32 +801,32 @@ function buildCarton3D() {
       transparent: true, opacity: isClear ? 0.35 : 0.92, roughness: 0.18, side: THREE.DoubleSide
     });
 
-    const eps = 0.3; // khoảng hở nhỏ để không bị xuyên lớp (z-fighting) với mặt giấy
-    // Mặt trên hộp ở y=H, mặt đáy ở y=0 (xem wallConfigs). Đoạn băng keo chính nằm
-    // ngay tâm đường nối 2 cánh (z=0), không phải ở mép ngoài vách L.
-    const mainY = isTop ? (H + eps) : -eps;
+    const eps = 0.6;
+    // Khi đóng nắp (openDeg = 0), cánh chính L nằm ở độ cao H + T (tâm) và mặt ngoài ở H + 2*T
+    const outerSurfaceY = isTop ? (H + T * 2 + eps) : -(T * 2 + eps);
 
-    // Đoạn chính chạy dọc suốt chiều dài L, ngay trên/dưới đường nối giữa hộp
-    const mainGeo = new THREE.PlaneGeometry(L, tapeWidthMm);
+    // 1. Đường băng keo dài chạy dọc theo khe hở giữa 2 cánh chính L trên mặt nắp/đáy
+    const mainGeo = new THREE.PlaneGeometry(L + eps * 2, tapeWidthMm);
     const mainMesh = new THREE.Mesh(mainGeo, tapeMat);
     mainMesh.rotation.x = isTop ? -Math.PI / 2 : Math.PI / 2;
-    mainMesh.position.set(0, mainY, 0);
+    mainMesh.position.set(0, outerSurfaceY, 0);
     group.add(mainMesh);
 
-    // 2 đoạn gập tràn, ôm vòng xuống đúng mặt hông (vách W) ở hai đầu hộp.
-    // wrapY: mép đầu băng (sát mặt trên/đáy) rồi "đổ" xuống đúng tapeOverlapMm
-    const wrapY = isTop ? (H - tapeOverlapMm / 2) : (tapeOverlapMm / 2);
-    const sideGeo = new THREE.PlaneGeometry(tapeWidthMm, tapeOverlapMm);
+    // 2. Hai đầu băng keo bẻ góc 90 độ gập ôm sát vào 2 mặt hông phụ (W)
+    if (tapeOverlapMm > 0) {
+      const wrapY = isTop ? (outerSurfaceY - tapeOverlapMm / 2) : (outerSurfaceY + tapeOverlapMm / 2);
+      const sideGeo = new THREE.PlaneGeometry(tapeWidthMm, tapeOverlapMm);
 
-    const leftMesh = new THREE.Mesh(sideGeo, tapeMat);
-    leftMesh.rotation.y = Math.PI / 2;
-    leftMesh.position.set(-(L / 2 + eps), wrapY, 0);
-    group.add(leftMesh);
+      const leftMesh = new THREE.Mesh(sideGeo, tapeMat);
+      leftMesh.rotation.y = Math.PI / 2;
+      leftMesh.position.set(-(L / 2 + eps), wrapY, 0);
+      group.add(leftMesh);
 
-    const rightMesh = new THREE.Mesh(sideGeo, tapeMat);
-    rightMesh.rotation.y = Math.PI / 2;
-    rightMesh.position.set(L / 2 + eps, wrapY, 0);
-    group.add(rightMesh);
+      const rightMesh = new THREE.Mesh(sideGeo, tapeMat);
+      rightMesh.rotation.y = Math.PI / 2;
+      rightMesh.position.set(L / 2 + eps, wrapY, 0);
+      group.add(rightMesh);
+    }
 
     cartonRoot.add(group);
     return group;
@@ -807,18 +885,30 @@ function setStatus(text) {
   if (el) el.textContent = text;
 }
 
+function clearUploadedArtwork(msg = 'Đã xóa file thiết kế — chỉ còn bản trải phẳng 2D') {
+  loadedArtImg = null;
+  document.getElementById('artInput').value = '';
+  setStatus(msg);
+  if (currentMode === '2d') {
+    resizeCanvas2D();
+  } else {
+    buildCarton3D();
+  }
+}
+
+document.getElementById('clearArtBtn').onclick = () => {
+  clearUploadedArtwork('Đã xóa file thiết kế khỏi bản vẽ 2D');
+};
+
 document.getElementById('updateDielineBtn').onclick = () => {
   currentMode = '2d';
   canvas2D.style.display = 'block';
   threeContainer.style.display = 'none';
   document.getElementById('camToolbar').style.display = 'none';
   document.getElementById('controls3DPanel').style.display = 'none';
-  document.getElementById('stageTitle').textContent = 'Bản trải phẳng 2D (Dieline Studio - Mouse Zoom)';
+  document.getElementById('stageTitle').textContent = 'Bản trải phẳng 2D (Dieline Studio)';
   
-  loadedArtImg = null;
-  document.getElementById('artInput').value = '';
-  setStatus('Đã làm mới bản 2D — vui lòng nạp lại ảnh thiết kế');
-  resizeCanvas2D();
+  clearUploadedArtwork('Đã cập nhật kích thước mới & làm mới bản 2D');
 };
 
 document.getElementById('build3DBtn').onclick = () => {
@@ -845,8 +935,8 @@ const switchTo2D = () => {
   threeContainer.style.display = 'none';
   document.getElementById('camToolbar').style.display = 'none';
   document.getElementById('controls3DPanel').style.display = 'none';
-  document.getElementById('stageTitle').textContent = 'Bản trải phẳng 2D (Dieline Studio - Mouse Zoom)';
-  setStatus(loadedArtImg ? 'Đã quay lại chỉnh 2D' : 'Sẵn sàng canh chỉnh 2D');
+  document.getElementById('stageTitle').textContent = 'Bản trải phẳng 2D (Dieline Studio)';
+  setStatus(loadedArtImg ? 'Đang canh chỉnh 2D (Giữ Shift để co giãn đều)' : 'Sẵn sàng canh chỉnh 2D');
   resizeCanvas2D();
 };
 
@@ -861,12 +951,10 @@ document.getElementById('artInput').addEventListener('change', e => {
   img.onload = () => {
     loadedArtImg = img;
     const geom = getDielineGeometry(getDims());
-    // Đặt ảnh phủ khít toàn bộ bản trải (0,0) -> (totalW, totalH) THEO MM THẬT,
-    // không còn lệ thuộc scale/startX của canvas tại thời điểm nạp ảnh.
     artRect = { x: 0, y: 0, w: geom.totalW, h: geom.totalH };
     zoom2D = 1.0;
     pan2D = { x: 0, y: 0 };
-    setStatus('Đã nạp ảnh thiết kế — kéo/co giãn để canh khớp dieline');
+    setStatus('Đã nạp thiết kế (Giữ Shift + kéo góc để co giãn đều)');
     render2DDieline();
   };
   img.src = url;
@@ -879,7 +967,6 @@ document.getElementById('artInput').addEventListener('change', e => {
   };
 });
 
-// Preset màu giấy: chọn trong danh sách sẽ đồng bộ sang ô chọn màu rồi vẽ lại ngay
 document.getElementById('paperPreset').onchange = e => {
   document.getElementById('paperColorPicker').value = e.target.value;
   if (currentMode === '2d') render2DDieline();
@@ -896,7 +983,6 @@ document.getElementById('tapeMode').onchange = e => {
 };
 document.getElementById('tapeColorPicker').oninput = applyFlapAngles;
 
-// Nút mở tự nhiên & đóng kín
 document.getElementById('presetStudio').onclick = () => {
   document.getElementById('topMainOpen').value = 32;
   document.getElementById('topSideOpen').value = 12;
