@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AUTO MOCKUP 3D STUDIO - V1.4 PRO</title>
+<title>AUTO MOCKUP 3D STUDIO - V1.5 PRO</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700;800;900&family=Montserrat:wght@600;700;800;900&family=Roboto+Mono:wght@600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#0b1120;--panel:#ffffff;--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;
@@ -82,7 +82,7 @@ header{
 
 main{
   flex:1;min-height:0;width:100%;max-width:1920px;margin:auto;padding:8px 10px;
-  display:grid;grid-template-columns:365px minmax(0,1fr);gap:10px;
+  display:grid;grid-template-columns:375px minmax(0,1fr);gap:10px;
 }
 .panel,.stage{background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 4px 16px rgba(15,23,42,0.05)}
 .panel{padding:11px 13px;height:100%;overflow-y:auto;display:flex;flex-direction:column;justify-content:flex-start;gap:10px}
@@ -152,9 +152,22 @@ button.eraser-btn.active{
   padding:3px 9px;font-size:11.5px;font-weight:700;color:#9d174d;
 }
 .eraser-controls.visible{display:inline-flex}
-.eraser-controls input[type=range]{width:85px;accent-color:#db2777;cursor:pointer}
+.eraser-controls input[type=range]{width:80px;accent-color:#db2777;cursor:pointer}
 
-/* Nút Ẩn/Hiện thông số 2D bắt mắt ngay dưới nút Dựng 2D */
+/* Nút Công cụ Text (Chèn chữ) trên thanh 2D */
+button.text-tool-btn{
+  background:#eff6ff;color:#1d4ed8;border:1.5px solid #93c5fd;box-shadow:none;
+}
+button.text-tool-btn:hover{
+  background:#dbeafe;border-color:#3b82f6;
+}
+button.text-tool-btn.active{
+  background:linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color:#ffffff;border-color:#60a5fa;
+  box-shadow:0 3px 10px rgba(59,130,246,0.4);
+}
+
+/* Nút Ẩn/Hiện thông số 2D */
 button.toggle-info-btn{
   width:100%;
   background:linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
@@ -163,30 +176,26 @@ button.toggle-info-btn{
 }
 button.toggle-info-btn:hover{
   background:linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
-  box-shadow:0 5px 14px rgba(79,70,229,0.42);
 }
 button.toggle-info-btn.hidden-state{
   background:linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
   border-color:#fbbf24;box-shadow:0 3px 10px rgba(217,119,6,0.32);
 }
-button.toggle-info-btn.hidden-state:hover{
-  background:linear-gradient(135deg, #d97706 0%, #b45309 100%);
-}
 
-/* Nút Dựng Mockup 3D & Quay lại chỉnh 2D đồng bộ */
+/* Nút Dựng Mockup 3D & Quay lại chỉnh 2D */
 button.cta-3d{
   width:100%;background:linear-gradient(135deg, #f97316 0%, #ea580c 100%);
   color:#fff;padding:10px 14px;font-size:14px;font-weight:800;letter-spacing:.3px;
   box-shadow:0 4px 12px rgba(234,88,12,0.38);border:1px solid #fb923c;
 }
-button.cta-3d:hover{background:linear-gradient(135deg, #ea580c 0%, #c2410c 100%);box-shadow:0 6px 16px rgba(234,88,12,0.48)}
+button.cta-3d:hover{background:linear-gradient(135deg, #ea580c 0%, #c2410c 100%)}
 
 button.cta-2d{
   width:100%;background:linear-gradient(135deg, #0d9488 0%, #0f766e 100%);
   color:#fff;padding:9px 14px;font-size:13.5px;font-weight:800;letter-spacing:.3px;
   box-shadow:0 4px 12px rgba(13,148,136,0.35);border:1px solid #2dd4bf;
 }
-button.cta-2d:hover{background:linear-gradient(135deg, #0f766e 0%, #115e59 100%);box-shadow:0 6px 16px rgba(13,148,136,0.45)}
+button.cta-2d:hover{background:linear-gradient(135deg, #0f766e 0%, #115e59 100%)}
 
 button.sm{padding:5px 9px;font-size:11.5px}
 .actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
@@ -202,11 +211,25 @@ button.sm{padding:5px 9px;font-size:11.5px}
 /* Bảng điều khiển nổi thao tác 3D */
 .float-panel{
   position:absolute;top:12px;left:12px;background:rgba(255,255,255,0.96);backdrop-filter:blur(10px);
-  border:1px solid var(--line);border-radius:9px;padding:10px 12px;width:295px;z-index:10;
+  border:1px solid var(--line);border-radius:9px;padding:10px 12px;width:300px;z-index:10;
   box-shadow:0 8px 24px rgba(15,23,42,0.2);font-size:12px;
 }
 .float-panel h4{margin:0 0 7px 0;font-size:12.5px;color:var(--primary);display:flex;justify-content:space-between;align-items:center;border-bottom:1.5px solid #e0f2fe;padding-bottom:4px;font-weight:800}
 .float-panel .field{grid-template-columns:1fr 95px;margin:4px 0}
+
+/* Thanh điều khiển Hiệu ứng Clip ngắn (Animation Player) */
+.anim-bar{
+  position:absolute;bottom:16px;left:50%;transform:translateX(-50%);
+  background:rgba(15,23,42,0.92);backdrop-filter:blur(12px);
+  border:1px solid rgba(56,189,248,0.35);border-radius:12px;
+  padding:10px 18px;display:none;align-items:center;gap:12px;z-index:20;
+  box-shadow:0 10px 30px rgba(0,0,0,0.5);color:#fff;font-size:12px;min-width:440px;
+}
+.anim-bar.visible{display:flex}
+.anim-bar button{background:#0284c7;color:#fff;padding:6px 12px;font-size:12px}
+.anim-bar button:hover{background:#0369a1}
+.anim-bar input[type=range]{flex:1;accent-color:#38bdf8;cursor:pointer}
+.anim-status{font-family:'Roboto Mono',monospace;font-size:11px;color:#38bdf8;min-width:42px;text-align:right}
 
 @media(max-width:1180px){
   header{flex-wrap:wrap;justify-content:center}
@@ -229,7 +252,7 @@ button.sm{padding:5px 9px;font-size:11.5px}
     <div id="liveClockDate" class="clock-date">Đang tải ngày...</div>
   </div>
 
-  <!-- Khối 2: Logo, Tên ứng dụng và Mô tả trải đều lấp đầy không gian -->
+  <!-- Khối 2: Logo, Tên ứng dụng và Mô tả -->
   <div class="brand-center">
     <div class="brand-logo-wrap">
       <div class="brand-logo" aria-hidden="true">
@@ -239,7 +262,7 @@ button.sm{padding:5px 9px;font-size:11.5px}
           <line x1="12" y1="22.08" x2="12" y2="12"></line>
         </svg>
       </div>
-      <h1 class="brand-title">AUTO MOCKUP 3D STUDIO <span class="ver-pill">V1.4 PRO</span></h1>
+      <h1 class="brand-title">AUTO MOCKUP 3D STUDIO <span class="ver-pill">V1.5 PRO</span></h1>
     </div>
 
     <div class="brand-divider" aria-hidden="true"></div>
@@ -319,7 +342,7 @@ button.sm{padding:5px 9px;font-size:11.5px}
 
   <!-- MỤC 3: NẠP FILE & DỰNG 3D -->
   <div class="section">
-    <h2>3. File thiết kế & Dựng hình</h2>
+    <h2>3. File thiết kế & Chèn chữ</h2>
     <div class="file-row">
       <input id="artInput" type="file" accept="image/png,image/jpeg,image/webp,application/pdf">
       <button type="button" class="danger sm" id="clearArtBtn" title="Xóa tệp thiết kế hiện tại">✕ Xóa</button>
@@ -350,7 +373,7 @@ button.sm{padding:5px 9px;font-size:11.5px}
 
 <section class="stage">
   <div class="toolbar">
-    <!-- Thanh công cụ Undo / Redo / Gôm tẩy cho chế độ 2D -->
+    <!-- Thanh công cụ Undo / Redo / Gôm / Chèn chữ cho chế độ 2D -->
     <div id="toolbar2D" class="toolbar-group">
       <button type="button" class="secondary sm" id="undoBtn" title="Hoàn tác (Ctrl + Z)" disabled>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
@@ -367,30 +390,51 @@ button.sm{padding:5px 9px;font-size:11.5px}
         <span>Redo (Ctrl+Shift+Z)</span>
       </button>
 
-      <!-- Nút Gôm tẩy kiểu Photoshop -->
-      <button type="button" class="eraser-btn sm" id="eraserToggleBtn" title="Bật/Tắt gôm tẩy để xóa chi tiết thừa trên hình thiết kế (Phím tắt: E)">
+      <!-- Nút Gôm tẩy -->
+      <button type="button" class="eraser-btn sm" id="eraserToggleBtn" title="Gôm tẩy xóa chi tiết (Phím tắt: E)">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
           <path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"></path>
           <path d="M22 21H7"></path>
           <path d="m5 11 9 9"></path>
         </svg>
-        <span id="eraserToggleText">Gôm tẩy (Xóa chi tiết)</span>
+        <span id="eraserToggleText">Gôm tẩy</span>
       </button>
-
       <div id="eraserControls" class="eraser-controls">
-        <span>Cỡ gôm:</span>
+        <span>Cỡ:</span>
         <input type="range" id="eraserSizeInput" min="5" max="150" value="35">
         <span id="eraserSizeLabel">35mm</span>
       </div>
+
+      <!-- Nút Chèn Chữ (Text Tool) -->
+      <button type="button" class="text-tool-btn sm" id="textToolToggleBtn" title="Chèn chữ, ghi chú trực tiếp lên phôi 2D">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="4 7 4 4 20 4 20 7"></polyline>
+          <line x1="9" y1="20" x2="15" y2="20"></line>
+          <line x1="12" y1="4" x2="12" y2="20"></line>
+        </svg>
+        <span id="textToolToggleText">Thêm Chữ / Ghi chú</span>
+      </button>
+      <div id="textControls" class="eraser-controls" style="background:#eff6ff;border-color:#93c5fd;color:#1d4ed8">
+        <input type="text" id="customTextInput" placeholder="Nhập chữ/ghi chú..." value="FRAGILE - HÀNG DỄ VỠ" style="width:135px;padding:3px 6px;border:1px solid #93c5fd;border-radius:4px;font-size:11.5px;font-weight:600">
+        <input type="color" id="textColorPicker" value="#0f172a" style="width:28px;height:22px;border:0;cursor:pointer;padding:0">
+        <select id="textSizeSelect" style="padding:2px 4px;border:1px solid #93c5fd;border-radius:4px;font-size:11px;font-weight:600">
+          <option value="16">16px</option>
+          <option value="24" selected>24px</option>
+          <option value="36">36px</option>
+          <option value="48">48px</option>
+          <option value="64">64px</option>
+        </select>
+        <button type="button" id="addTextBtn" class="sm" style="padding:3px 8px;background:#2563eb">Đóng dấu</button>
+      </div>
     </div>
 
-    <!-- Thanh công cụ Góc nhìn cho chế độ 3D -->
+    <!-- Thanh công cụ Góc nhìn 3D & Hiệu ứng clip ngắn -->
     <div id="camToolbar" class="toolbar-group" style="display:none">
       <button class="secondary sm" id="camIso">Góc 3/4</button>
       <button class="secondary sm" id="camFront">Mặt chính</button>
       <button class="secondary sm" id="camSide">Mặt hông</button>
-      <button class="secondary sm" id="camTop">Nhìn từ trên</button>
-      <button class="secondary sm" id="camBottom">Nhìn từ dưới</button>
+      <button class="secondary sm" id="camTop">Nhìn trên</button>
+      <button class="sm" id="playAnimBtn" style="background:linear-gradient(135deg, #10b981, #059669)">Chạy clip ráp thùng</button>
       <button class="sm" id="saveBtn">Xuất ảnh PNG</button>
     </div>
   </div>
@@ -399,6 +443,7 @@ button.sm{padding:5px 9px;font-size:11.5px}
     <canvas id="dieline2DCanvas"></canvas>
     <div id="threeCanvas"></div>
 
+    <!-- Bảng điều khiển nổi 3D -->
     <div class="float-panel" id="controls3DPanel" style="display:none">
       <h4><span>Điều khiển 3D & Nắp</span> <button class="secondary sm" id="toggleOverlay" style="padding:2px 6px;font-size:10.5px">Thu gọn</button></h4>
       <div id="overlayContent">
@@ -410,6 +455,15 @@ button.sm{padding:5px 9px;font-size:11.5px}
           <button class="secondary sm" id="presetClosed" style="flex:1">Đóng kín</button>
         </div>
       </div>
+    </div>
+
+    <!-- Thanh phát hiệu ứng Clip ngắn (Animation Player bar) -->
+    <div class="anim-bar" id="animBar">
+      <button id="animPlayPauseBtn" title="Phát / Tạm dừng">⏸ Tạm dừng</button>
+      <button id="animResetBtn" title="Về đầu">⏮ Đầu</button>
+      <input type="range" id="animSeekSlider" min="0" max="1000" value="0">
+      <span class="anim-status" id="animTimeStatus">0.0s</span>
+      <button class="secondary sm" id="animCloseBtn" style="background:#ef4444;color:#fff;padding:4px 8px">✕ Đóng</button>
     </div>
   </div>
 </section>
@@ -428,7 +482,7 @@ button.sm{padding:5px 9px;font-size:11.5px}
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-// --- ĐỒNG HỒ THỜI GIAN THỰC THEO GIỜ MÁY TÍNH ---
+// --- ĐỒNG HỒ THỜI GIAN THỰC ---
 function updateLiveClock() {
   const now = new Date();
   const hh = String(now.getHours()).padStart(2, '0');
@@ -450,7 +504,7 @@ updateLiveClock();
 setInterval(updateLiveClock, 1000);
 
 let currentMode = '2d';
-let loadedArtImg = null; // Lưu đối tượng HTMLCanvasElement / Image đã qua chỉnh sửa/tẩy
+let loadedArtImg = null;
 let show2DLabels = true;
 
 let zoom2D = 1.0;
@@ -459,14 +513,16 @@ let artRect = { x: 0, y: 0, w: 300, h: 200 };
 let activeHandle = null;
 let dragStart2D = { x: 0, y: 0 };
 
-// --- TRẠNG THÁI CÔNG CỤ GÔM TẨY (ERASER) ---
+// --- CÔNG CỤ GÔM TẨY & CHÈN CHỮ ---
 let eraserMode = false;
 let eraserSizeMm = 35;
 let isErasing = false;
 let lastErasePos = null;
 let mouseWorldPos2D = null;
 
-// --- HỆ THỐNG UNDO / REDO CHO THAO TÁC 2D (BAO GỒM CẢ NÉT TẨY) ---
+let textToolMode = false;
+
+// --- LỊCH SỬ UNDO / REDO ---
 let historyStack = [];
 let historyIndex = -1;
 const MAX_HISTORY = 40;
@@ -480,9 +536,7 @@ function updateUndoRedoButtons() {
 
 function getArtDataURL() {
   if (!loadedArtImg) return null;
-  if (loadedArtImg instanceof HTMLCanvasElement) {
-    return loadedArtImg.toDataURL('image/png');
-  }
+  if (loadedArtImg instanceof HTMLCanvasElement) return loadedArtImg.toDataURL('image/png');
   return loadedArtImg.src || null;
 }
 
@@ -501,15 +555,11 @@ function pushHistory() {
       Math.abs(prev.artRect.y - snapshot.artRect.y) < 0.01 &&
       Math.abs(prev.artRect.w - snapshot.artRect.w) < 0.01 &&
       Math.abs(prev.artRect.h - snapshot.artRect.h) < 0.01
-    ) {
-      return;
-    }
+    ) return;
   }
   historyStack = historyStack.slice(0, historyIndex + 1);
   historyStack.push(snapshot);
-  if (historyStack.length > MAX_HISTORY) {
-    historyStack.shift();
-  }
+  if (historyStack.length > MAX_HISTORY) historyStack.shift();
   historyIndex = historyStack.length - 1;
   updateUndoRedoButtons();
 }
@@ -525,8 +575,7 @@ function applyHistorySnapshot(snap) {
     const img = new Image();
     img.onload = () => {
       const c = document.createElement('canvas');
-      c.width = img.width;
-      c.height = img.height;
+      c.width = img.width; c.height = img.height;
       c.getContext('2d').drawImage(img, 0, 0);
       loadedArtImg = c;
       if (currentMode === '2d') render2DDieline();
@@ -543,7 +592,6 @@ function undoAction() {
     applyHistorySnapshot(historyStack[historyIndex]);
   }
 }
-
 function redoAction() {
   if (historyIndex < historyStack.length - 1) {
     historyIndex++;
@@ -554,30 +602,55 @@ function redoAction() {
 document.getElementById('undoBtn').onclick = undoAction;
 document.getElementById('redoBtn').onclick = redoAction;
 
-// --- BẬT / TẮT CÔNG CỤ GÔM TẨY ---
+// --- GÔM TẨY & CHÈN CHỮ UI ---
 const eraserToggleBtn = document.getElementById('eraserToggleBtn');
 const eraserToggleText = document.getElementById('eraserToggleText');
 const eraserControls = document.getElementById('eraserControls');
 const eraserSizeInput = document.getElementById('eraserSizeInput');
 const eraserSizeLabel = document.getElementById('eraserSizeLabel');
 
+const textToolToggleBtn = document.getElementById('textToolToggleBtn');
+const textToolToggleText = document.getElementById('textToolToggleText');
+const textControls = document.getElementById('textControls');
+
 function setEraserMode(state) {
   eraserMode = state;
   if (eraserMode) {
+    textToolMode = false;
+    textControls.classList.remove('visible');
+    textToolToggleBtn.classList.remove('active');
     eraserToggleBtn.classList.add('active');
-    eraserToggleText.textContent = 'Đang dùng Gôm tẩy';
+    eraserToggleText.textContent = 'Đang gôm';
     eraserControls.classList.add('visible');
     canvas2D.style.cursor = 'none';
   } else {
     eraserToggleBtn.classList.remove('active');
-    eraserToggleText.textContent = 'Gôm tẩy (Xóa chi tiết)';
+    eraserToggleText.textContent = 'Gôm tẩy';
     eraserControls.classList.remove('visible');
     canvas2D.style.cursor = 'crosshair';
   }
   render2DDieline();
 }
 
+function setTextToolMode(state) {
+  textToolMode = state;
+  if (textToolMode) {
+    setEraserMode(false);
+    textToolToggleBtn.classList.add('active');
+    textToolToggleText.textContent = 'Đang chèn chữ';
+    textControls.classList.add('visible');
+    canvas2D.style.cursor = 'crosshair';
+  } else {
+    textToolToggleBtn.classList.remove('active');
+    textToolToggleText.textContent = 'Thêm Chữ / Ghi chú';
+    textControls.classList.remove('visible');
+    canvas2D.style.cursor = 'crosshair';
+  }
+  render2DDieline();
+}
+
 eraserToggleBtn.onclick = () => setEraserMode(!eraserMode);
+textToolToggleBtn.onclick = () => setTextToolMode(!textToolMode);
 
 eraserSizeInput.oninput = e => {
   eraserSizeMm = parseInt(e.target.value, 10) || 35;
@@ -585,18 +658,46 @@ eraserSizeInput.oninput = e => {
   render2DDieline();
 };
 
+document.getElementById('addTextBtn').onclick = () => {
+  const textVal = document.getElementById('customTextInput').value.trim();
+  if (!textVal) return;
+  const color = document.getElementById('textColorPicker').value;
+  const fontSize = parseInt(document.getElementById('textSizeSelect').value, 10) || 24;
+
+  if (!loadedArtImg) {
+    const geom = getDielineGeometry(getDims());
+    const c = document.createElement('canvas');
+    c.width = 1200; c.height = 800;
+    loadedArtImg = c;
+    artRect = { x: 0, y: 0, w: geom.totalW, h: geom.totalH };
+  }
+
+  const artCtx = loadedArtImg.getContext('2d');
+  artCtx.save();
+  artCtx.font = `bold ${fontSize}px "Be Vietnam Pro", sans-serif`;
+  artCtx.fillStyle = color;
+  artCtx.textBaseline = 'middle';
+  
+  // Đóng dấu vào giữa phôi thiết kế
+  const tx = loadedArtImg.width / 2;
+  const ty = loadedArtImg.height / 2;
+  artCtx.fillText(textVal, tx - artCtx.measureText(textVal).width / 2, ty);
+  artCtx.restore();
+
+  pushHistory();
+  render2DDieline();
+  setTextToolMode(false);
+};
+
 window.addEventListener('keydown', e => {
   if (['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement?.tagName)) return;
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
     e.preventDefault();
-    if (e.shiftKey) redoAction();
-    else undoAction();
+    if (e.shiftKey) redoAction(); else undoAction();
   } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
-    e.preventDefault();
-    redoAction();
+    e.preventDefault(); redoAction();
   } else if (e.key.toLowerCase() === 'e' && currentMode === '2d') {
-    e.preventDefault();
-    setEraserMode(!eraserMode);
+    e.preventDefault(); setEraserMode(!eraserMode);
   }
 });
 
@@ -654,7 +755,6 @@ function resizeCanvas2D() {
   render2DDieline();
 }
 
-// --- HÀM THỰC HIỆN TẨY TRỰC TIẾP TRÊN CANVAS ẢNH THIẾT KẾ ---
 function eraseAtWorldPos(worldPos, prevWorldPos) {
   if (!loadedArtImg) return;
   const scale = getLayoutMetrics(getDims()).scale;
@@ -719,7 +819,8 @@ function render2DDieline() {
   const totalH_px = topH_px + h_px + botH_px;
   const totalW_px = geom.totalW * scale;
 
-  const tsBevelPx = ts_px > 0 ? Math.min(ts_px * 0.45, h_px * 0.14, 18 * scale) : 0;
+  // LÀM VÁT XÉO ĐÚNG CHUẨN KỸ THUẬT CHO MỐI NỐI TS (Bao gồm cả 2D)
+  const tsBevelPx = ts_px > 0 ? Math.min(ts_px * 0.5, h_px * 0.15, 20 * scale) : 0;
 
   ctx2D.save();
   ctx2D.translate(cw / 2 + pan2D.x, ch / 2 + pan2D.y);
@@ -767,7 +868,7 @@ function render2DDieline() {
     const rpx = getArtRectPx();
     ctx2D.drawImage(loadedArtImg, rpx.x, rpx.y, rpx.w, rpx.h);
 
-    if (!eraserMode) {
+    if (!eraserMode && !textToolMode) {
       ctx2D.strokeStyle = '#10b981';
       ctx2D.lineWidth = 1.5;
       ctx2D.strokeRect(rpx.x, rpx.y, rpx.w, rpx.h);
@@ -786,7 +887,7 @@ function render2DDieline() {
     }
   }
 
-  // 3. Đường cấn (nét hồng) & khe rãnh
+  // 3. Đường cấn & khe rãnh
   ctx2D.strokeStyle = '#ec4899';
   ctx2D.lineWidth = 1.5;
 
@@ -813,7 +914,7 @@ function render2DDieline() {
     ctx2D.font = 'bold 11px "Be Vietnam Pro", sans-serif';
     ctx2D.textAlign = 'center';
     ctx2D.textBaseline = 'middle';
-    ctx2D.fillText(`TS (${d.TS}mm)`, 0, 0);
+    ctx2D.fillText(`TS Vát (${d.TS}mm)`, 0, 0);
     ctx2D.restore();
   }
 
@@ -862,13 +963,11 @@ function render2DDieline() {
     curX = nextX;
   });
 
-  // Đường cắt biên ngoài cùng
   ctx2D.strokeStyle = '#0f172a';
   ctx2D.lineWidth = 2;
   buildDielineClipPath();
   ctx2D.stroke();
 
-  // 4. Vẽ vòng tròn con trỏ gôm tẩy kiểu Photoshop khi đang bật chế độ Gôm
   if (eraserMode && mouseWorldPos2D) {
     const rPx = (eraserSizeMm / 2) * scale;
     ctx2D.save();
@@ -931,7 +1030,6 @@ canvas2D.addEventListener('pointerdown', e => {
   const m = getCanvasWorldPos(e);
   mouseWorldPos2D = m;
 
-  // Chuột giữa hoặc giữ phím Space để kéo khung nhìn kể cả khi đang bật gôm
   if (e.button === 1) {
     activeHandle = 'pan';
     dragStart2D = { x: e.clientX, y: e.clientY, panX: pan2D.x, panY: pan2D.y };
@@ -939,7 +1037,6 @@ canvas2D.addEventListener('pointerdown', e => {
     return;
   }
 
-  // Chế độ Gôm tẩy
   if (eraserMode) {
     if (loadedArtImg) {
       isErasing = true;
@@ -947,6 +1044,43 @@ canvas2D.addEventListener('pointerdown', e => {
       eraseAtWorldPos(m, null);
       render2DDieline();
       canvas2D.setPointerCapture(e.pointerId);
+    }
+    return;
+  }
+
+  if (textToolMode) {
+    const textVal = document.getElementById('customTextInput').value.trim();
+    if (textVal) {
+      const color = document.getElementById('textColorPicker').value;
+      const fontSize = parseInt(document.getElementById('textSizeSelect').value, 10) || 24;
+
+      if (!loadedArtImg) {
+        const geom = getDielineGeometry(getDims());
+        const c = document.createElement('canvas');
+        c.width = 1200; c.height = 800;
+        loadedArtImg = c;
+        artRect = { x: 0, y: 0, w: geom.totalW, h: geom.totalH };
+      }
+
+      const scale = getLayoutMetrics(getDims()).scale;
+      const mmX = m.x / scale;
+      const mmY = m.y / scale;
+      const imgW = loadedArtImg.width;
+      const imgH = loadedArtImg.height;
+      const imgX = ((mmX - artRect.x) / artRect.w) * imgW;
+      const imgY = ((mmY - artRect.y) / artRect.h) * imgH;
+
+      const artCtx = loadedArtImg.getContext('2d');
+      artCtx.save();
+      artCtx.font = `bold ${fontSize}px "Be Vietnam Pro", sans-serif`;
+      artCtx.fillStyle = color;
+      artCtx.textBaseline = 'middle';
+      artCtx.fillText(textVal, imgX, imgY);
+      artCtx.restore();
+
+      pushHistory();
+      render2DDieline();
+      setTextToolMode(false);
     }
     return;
   }
@@ -1059,16 +1193,13 @@ canvas2D.addEventListener('pointerup', () => {
     lastErasePos = null;
     pushHistory();
   }
-  if (activeHandle && activeHandle !== 'pan') {
-    pushHistory();
-  }
+  if (activeHandle && activeHandle !== 'pan') pushHistory();
   activeHandle = null;
 });
 
 canvas2D.addEventListener('wheel', e => {
   if (currentMode !== '2d') return;
   e.preventDefault();
-
   const rect = canvas2D.getBoundingClientRect();
   const mouseX = e.clientX - rect.left;
   const mouseY = e.clientY - rect.top;
@@ -1087,7 +1218,7 @@ canvas2D.addEventListener('wheel', e => {
   render2DDieline();
 }, { passive: false });
 
-// --- KHỞI TẠO THREE.JS CHO MÔ HÌNH 3D ---
+// --- THREE.JS 3D STUDIO ---
 const threeContainer = document.getElementById('threeCanvas');
 const scene = new THREE.Scene();
 
@@ -1146,54 +1277,23 @@ function createCorrugatedEdgeTexture(hexColor, layers = 5) {
   ctx.fillStyle = hexColor; ctx.fillRect(0, 0, 128, 128);
 
   const h = 128;
-  if (layers === 3) {
-    ctx.fillStyle = '#b08a5e'; ctx.fillRect(0, 0, 128, 18);
-    ctx.fillRect(0, 110, 128, 18);
-    ctx.fillStyle = '#9e7b51'; ctx.fillRect(0, 18, 128, 92);
-    ctx.strokeStyle = '#573c20'; ctx.lineWidth = 3.5;
-    ctx.beginPath();
-    for (let x = 0; x <= 128; x += 2) {
-      const y = 64 + Math.sin((x / 128) * Math.PI * 10) * 22;
-      if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-    }
-    ctx.stroke();
-  } else if (layers === 7) {
-    const stripH = h / 7;
-    for (let i = 0; i < 7; i++) {
-      if (i % 2 === 0) {
-        ctx.fillStyle = '#b08a5e'; ctx.fillRect(0, i * stripH, 128, stripH);
-      } else {
-        ctx.fillStyle = '#9e7b51'; ctx.fillRect(0, i * stripH, 128, stripH);
-        ctx.strokeStyle = '#573c20'; ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        for (let x = 0; x <= 128; x += 2) {
-          const y = (i + 0.5) * stripH + Math.sin((x / 128) * Math.PI * 12) * 6;
-          if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-        }
-        ctx.stroke();
+  const stripH = h / layers;
+  for (let i = 0; i < layers; i++) {
+    if (i % 2 === 0) {
+      ctx.fillStyle = '#b08a5e'; ctx.fillRect(0, i * stripH, 128, stripH + 2);
+    } else {
+      ctx.fillStyle = '#9e7b51'; ctx.fillRect(0, i * stripH, 128, stripH);
+      ctx.strokeStyle = '#573c20'; ctx.lineWidth = 3;
+      ctx.beginPath();
+      for (let x = 0; x <= 128; x += 2) {
+        const y = (i + 0.5) * stripH + Math.sin((x / 128) * Math.PI * 10) * 8;
+        if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
       }
-    }
-  } else {
-    const stripH = h / 5;
-    for (let i = 0; i < 5; i++) {
-      if (i % 2 === 0) {
-        ctx.fillStyle = '#b08a5e'; ctx.fillRect(0, i * stripH, 128, stripH + 2);
-      } else {
-        ctx.fillStyle = '#9e7b51'; ctx.fillRect(0, i * stripH, 128, stripH);
-        ctx.strokeStyle = '#573c20'; ctx.lineWidth = 3;
-        ctx.beginPath();
-        for (let x = 0; x <= 128; x += 2) {
-          const y = (i + 0.5) * stripH + Math.sin((x / 128) * Math.PI * 10) * 10;
-          if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-        }
-        ctx.stroke();
-      }
+      ctx.stroke();
     }
   }
-
   const tex = new THREE.CanvasTexture(c);
-  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-  tex.repeat.set(16, 1);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping; tex.repeat.set(16, 1);
   tex.colorSpace = THREE.SRGBColorSpace;
   return tex;
 }
@@ -1289,7 +1389,7 @@ function buildCarton3D() {
       flapBox.position.set(0, topFlapH / 2, -T / 2);
       flapBox.castShadow = true; flapBox.receiveShadow = true;
       hinge.add(flapBox);
-      flapControllers.push({ hinge, isTop: true, isLong: cfg.isLong });
+      flapControllers.push({ hinge, isTop: true, isLong: cfg.isLong, type: 'top' });
     }
 
     if (botFlapH > 0) {
@@ -1299,14 +1399,30 @@ function buildCarton3D() {
       flapBox.position.set(0, -botFlapH / 2, -T / 2);
       flapBox.castShadow = true; flapBox.receiveShadow = true;
       hinge.add(flapBox);
-      flapControllers.push({ hinge, isTop: false, isLong: cfg.isLong });
+      flapControllers.push({ hinge, isTop: false, isLong: cfg.isLong, type: 'bottom' });
     }
   });
 
+  // MỐI NỐI TS VÁT XÉO 3D CHUẨN KỸ THUẬT
   if (TS > 0 && H > 6) {
-    const glueTab = new THREE.Mesh(new THREE.BoxGeometry(TS, H - 6, T * 0.8), innerMat);
-    glueTab.position.set(-L / 2 + TS / 2 + T, H / 2, W / 2 - T * 1.4);
-    cartonRoot.add(glueTab);
+    const tabGroup = new THREE.Group();
+    tabGroup.position.set(-L / 2 + T, H / 2, W / 2 - T * 1.2);
+    const shape = new THREE.Shape();
+    const tw = TS, th = H - 6;
+    const bevel = Math.min(th * 0.12, 18);
+    shape.moveTo(0, -th / 2 + bevel);
+    shape.lineTo(tw, -th / 2);
+    shape.lineTo(tw, th / 2);
+    shape.lineTo(0, th / 2 - bevel);
+    shape.closePath();
+
+    const extrudeSettings = { depth: T * 0.8, bevelEnabled: true, bevelSegments: 2, steps: 1, bevelSize: 0.5, bevelThickness: 0.5 };
+    const tabGeo = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+    tabGeo.center();
+    const tabMesh = new THREE.Mesh(tabGeo, innerMat);
+    tabMesh.castShadow = true;
+    tabGroup.add(tabMesh);
+    cartonRoot.add(tabGroup);
   }
 
   const createFoldedTapeGroup = (isTop) => {
@@ -1381,6 +1497,84 @@ function applyFlapAngles() {
   });
 }
 
+// --- HỆ THỐNG HIỆU ỨNG CLIP NGẮN (ANIMATION CLIP PLAYER) ---
+let isAnimating = false;
+let animProgress = 0; // Từ 0.0 (Trải phẳng) đến 1.0 (Đóng hoàn chỉnh)
+let animDuration = 6.0; // 6 giây cho toàn clip
+let animLastTime = null;
+
+const animBar = document.getElementById('animBar');
+const animPlayPauseBtn = document.getElementById('animPlayPauseBtn');
+const animResetBtn = document.getElementById('animResetBtn');
+const animSeekSlider = document.getElementById('animSeekSlider');
+const animTimeStatus = document.getElementById('animTimeStatus');
+
+function setAnimationProgress(prog) {
+  animProgress = Math.max(0, Math.min(1, prog));
+  animSeekSlider.value = animProgress * 1000;
+  animTimeStatus.textContent = (animProgress * animDuration).toFixed(1) + 's';
+
+  const topMainVal = (1 - animProgress) * 90;
+  const topSideVal = (1 - animProgress) * 90;
+  const botVal = (1 - animProgress) * 90;
+
+  document.getElementById('topMainOpen').value = topMainVal;
+  document.getElementById('topSideOpen').value = topSideVal;
+  document.getElementById('bottomOpen').value = botVal;
+
+  applyFlapAngles();
+}
+
+document.getElementById('playAnimBtn').onclick = () => {
+  if (currentMode !== '3d') {
+    document.getElementById('build3DBtn').click();
+  }
+  animBar.classList.add('visible');
+  isAnimating = true;
+  animPlayPauseBtn.textContent = '⏸ Tạm dừng';
+  animLastTime = performance.now();
+};
+
+animPlayPauseBtn.onclick = () => {
+  isAnimating = !isAnimating;
+  animPlayPauseBtn.textContent = isAnimating ? '⏸ Tạm dừng' : '▶ Tiếp tục';
+  if (isAnimating) animLastTime = performance.now();
+};
+
+animResetBtn.onclick = () => {
+  setAnimationProgress(0);
+  isAnimating = true;
+  animPlayPauseBtn.textContent = '⏸ Tạm dừng';
+  animLastTime = performance.now();
+};
+
+animSeekSlider.oninput = e => {
+  isAnimating = false;
+  animPlayPauseBtn.textContent = '▶ Tiếp tục';
+  setAnimationProgress(e.target.value / 1000);
+};
+
+document.getElementById('animCloseBtn').onclick = () => {
+  isAnimating = false;
+  animBar.classList.remove('visible');
+};
+
+function updateAnimation(timestamp) {
+  if (isAnimating && animBar.classList.contains('visible')) {
+    if (!animLastTime) animLastTime = timestamp;
+    const dt = (timestamp - animLastTime) / 1000;
+    animLastTime = timestamp;
+
+    animProgress += dt / animDuration;
+    if (animProgress >= 1.0) {
+      animProgress = 1.0;
+      isAnimating = false;
+      animPlayPauseBtn.textContent = '▶ Tiếp tục';
+    }
+    setAnimationProgress(animProgress);
+  }
+}
+
 function focusCamera(preset = 'iso') {
   const { L, W, H } = getDims();
   const maxDim = Math.max(L, W, H);
@@ -1388,12 +1582,10 @@ function focusCamera(preset = 'iso') {
   if (preset === 'front') camera.position.set(0, H * 0.55, maxDim * 2.2);
   else if (preset === 'side') camera.position.set(maxDim * 2.2, H * 0.55, 0);
   else if (preset === 'top') camera.position.set(0, maxDim * 2.4, 10);
-  else if (preset === 'bottom') camera.position.set(0, -maxDim * 2.4, 10);
   else camera.position.set(maxDim * 1.65, maxDim * 1.25, maxDim * 1.85);
   controls.update();
 }
 
-// --- SỰ KIỆN GIAO DIỆN ---
 const toggleLabelsBtn = document.getElementById('toggle2DLabelsBtn');
 const toggleLabelsText = document.getElementById('toggle2DLabelsText');
 const eyeIcon = document.getElementById('eyeIcon');
@@ -1416,16 +1608,10 @@ function clearUploadedArtwork(recordHistory = true) {
   loadedArtImg = null;
   document.getElementById('artInput').value = '';
   if (recordHistory) pushHistory();
-  if (currentMode === '2d') {
-    resizeCanvas2D();
-  } else {
-    buildCarton3D();
-  }
+  if (currentMode === '2d') resizeCanvas2D(); else buildCarton3D();
 }
 
-document.getElementById('clearArtBtn').onclick = () => {
-  clearUploadedArtwork(true);
-};
+document.getElementById('clearArtBtn').onclick = () => clearUploadedArtwork(true);
 
 document.getElementById('updateDielineBtn').onclick = () => {
   currentMode = '2d';
@@ -1434,22 +1620,22 @@ document.getElementById('updateDielineBtn').onclick = () => {
   document.getElementById('toolbar2D').style.display = 'flex';
   document.getElementById('camToolbar').style.display = 'none';
   document.getElementById('controls3DPanel').style.display = 'none';
-  
+  animBar.classList.remove('visible');
   clearUploadedArtwork(true);
 };
 
 document.getElementById('build3DBtn').onclick = () => {
   setEraserMode(false);
+  setTextToolMode(false);
   currentMode = '3d';
   canvas2D.style.display = 'none';
   threeContainer.style.display = 'block';
   document.getElementById('toolbar2D').style.display = 'none';
   document.getElementById('camToolbar').style.display = 'flex';
   document.getElementById('controls3DPanel').style.display = 'block';
-  
+
   const w = viewArea.clientWidth, h = viewArea.clientHeight;
-  camera.aspect = w / h;
-  camera.updateProjectionMatrix();
+  camera.aspect = w / h; camera.updateProjectionMatrix();
   renderer.setSize(w, h);
 
   buildCarton3D();
@@ -1463,12 +1649,11 @@ const switchTo2D = () => {
   document.getElementById('toolbar2D').style.display = 'flex';
   document.getElementById('camToolbar').style.display = 'none';
   document.getElementById('controls3DPanel').style.display = 'none';
+  animBar.classList.remove('visible');
   resizeCanvas2D();
 };
-
 document.getElementById('switchMode2D_bottom').onclick = switchTo2D;
 
-// --- NẠP FILE ẢNH/PDF (Chuyển sang Canvas nội bộ để gôm tẩy mượt mà) ---
 document.getElementById('artInput').addEventListener('change', e => {
   const file = e.target.files[0];
   if (!file) return;
@@ -1476,15 +1661,13 @@ document.getElementById('artInput').addEventListener('change', e => {
   const img = new Image();
   img.onload = () => {
     const offscreen = document.createElement('canvas');
-    offscreen.width = img.width;
-    offscreen.height = img.height;
+    offscreen.width = img.width; offscreen.height = img.height;
     offscreen.getContext('2d').drawImage(img, 0, 0);
     loadedArtImg = offscreen;
 
     const geom = getDielineGeometry(getDims());
     artRect = { x: 0, y: 0, w: geom.totalW, h: geom.totalH };
-    zoom2D = 1.0;
-    pan2D = { x: 0, y: 0 };
+    zoom2D = 1.0; pan2D = { x: 0, y: 0 };
     pushHistory();
     render2DDieline();
     URL.revokeObjectURL(url);
@@ -1494,15 +1677,13 @@ document.getElementById('artInput').addEventListener('change', e => {
 
 ['L', 'W', 'H', 'thick', 'glueTS', 'topFlapH', 'botFlapH', 'slotGap', 'paperColorPicker', 'fluteLayers', 'tapeWidthMm', 'tapeOverlapMm'].forEach(id => {
   document.getElementById(id).onchange = () => {
-    if (currentMode === '2d') render2DDieline();
-    else buildCarton3D();
+    if (currentMode === '2d') render2DDieline(); else buildCarton3D();
   };
 });
 
 document.getElementById('paperPreset').onchange = e => {
   document.getElementById('paperColorPicker').value = e.target.value;
-  if (currentMode === '2d') render2DDieline();
-  else buildCarton3D();
+  if (currentMode === '2d') render2DDieline(); else buildCarton3D();
 };
 
 ['topMainOpen', 'topSideOpen', 'bottomOpen'].forEach(id => {
@@ -1532,7 +1713,6 @@ document.getElementById('camIso').onclick = () => focusCamera('iso');
 document.getElementById('camFront').onclick = () => focusCamera('front');
 document.getElementById('camSide').onclick = () => focusCamera('side');
 document.getElementById('camTop').onclick = () => focusCamera('top');
-document.getElementById('camBottom').onclick = () => focusCamera('bottom');
 
 document.getElementById('saveBtn').onclick = () => {
   renderer.render(scene, camera);
@@ -1559,9 +1739,10 @@ new ResizeObserver(() => {
   }
 }).observe(viewArea);
 
-function animate() {
+function animate(timestamp) {
   requestAnimationFrame(animate);
   if (currentMode === '3d') {
+    updateAnimation(timestamp);
     controls.update();
     renderer.render(scene, camera);
   }
