@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AUTO MOCKUP 3D STUDIO - V2.1</title>
+<title>AUTO MOCKUP 3D STUDIO - V1.5 PRO</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700;800;900&family=Montserrat:wght@600;700;800;900&family=Roboto+Mono:wght@600;700&display=swap" rel="stylesheet">
@@ -20,12 +20,14 @@ body{
   height:100vh;display:flex;flex-direction:column;overflow:hidden;
 }
 
+/* Header & Banner: Phân bổ dàn đều lấp đầy toàn bộ chiều ngang */
 header{
   background:linear-gradient(125deg, #090d16 0%, #172554 55%, #0c4a6e 100%);
   color:#fff;padding:8px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;
   border-bottom:2px solid #0284c7;box-shadow:0 3px 12px rgba(2,132,199,0.25);flex-shrink:0;
 }
 
+/* Khối 1 (Trái): Đồng hồ giờ:phút:giây + Thứ ngày tháng năm màu trắng */
 .header-clock{
   display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
   color:#ffffff;min-width:190px;padding:3px 10px;border-radius:8px;
@@ -39,11 +41,14 @@ header{
   font-size:11px;font-weight:600;color:#ffffff;opacity:0.92;margin-top:2px;letter-spacing:.2px;
 }
 
+/* Khối 2 (Giữa): Bộ Logo + Tên thương hiệu + Dòng mô tả tách thoáng lấp đầy chiều ngang */
 .brand-center{
   flex:1;display:flex;align-items:center;justify-content:space-evenly;gap:18px;
   padding:0 12px;
 }
-.brand-logo-wrap{display:flex;align-items:center;gap:10px;}
+.brand-logo-wrap{
+  display:flex;align-items:center;gap:10px;
+}
 .brand-logo{
   width:38px;height:38px;border-radius:10px;
   background:linear-gradient(135deg, #38bdf8, #0284c7);
@@ -58,7 +63,9 @@ header{
   background:rgba(16,185,129,0.22);border:1px solid #10b981;color:#34d399;
   border-radius:20px;padding:2px 9px;font-size:10.5px;font-weight:800;
 }
-.brand-divider{width:1.5px;height:24px;background:rgba(255,255,255,0.2);border-radius:2px;}
+.brand-divider{
+  width:1.5px;height:24px;background:rgba(255,255,255,0.2);border-radius:2px;
+}
 .brand-sub{
   color:#e2e8f0;font-size:13px;font-weight:700;letter-spacing:.4px;
   text-transform:uppercase;white-space:nowrap;
@@ -66,6 +73,7 @@ header{
   padding:5px 14px;border-radius:20px;
 }
 
+/* Khối 3 (Phải): Dòng ghi công tác giả */
 .author-credit{
   font-size:10.5px;color:#e2e8f0;letter-spacing:.3px;text-align:right;font-weight:600;
   background:rgba(255,255,255,0.07);padding:6px 11px;border-radius:8px;
@@ -109,6 +117,7 @@ input[type=file]{
 }
 input[type=file]:hover{background:#e0f2fe}
 
+/* Nút bấm & hiệu ứng tương tác */
 button{
   border:0;border-radius:7px;background:var(--primary);color:#fff;padding:7px 12px;
   font-family:'Be Vietnam Pro',sans-serif;font-weight:700;font-size:12px;cursor:pointer;transition:all .15s ease;
@@ -125,11 +134,17 @@ button.secondary:active{transform:scale(0.97)}
 button.danger{background:var(--danger);color:#fff;box-shadow:0 2px 5px rgba(239,68,68,0.25);padding:6px 10px}
 button.danger:hover{background:var(--danger-hover)}
 
-button.eraser-btn{background:#fce7f3;color:#be185d;border:1.5px solid #f472b6;box-shadow:none}
-button.eraser-btn:hover{background:#fbcfe8;border-color:#ec4899}
+/* Nút Công cụ Gôm tẩy (Eraser) trên thanh công cụ 2D */
+button.eraser-btn{
+  background:#fce7f3;color:#be185d;border:1.5px solid #f472b6;box-shadow:none;
+}
+button.eraser-btn:hover{
+  background:#fbcfe8;border-color:#ec4899;
+}
 button.eraser-btn.active{
   background:linear-gradient(135deg, #ec4899 0%, #db2777 100%);
-  color:#ffffff;border-color:#f9a8d4;box-shadow:0 3px 10px rgba(219,39,119,0.4);
+  color:#ffffff;border-color:#f9a8d4;
+  box-shadow:0 3px 10px rgba(219,39,119,0.4);
 }
 .eraser-controls{
   display:none;align-items:center;gap:6px;
@@ -139,24 +154,35 @@ button.eraser-btn.active{
 .eraser-controls.visible{display:inline-flex}
 .eraser-controls input[type=range]{width:80px;accent-color:#db2777;cursor:pointer}
 
-button.text-tool-btn{background:#eff6ff;color:#1d4ed8;border:1.5px solid #93c5fd;box-shadow:none}
-button.text-tool-btn:hover{background:#dbeafe;border-color:#3b82f6}
+/* Nút Công cụ Text (Chèn chữ) trên thanh 2D */
+button.text-tool-btn{
+  background:#eff6ff;color:#1d4ed8;border:1.5px solid #93c5fd;box-shadow:none;
+}
+button.text-tool-btn:hover{
+  background:#dbeafe;border-color:#3b82f6;
+}
 button.text-tool-btn.active{
   background:linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-  color:#ffffff;border-color:#60a5fa;box-shadow:0 3px 10px rgba(59,130,246,0.4);
+  color:#ffffff;border-color:#60a5fa;
+  box-shadow:0 3px 10px rgba(59,130,246,0.4);
 }
 
+/* Nút Ẩn/Hiện thông số 2D */
 button.toggle-info-btn{
-  width:100%;background:linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  width:100%;
+  background:linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
   color:#fff;padding:7px 12px;font-size:12px;font-weight:700;letter-spacing:.2px;
   box-shadow:0 3px 10px rgba(79,70,229,0.3);border:1px solid #818cf8;
 }
-button.toggle-info-btn:hover{background:linear-gradient(135deg, #4f46e5 0%, #4338ca 100%)}
+button.toggle-info-btn:hover{
+  background:linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+}
 button.toggle-info-btn.hidden-state{
   background:linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
   border-color:#fbbf24;box-shadow:0 3px 10px rgba(217,119,6,0.32);
 }
 
+/* Nút Dựng Mockup 3D & Quay lại chỉnh 2D */
 button.cta-3d{
   width:100%;background:linear-gradient(135deg, #f97316 0%, #ea580c 100%);
   color:#fff;padding:10px 14px;font-size:14px;font-weight:800;letter-spacing:.3px;
@@ -182,6 +208,7 @@ button.sm{padding:5px 9px;font-size:11.5px}
 #dieline2DCanvas{background:#1e293b;cursor:crosshair;box-shadow:0 10px 28px rgba(0,0,0,0.65)}
 #threeCanvas{display:none;width:100%;height:100%}
 
+/* Bảng điều khiển nổi thao tác 3D */
 .float-panel{
   position:absolute;top:12px;left:12px;background:rgba(255,255,255,0.96);backdrop-filter:blur(10px);
   border:1px solid var(--line);border-radius:9px;padding:10px 12px;width:300px;z-index:10;
@@ -190,18 +217,19 @@ button.sm{padding:5px 9px;font-size:11.5px}
 .float-panel h4{margin:0 0 7px 0;font-size:12.5px;color:var(--primary);display:flex;justify-content:space-between;align-items:center;border-bottom:1.5px solid #e0f2fe;padding-bottom:4px;font-weight:800}
 .float-panel .field{grid-template-columns:1fr 95px;margin:4px 0}
 
+/* Thanh điều khiển Hiệu ứng Clip ngắn (Animation Player) */
 .anim-bar{
   position:absolute;bottom:16px;left:50%;transform:translateX(-50%);
   background:rgba(15,23,42,0.92);backdrop-filter:blur(12px);
   border:1px solid rgba(56,189,248,0.35);border-radius:12px;
   padding:10px 18px;display:none;align-items:center;gap:12px;z-index:20;
-  box-shadow:0 10px 30px rgba(0,0,0,0.5);color:#fff;font-size:12px;min-width:520px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.5);color:#fff;font-size:12px;min-width:440px;
 }
 .anim-bar.visible{display:flex}
-.anim-bar button{background:#0284c7;color:#fff;padding:6px 12px;font-size:12px;white-space:nowrap}
+.anim-bar button{background:#0284c7;color:#fff;padding:6px 12px;font-size:12px}
 .anim-bar button:hover{background:#0369a1}
 .anim-bar input[type=range]{flex:1;accent-color:#38bdf8;cursor:pointer}
-.anim-status{font-family:'Roboto Mono',monospace;font-size:11px;color:#38bdf8;min-width:155px;text-align:right;white-space:nowrap}
+.anim-status{font-family:'Roboto Mono',monospace;font-size:11px;color:#38bdf8;min-width:42px;text-align:right}
 
 @media(max-width:1180px){
   header{flex-wrap:wrap;justify-content:center}
@@ -218,11 +246,13 @@ button.sm{padding:5px 9px;font-size:11.5px}
 <body>
 
 <header>
+  <!-- Khối 1: Đồng hồ thời gian thực bên trái -->
   <div class="header-clock" aria-label="Đồng hồ thời gian thực">
     <div id="liveClockTime" class="clock-time">00:00:00</div>
     <div id="liveClockDate" class="clock-date">Đang tải ngày...</div>
   </div>
 
+  <!-- Khối 2: Logo, Tên ứng dụng và Mô tả -->
   <div class="brand-center">
     <div class="brand-logo-wrap">
       <div class="brand-logo" aria-hidden="true">
@@ -232,7 +262,7 @@ button.sm{padding:5px 9px;font-size:11.5px}
           <line x1="12" y1="22.08" x2="12" y2="12"></line>
         </svg>
       </div>
-      <h1 class="brand-title">AUTO MOCKUP 3D STUDIO <span class="ver-pill">V2.1</span></h1>
+      <h1 class="brand-title">AUTO MOCKUP 3D STUDIO <span class="ver-pill">V1.5 PRO</span></h1>
     </div>
 
     <div class="brand-divider" aria-hidden="true"></div>
@@ -240,11 +270,13 @@ button.sm{padding:5px 9px;font-size:11.5px}
     <span class="brand-sub">Công cụ dựng hình 2D/3D THÙNG CARTON</span>
   </div>
 
+  <!-- Khối 3: Dòng ghi công bên phải -->
   <div class="author-credit">CÔNG CỤ ĐƯỢC PHÁT TRIỂN TỪ Ý TƯỞNG CỦA BÙI VĂN THANH</div>
 </header>
 
 <main>
 <aside class="panel">
+  <!-- MỤC 1: KÍCH THƯỚC & CẤU TRÚC -->
   <div class="section">
     <h2>1. Kích thước thùng & Kết cấu</h2>
     <div class="grid-2">
@@ -297,6 +329,7 @@ button.sm{padding:5px 9px;font-size:11.5px}
     </div>
   </div>
 
+  <!-- MỤC 2: CÀI ĐẶT BĂNG KEO -->
   <div class="section">
     <h2>2. Băng keo niêm phong</h2>
     <div class="grid-2">
@@ -307,6 +340,7 @@ button.sm{padding:5px 9px;font-size:11.5px}
     <div id="tapeColorRow" class="field" style="display:none"><label>Chọn màu keo</label><input type="color" id="tapeColorPicker" value="#facc15" style="width:100%;height:24px;border:0;cursor:pointer;padding:0"></div>
   </div>
 
+  <!-- MỤC 3: NẠP FILE & DỰNG 3D -->
   <div class="section">
     <h2>3. File thiết kế & Chèn chữ</h2>
     <div class="file-row">
@@ -339,6 +373,7 @@ button.sm{padding:5px 9px;font-size:11.5px}
 
 <section class="stage">
   <div class="toolbar">
+    <!-- Thanh công cụ Undo / Redo / Gôm / Chèn chữ cho chế độ 2D -->
     <div id="toolbar2D" class="toolbar-group">
       <button type="button" class="secondary sm" id="undoBtn" title="Hoàn tác (Ctrl + Z)" disabled>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
@@ -355,6 +390,7 @@ button.sm{padding:5px 9px;font-size:11.5px}
         <span>Redo (Ctrl+Shift+Z)</span>
       </button>
 
+      <!-- Nút Gôm tẩy -->
       <button type="button" class="eraser-btn sm" id="eraserToggleBtn" title="Gôm tẩy xóa chi tiết (Phím tắt: E)">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
           <path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"></path>
@@ -369,16 +405,17 @@ button.sm{padding:5px 9px;font-size:11.5px}
         <span id="eraserSizeLabel">35mm</span>
       </div>
 
-      <button type="button" class="text-tool-btn sm" id="textToolToggleBtn" title="Chèn chữ, ghi chú tùy chỉnh lên phôi 2D">
+      <!-- Nút Chèn Chữ (Text Tool) -->
+      <button type="button" class="text-tool-btn sm" id="textToolToggleBtn" title="Bấm để bật, rồi bấm lên bản vẽ để đặt chữ. Sau đó có thể kéo để di chuyển, kéo tay cầm góc để co giãn, đổi màu/nội dung ở thanh bên cạnh, hoặc bấm Delete để xóa.">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="4 7 4 4 20 4 20 7"></polyline>
           <line x1="9" y1="20" x2="15" y2="20"></line>
           <line x1="12" y1="4" x2="12" y2="20"></line>
         </svg>
-        <span id="textToolToggleText">Thêm Chữ / Đóng Dấu</span>
+        <span id="textToolToggleText">Thêm Chữ / Ghi chú</span>
       </button>
       <div id="textControls" class="eraser-controls" style="background:#eff6ff;border-color:#93c5fd;color:#1d4ed8">
-        <input type="text" id="customTextInput" placeholder="Nhập nội dung chữ..." value="FRAGILE - HÀNG DỄ VỠ" style="width:135px;padding:3px 6px;border:1px solid #93c5fd;border-radius:4px;font-size:11.5px;font-weight:600">
+        <input type="text" id="customTextInput" placeholder="Nhập chữ/ghi chú..." value="FRAGILE - HÀNG DỄ VỠ" style="width:135px;padding:3px 6px;border:1px solid #93c5fd;border-radius:4px;font-size:11.5px;font-weight:600">
         <input type="color" id="textColorPicker" value="#0f172a" style="width:28px;height:22px;border:0;cursor:pointer;padding:0">
         <select id="textSizeSelect" style="padding:2px 4px;border:1px solid #93c5fd;border-radius:4px;font-size:11px;font-weight:600">
           <option value="16">16px</option>
@@ -387,10 +424,11 @@ button.sm{padding:5px 9px;font-size:11.5px}
           <option value="48">48px</option>
           <option value="64">64px</option>
         </select>
-        <button type="button" id="addTextBtn" class="sm" style="padding:3px 8px;background:#2563eb">Chèn chữ</button>
+        <button type="button" id="addTextBtn" class="sm" style="padding:3px 8px;background:#2563eb" title="Thêm vào giữa bản vẽ, sau đó kéo tới vị trí mong muốn">+ Thêm chữ</button>
       </div>
     </div>
 
+    <!-- Thanh công cụ Góc nhìn 3D & Hiệu ứng clip ngắn -->
     <div id="camToolbar" class="toolbar-group" style="display:none">
       <button class="secondary sm" id="camIso">Góc 3/4</button>
       <button class="secondary sm" id="camFront">Mặt chính</button>
@@ -405,6 +443,7 @@ button.sm{padding:5px 9px;font-size:11.5px}
     <canvas id="dieline2DCanvas"></canvas>
     <div id="threeCanvas"></div>
 
+    <!-- Bảng điều khiển nổi 3D -->
     <div class="float-panel" id="controls3DPanel" style="display:none">
       <h4><span>Điều khiển 3D & Nắp</span> <button class="secondary sm" id="toggleOverlay" style="padding:2px 6px;font-size:10.5px">Thu gọn</button></h4>
       <div id="overlayContent">
@@ -418,11 +457,12 @@ button.sm{padding:5px 9px;font-size:11.5px}
       </div>
     </div>
 
+    <!-- Thanh phát hiệu ứng Clip ngắn (Animation Player bar) -->
     <div class="anim-bar" id="animBar">
       <button id="animPlayPauseBtn" title="Phát / Tạm dừng">⏸ Tạm dừng</button>
       <button id="animResetBtn" title="Về đầu">⏮ Đầu</button>
       <input type="range" id="animSeekSlider" min="0" max="1000" value="0">
-      <span class="anim-status" id="animTimeStatus">0.0s • Dán mối nối</span>
+      <span class="anim-status" id="animTimeStatus">0.0s</span>
       <button class="secondary sm" id="animCloseBtn" style="background:#ef4444;color:#fff;padding:4px 8px">✕ Đóng</button>
     </div>
   </div>
@@ -442,11 +482,13 @@ button.sm{padding:5px 9px;font-size:11.5px}
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
+// --- ĐỒNG HỒ THỜI GIAN THỰC ---
 function updateLiveClock() {
   const now = new Date();
   const hh = String(now.getHours()).padStart(2, '0');
   const mm = String(now.getMinutes()).padStart(2, '0');
   const ss = String(now.getSeconds()).padStart(2, '0');
+
   const days = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
   const dayName = days[now.getDay()];
   const dd = String(now.getDate()).padStart(2, '0');
@@ -471,15 +513,22 @@ let artRect = { x: 0, y: 0, w: 300, h: 200 };
 let activeHandle = null;
 let dragStart2D = { x: 0, y: 0 };
 
+// --- CÔNG CỤ GÔM TẨY & CHÈN CHỮ ---
 let eraserMode = false;
 let eraserSizeMm = 35;
 let isErasing = false;
 let lastErasePos = null;
 let mouseWorldPos2D = null;
+
 let textToolMode = false;
+// Lớp CHỮ: mỗi phần tử là 1 đối tượng văn bản độc lập, có thể chọn/kéo/co giãn/đổi màu
+// riêng — KHÔNG còn "đóng dấu" cố định vào ảnh nền như trước (nên trước đây không thao
+// tác lại được). x/y là mm trên bản trải phẳng (tâm chữ), fontSize là mm (chiều cao chữ).
+let textLayers = [];
+let selectedTextId = null;
+let nextTextId = 1;
 
-let customTextItems = [];
-
+// --- LỊCH SỬ UNDO / REDO ---
 let historyStack = [];
 let historyIndex = -1;
 const MAX_HISTORY = 40;
@@ -502,7 +551,7 @@ function pushHistory() {
     artRect: { ...artRect },
     hasImg: !!loadedArtImg,
     imgData: getArtDataURL(),
-    texts: JSON.parse(JSON.stringify(customTextItems))
+    textLayers: textLayers.map(t => ({ ...t }))
   };
   if (historyIndex >= 0) {
     const prev = historyStack[historyIndex];
@@ -513,7 +562,7 @@ function pushHistory() {
       Math.abs(prev.artRect.y - snapshot.artRect.y) < 0.01 &&
       Math.abs(prev.artRect.w - snapshot.artRect.w) < 0.01 &&
       Math.abs(prev.artRect.h - snapshot.artRect.h) < 0.01 &&
-      JSON.stringify(prev.texts) === JSON.stringify(snapshot.texts)
+      JSON.stringify(prev.textLayers) === JSON.stringify(snapshot.textLayers)
     ) return;
   }
   historyStack = historyStack.slice(0, historyIndex + 1);
@@ -525,11 +574,13 @@ function pushHistory() {
 
 function applyHistorySnapshot(snap) {
   artRect = { ...snap.artRect };
-  customTextItems = JSON.parse(JSON.stringify(snap.texts || []));
+  textLayers = (snap.textLayers || []).map(t => ({ ...t }));
+  selectedTextId = null;
   if (!snap.hasImg || !snap.imgData) {
     loadedArtImg = null;
     document.getElementById('artInput').value = '';
-    if (currentMode === '2d') render2DDieline(); else buildCarton3D();
+    if (currentMode === '2d') render2DDieline();
+    else buildCarton3D();
   } else {
     const img = new Image();
     img.onload = () => {
@@ -537,7 +588,8 @@ function applyHistorySnapshot(snap) {
       c.width = img.width; c.height = img.height;
       c.getContext('2d').drawImage(img, 0, 0);
       loadedArtImg = c;
-      if (currentMode === '2d') render2DDieline(); else buildCarton3D();
+      if (currentMode === '2d') render2DDieline();
+      else buildCarton3D();
     };
     img.src = snap.imgData;
   }
@@ -560,6 +612,7 @@ function redoAction() {
 document.getElementById('undoBtn').onclick = undoAction;
 document.getElementById('redoBtn').onclick = redoAction;
 
+// --- GÔM TẨY & CHÈN CHỮ UI ---
 const eraserToggleBtn = document.getElementById('eraserToggleBtn');
 const eraserToggleText = document.getElementById('eraserToggleText');
 const eraserControls = document.getElementById('eraserControls');
@@ -599,7 +652,7 @@ function setTextToolMode(state) {
     canvas2D.style.cursor = 'crosshair';
   } else {
     textToolToggleBtn.classList.remove('active');
-    textToolToggleText.textContent = 'Thêm Chữ / Đóng Dấu';
+    textToolToggleText.textContent = 'Thêm Chữ / Ghi chú';
     textControls.classList.remove('visible');
     canvas2D.style.cursor = 'crosshair';
   }
@@ -615,26 +668,79 @@ eraserSizeInput.oninput = e => {
   render2DDieline();
 };
 
-document.getElementById('addTextBtn').onclick = () => {
-  const textVal = document.getElementById('customTextInput').value.trim();
-  if (!textVal) return;
+// --- LỚP CHỮ: thêm / chọn / đo khung để kéo-thả, co giãn, đổi màu ---
+function createTextLayer(xMm, yMm) {
+  const textVal = (document.getElementById('customTextInput').value || '').trim() || 'FRAGILE - HÀNG DỄ VỠ';
   const color = document.getElementById('textColorPicker').value;
   const fontSize = parseInt(document.getElementById('textSizeSelect').value, 10) || 24;
-
-  const geom = getDielineGeometry(getDims());
-  customTextItems.push({
-    text: textVal,
-    x: geom.totalW / 2,
-    y: geom.totalH / 2,
-    fontSize: fontSize,
-    color: color,
-    scale: 1.0
-  });
-
+  const layer = { id: nextTextId++, text: textVal, x: xMm, y: yMm, fontSize, color };
+  textLayers.push(layer);
+  selectTextLayer(layer.id);
   pushHistory();
   render2DDieline();
+  return layer;
+}
+
+function selectTextLayer(id) {
+  selectedTextId = id;
+  const layer = textLayers.find(t => t.id === id);
+  if (layer) {
+    document.getElementById('customTextInput').value = layer.text;
+    document.getElementById('textColorPicker').value = layer.color;
+  }
+}
+
+function deleteSelectedText() {
+  if (!selectedTextId) return;
+  textLayers = textLayers.filter(t => t.id !== selectedTextId);
+  selectedTextId = null;
+  pushHistory();
+  render2DDieline();
+}
+
+// Khung bao (px canvas) của 1 lớp chữ, dùng để vẽ khung chọn và bắt điểm chuột.
+// Neo theo đúng tâm (x,y) với textAlign/textBaseline = center/middle lúc vẽ.
+function getTextBoxPx(layer) {
+  const scale = getLayoutMetrics(getDims()).scale;
+  const fontPx = Math.max(1, layer.fontSize * scale);
+  ctx2D.save();
+  ctx2D.font = `bold ${fontPx}px "Be Vietnam Pro", sans-serif`;
+  const w = Math.max(10, ctx2D.measureText(layer.text || ' ').width);
+  ctx2D.restore();
+  const h = fontPx * 1.25;
+  const cx = layer.x * scale, cy = layer.y * scale;
+  return { x: cx - w / 2, y: cy - h / 2, w, h, scale, fontPx, handle: { x: cx + w / 2, y: cy + h / 2 } };
+}
+
+document.getElementById('addTextBtn').onclick = () => {
+  const geom = getDielineGeometry(getDims());
+  createTextLayer(geom.totalW / 2, geom.totalH / 2);
   setTextToolMode(false);
 };
+
+// Đổi màu / cỡ chữ / nội dung ngay trên thanh công cụ sẽ áp dụng LIVE lên chữ đang được
+// chọn (nếu có) — đây chính là phần còn thiếu khiến công cụ chèn chữ "không thao tác được".
+document.getElementById('textColorPicker').addEventListener('input', e => {
+  if (!selectedTextId) return;
+  const layer = textLayers.find(t => t.id === selectedTextId);
+  if (layer) { layer.color = e.target.value; render2DDieline(); }
+});
+document.getElementById('textColorPicker').addEventListener('change', () => {
+  if (selectedTextId) pushHistory();
+});
+document.getElementById('textSizeSelect').addEventListener('change', e => {
+  if (!selectedTextId) return;
+  const layer = textLayers.find(t => t.id === selectedTextId);
+  if (layer) { layer.fontSize = parseInt(e.target.value, 10) || layer.fontSize; render2DDieline(); pushHistory(); }
+});
+document.getElementById('customTextInput').addEventListener('input', e => {
+  if (!selectedTextId) return;
+  const layer = textLayers.find(t => t.id === selectedTextId);
+  if (layer) { layer.text = e.target.value; render2DDieline(); }
+});
+document.getElementById('customTextInput').addEventListener('change', () => {
+  if (selectedTextId) pushHistory();
+});
 
 window.addEventListener('keydown', e => {
   if (['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement?.tagName)) return;
@@ -645,6 +751,8 @@ window.addEventListener('keydown', e => {
     e.preventDefault(); redoAction();
   } else if (e.key.toLowerCase() === 'e' && currentMode === '2d') {
     e.preventDefault(); setEraserMode(!eraserMode);
+  } else if ((e.key === 'Delete' || e.key === 'Backspace') && selectedTextId && currentMode === '2d') {
+    e.preventDefault(); deleteSelectedText();
   }
 });
 
@@ -702,35 +810,49 @@ function resizeCanvas2D() {
   render2DDieline();
 }
 
-function eraseArtworkAt(worldPos) {
+function eraseAtWorldPos(worldPos, prevWorldPos) {
   if (!loadedArtImg) return;
   const scale = getLayoutMetrics(getDims()).scale;
-  const rPxCanvas = (eraserSizeMm / 2) * scale;
-  const rArtX = (rPxCanvas / (artRect.w * scale)) * loadedArtImg.width;
-  const rArtY = (rPxCanvas / (artRect.h * scale)) * loadedArtImg.height;
-  const rArt = Math.max(2, (rArtX + rArtY) / 2);
+  const mmX = worldPos.x / scale;
+  const mmY = worldPos.y / scale;
 
-  const curX = ((worldPos.x - artRect.x * scale) / (artRect.w * scale)) * loadedArtImg.width;
-  const curY = ((worldPos.y - artRect.y * scale) / (artRect.h * scale)) * loadedArtImg.height;
+  const imgW = loadedArtImg.width;
+  const imgH = loadedArtImg.height;
+  const imgX = ((mmX - artRect.x) / artRect.w) * imgW;
+  const imgY = ((mmY - artRect.y) / artRect.h) * imgH;
 
-  const actx = loadedArtImg.getContext('2d');
-  actx.save();
-  actx.globalCompositeOperation = 'destination-out';
-  actx.lineCap = 'round';
-  actx.lineJoin = 'round';
-  actx.lineWidth = rArt * 2;
-  actx.beginPath();
-  if (lastErasePos) {
-    const prevX = ((lastErasePos.x - artRect.x * scale) / (artRect.w * scale)) * loadedArtImg.width;
-    const prevY = ((lastErasePos.y - artRect.y * scale) / (artRect.h * scale)) * loadedArtImg.height;
-    actx.moveTo(prevX, prevY);
-    actx.lineTo(curX, curY);
-    actx.stroke();
+  const radiusX = ((eraserSizeMm / 2) / artRect.w) * imgW;
+  const radiusY = ((eraserSizeMm / 2) / artRect.h) * imgH;
+
+  const artCtx = loadedArtImg.getContext('2d');
+  artCtx.save();
+  artCtx.globalCompositeOperation = 'destination-out';
+  artCtx.fillStyle = 'rgba(0,0,0,1)';
+  artCtx.strokeStyle = 'rgba(0,0,0,1)';
+  artCtx.lineCap = 'round';
+  artCtx.lineJoin = 'round';
+
+  if (prevWorldPos) {
+    const prevMmX = prevWorldPos.x / scale;
+    const prevMmY = prevWorldPos.y / scale;
+    const prevImgX = ((prevMmX - artRect.x) / artRect.w) * imgW;
+    const prevImgY = ((prevMmY - artRect.y) / artRect.h) * imgH;
+
+    const steps = Math.max(1, Math.ceil(Math.hypot(imgX - prevImgX, imgY - prevImgY) / Math.max(1, Math.min(radiusX, radiusY) * 0.25)));
+    for (let i = 0; i <= steps; i++) {
+      const t = i / steps;
+      const cx = prevImgX + (imgX - prevImgX) * t;
+      const cy = prevImgY + (imgY - prevImgY) * t;
+      artCtx.beginPath();
+      artCtx.ellipse(cx, cy, Math.max(1, radiusX), Math.max(1, radiusY), 0, 0, Math.PI * 2);
+      artCtx.fill();
+    }
   } else {
-    actx.arc(curX, curY, rArt, 0, Math.PI * 2);
-    actx.fill();
+    artCtx.beginPath();
+    artCtx.ellipse(imgX, imgY, Math.max(1, radiusX), Math.max(1, radiusY), 0, 0, Math.PI * 2);
+    artCtx.fill();
   }
-  actx.restore();
+  artCtx.restore();
 }
 
 function render2DDieline() {
@@ -752,6 +874,7 @@ function render2DDieline() {
   const totalH_px = topH_px + h_px + botH_px;
   const totalW_px = geom.totalW * scale;
 
+  // LÀM VÁT XÉO ĐÚNG CHUẨN KỸ THUẬT CHO MỐI NỐI TS (Bao gồm cả 2D)
   const tsBevelPx = ts_px > 0 ? Math.min(ts_px * 0.5, h_px * 0.15, 20 * scale) : 0;
 
   ctx2D.save();
@@ -788,12 +911,14 @@ function render2DDieline() {
     }
   };
 
+  // 1. Nền giấy carton
   ctx2D.save();
   buildDielineClipPath();
   ctx2D.fillStyle = paperColor;
   ctx2D.fill();
   ctx2D.restore();
 
+  // 2. Hình ảnh thiết kế
   if (loadedArtImg) {
     const rpx = getArtRectPx();
     ctx2D.drawImage(loadedArtImg, rpx.x, rpx.y, rpx.w, rpx.h);
@@ -817,33 +942,7 @@ function render2DDieline() {
     }
   }
 
-  customTextItems.forEach((item) => {
-    ctx2D.save();
-    const pxX = item.x * scale;
-    const pxY = item.y * scale;
-    ctx2D.translate(pxX, pxY);
-    const actualFontSize = item.fontSize * (item.scale || 1.0);
-    ctx2D.font = `bold ${actualFontSize}px "Be Vietnam Pro", sans-serif`;
-    ctx2D.fillStyle = item.color || '#0f172a';
-    ctx2D.textBaseline = 'middle';
-    ctx2D.textAlign = 'center';
-    ctx2D.fillText(item.text, 0, 0);
-
-    if (!eraserMode && !textToolMode) {
-      const m = ctx2D.measureText(item.text);
-      const tw = m.width + 12;
-      const th = actualFontSize + 10;
-      item._box = { x: pxX - tw / 2, y: pxY - th / 2, w: tw, h: th };
-
-      ctx2D.strokeStyle = '#3b82f6';
-      ctx2D.lineWidth = 1.2;
-      ctx2D.strokeRect(-tw / 2, -th / 2, tw, th);
-      ctx2D.fillStyle = '#2563eb';
-      ctx2D.fillRect(tw / 2 - 4, th / 2 - 4, 8, 8);
-    }
-    ctx2D.restore();
-  });
-
+  // 3. Đường cấn & khe rãnh
   ctx2D.strokeStyle = '#ec4899';
   ctx2D.lineWidth = 1.5;
 
@@ -906,7 +1005,7 @@ function render2DDieline() {
     if (show2DLabels) {
       ctx2D.fillStyle = 'rgba(15, 23, 42, 0.85)';
       ctx2D.font = 'bold 12px "Be Vietnam Pro", sans-serif';
-      const panelName = idx % 2 === 0 ? `L${idx / 2 + 1} (${pw}mm)` : `W${(idx + 1) / 2} (${pw}mm)`;
+      const panelName = idx % 2 === 0 ? `L${idx/2+1} (${pw}mm)` : `W${(idx+1)/2} (${pw}mm)`;
       ctx2D.fillText(panelName, curX + 10, topH_px + 22);
 
       ctx2D.font = '10px "Be Vietnam Pro", sans-serif';
@@ -939,6 +1038,33 @@ function render2DDieline() {
     ctx2D.stroke();
     ctx2D.restore();
   }
+
+  // 4. Các lớp CHỮ đã chèn — luôn vẽ trên cùng để không bao giờ bị ảnh/đường cấn che mất
+  textLayers.forEach(layer => {
+    const fontPx = Math.max(1, layer.fontSize * scale);
+    const px = layer.x * scale, py = layer.y * scale;
+    ctx2D.save();
+    ctx2D.font = `bold ${fontPx}px "Be Vietnam Pro", sans-serif`;
+    ctx2D.fillStyle = layer.color;
+    ctx2D.textAlign = 'center';
+    ctx2D.textBaseline = 'middle';
+    ctx2D.fillText(layer.text, px, py);
+    ctx2D.restore();
+
+    if (layer.id === selectedTextId && !eraserMode && !textToolMode) {
+      const box = getTextBoxPx(layer);
+      ctx2D.save();
+      ctx2D.strokeStyle = '#2563eb';
+      ctx2D.setLineDash([4 / zoom2D, 3 / zoom2D]);
+      ctx2D.lineWidth = 1.5 / zoom2D;
+      ctx2D.strokeRect(box.x, box.y, box.w, box.h);
+      ctx2D.setLineDash([]);
+      ctx2D.fillStyle = '#2563eb';
+      const hs = 10 / zoom2D;
+      ctx2D.fillRect(box.handle.x - hs / 2, box.handle.y - hs / 2, hs, hs);
+      ctx2D.restore();
+    }
+  });
 
   ctx2D.restore();
   ctx2D.restore();
@@ -976,9 +1102,6 @@ function getCanvasWorldPos(e) {
   return { x: xFinal, y: yFinal };
 }
 
-let activeTextIndex = -1;
-let textDragType = null;
-
 canvas2D.addEventListener('pointerleave', () => {
   mouseWorldPos2D = null;
   if (eraserMode) render2DDieline();
@@ -999,9 +1122,8 @@ canvas2D.addEventListener('pointerdown', e => {
   if (eraserMode) {
     if (loadedArtImg) {
       isErasing = true;
-      lastErasePos = null;
-      eraseArtworkAt(m);
       lastErasePos = { ...m };
+      eraseAtWorldPos(m, null);
       render2DDieline();
       canvas2D.setPointerCapture(e.pointerId);
     }
@@ -1009,48 +1131,42 @@ canvas2D.addEventListener('pointerdown', e => {
   }
 
   if (textToolMode) {
-    const textVal = document.getElementById('customTextInput').value.trim();
-    if (textVal) {
-      const color = document.getElementById('textColorPicker').value;
-      const fontSize = parseInt(document.getElementById('textSizeSelect').value, 10) || 24;
-      const scale = getLayoutMetrics(getDims()).scale;
-
-      customTextItems.push({
-        text: textVal,
-        x: m.x / scale,
-        y: m.y / scale,
-        fontSize: fontSize,
-        color: color,
-        scale: 1.0
-      });
-      pushHistory();
-      render2DDieline();
-      setTextToolMode(false);
-    }
+    const scale = getLayoutMetrics(getDims()).scale;
+    createTextLayer(m.x / scale, m.y / scale);
+    setTextToolMode(false);
     return;
   }
 
-  for (let i = customTextItems.length - 1; i >= 0; i--) {
-    const item = customTextItems[i];
-    if (item._box) {
-      const b = item._box;
-      const scaleHandleBox = { x: b.x + b.w - 8, y: b.y + b.h - 8, w: 16, h: 16 };
-      if (m.x >= scaleHandleBox.x && m.x <= scaleHandleBox.x + scaleHandleBox.w && m.y >= scaleHandleBox.y && m.y <= scaleHandleBox.y + scaleHandleBox.h) {
-        activeTextIndex = i;
-        textDragType = 'scale';
-        dragStart2D = { x: m.x, y: m.y, startScale: item.scale || 1.0 };
-        canvas2D.setPointerCapture(e.pointerId);
-        return;
-      }
-      if (m.x >= b.x && m.x <= b.x + b.w && m.y >= b.y && m.y <= b.y + b.h) {
-        activeTextIndex = i;
-        textDragType = 'move';
-        dragStart2D = { x: m.x, y: m.y, startX: item.x, startY: item.y };
+  // --- Tay cầm co giãn của CHỮ đang được chọn (góc dưới-phải khung chữ) ---
+  if (selectedTextId) {
+    const layer = textLayers.find(t => t.id === selectedTextId);
+    if (layer) {
+      const box = getTextBoxPx(layer);
+      if (Math.hypot(m.x - box.handle.x, m.y - box.handle.y) < 12 / zoom2D) {
+        activeHandle = 'text-resize';
+        dragStart2D = { x: m.x, y: m.y, scale: box.scale, layer: { ...layer } };
         canvas2D.setPointerCapture(e.pointerId);
         return;
       }
     }
   }
+
+  // --- Bấm trúng bất kỳ CHỮ nào: chọn và bắt đầu kéo luôn trong cùng thao tác ---
+  for (let i = textLayers.length - 1; i >= 0; i--) {
+    const layer = textLayers[i];
+    const box = getTextBoxPx(layer);
+    if (m.x >= box.x && m.x <= box.x + box.w && m.y >= box.y && m.y <= box.y + box.h) {
+      selectTextLayer(layer.id);
+      activeHandle = 'text-move';
+      dragStart2D = { x: m.x, y: m.y, scale: box.scale, layer: { ...layer } };
+      canvas2D.setPointerCapture(e.pointerId);
+      render2DDieline();
+      return;
+    }
+  }
+
+  // Bấm ra ngoài mọi chữ -> bỏ chọn chữ đang chọn (nếu có)
+  if (selectedTextId) { selectedTextId = null; render2DDieline(); }
 
   if (loadedArtImg) {
     const handles = getHandles();
@@ -1083,27 +1199,9 @@ canvas2D.addEventListener('pointermove', e => {
   mouseWorldPos2D = m;
 
   if (eraserMode) {
-    if (isErasing) {
-      eraseArtworkAt(m);
+    if (isErasing && loadedArtImg) {
+      eraseAtWorldPos(m, lastErasePos);
       lastErasePos = { ...m };
-    }
-    render2DDieline();
-    return;
-  }
-
-  if (activeTextIndex !== -1) {
-    const scale = getLayoutMetrics(getDims()).scale;
-    const item = customTextItems[activeTextIndex];
-    if (textDragType === 'move') {
-      const dx = (m.x - dragStart2D.x) / scale;
-      const dy = (m.y - dragStart2D.y) / scale;
-      item.x = dragStart2D.startX + dx;
-      item.y = dragStart2D.startY + dy;
-    } else if (textDragType === 'scale') {
-      const distStart = Math.hypot(dragStart2D.x - item.x * scale, dragStart2D.y - item.y * scale);
-      const distCurrent = Math.hypot(m.x - item.x * scale, m.y - item.y * scale);
-      const ratio = distStart > 5 ? distCurrent / distStart : 1.0;
-      item.scale = Math.max(0.3, Math.min(5.0, dragStart2D.startScale * ratio));
     }
     render2DDieline();
     return;
@@ -1118,13 +1216,58 @@ canvas2D.addEventListener('pointermove', e => {
     return;
   }
 
+  if (activeHandle === 'text-move' || activeHandle === 'text-resize') {
+    const layer = textLayers.find(t => t.id === selectedTextId);
+    if (!layer) { activeHandle = null; return; }
+    if (activeHandle === 'text-move') {
+      const dx = (m.x - dragStart2D.x) / dragStart2D.scale;
+      const dy = (m.y - dragStart2D.y) / dragStart2D.scale;
+      layer.x = dragStart2D.layer.x + dx;
+      layer.y = dragStart2D.layer.y + dy;
+    } else {
+      // Co giãn ĐỀU quanh tâm chữ: tỉ lệ = khoảng cách chuột hiện tại / lúc bắt đầu kéo
+      const cx = dragStart2D.layer.x, cy = dragStart2D.layer.y;
+      const startMmX = dragStart2D.x / dragStart2D.scale, startMmY = dragStart2D.y / dragStart2D.scale;
+      const curMmX = m.x / dragStart2D.scale, curMmY = m.y / dragStart2D.scale;
+      const startDist = Math.hypot(startMmX - cx, startMmY - cy);
+      const curDist = Math.hypot(curMmX - cx, curMmY - cy);
+      const ratio = startDist > 0.5 ? (curDist / startDist) : 1;
+      layer.fontSize = Math.max(4, dragStart2D.layer.fontSize * ratio);
+    }
+    render2DDieline();
+    return;
+  }
+
   if (!loadedArtImg) return;
   const dx = (m.x - dragStart2D.x) / dragStart2D.scale;
   const dy = (m.y - dragStart2D.y) / dragStart2D.scale;
   const r = dragStart2D.rect;
+  const aspect = r.w / r.h;
 
   if (activeHandle === 'move') {
     artRect.x = r.x + dx; artRect.y = r.y + dy;
+  } else if (e.shiftKey && ['tl', 'tr', 'bl', 'br'].includes(activeHandle)) {
+    if (activeHandle === 'br') {
+      const newW = Math.max(5, r.w + dx);
+      const newH = newW / aspect;
+      artRect.w = newW; artRect.h = newH;
+    } else if (activeHandle === 'tl') {
+      const newW = Math.max(5, r.w - dx);
+      const newH = newW / aspect;
+      artRect.x = r.x + (r.w - newW);
+      artRect.y = r.y + (r.h - newH);
+      artRect.w = newW; artRect.h = newH;
+    } else if (activeHandle === 'tr') {
+      const newW = Math.max(5, r.w + dx);
+      const newH = newW / aspect;
+      artRect.y = r.y + (r.h - newH);
+      artRect.w = newW; artRect.h = newH;
+    } else if (activeHandle === 'bl') {
+      const newW = Math.max(5, r.w - dx);
+      const newH = newW / aspect;
+      artRect.x = r.x + (r.w - newW);
+      artRect.w = newW; artRect.h = newH;
+    }
   } else {
     if (activeHandle === 'tl') {
       artRect.x = r.x + dx; artRect.w = r.w - dx; artRect.y = r.y + dy; artRect.h = r.h - dy;
@@ -1153,11 +1296,6 @@ canvas2D.addEventListener('pointerup', () => {
   if (isErasing) {
     isErasing = false;
     lastErasePos = null;
-    pushHistory();
-  }
-  if (activeTextIndex !== -1) {
-    activeTextIndex = -1;
-    textDragType = null;
     pushHistory();
   }
   if (activeHandle && activeHandle !== 'pan') pushHistory();
@@ -1268,10 +1406,7 @@ function createCorrugatedEdgeTexture(hexColor, layers = 5) {
 let cartonRoot = new THREE.Group();
 scene.add(cartonRoot);
 let flapControllers = [];
-let wallHinges = []; // Chuỗi bản lề thân thùng [W1, L2, W2]
-let tsHinge = null;
 let topTapeGroup = null, botTapeGroup = null;
-let animBotMainDeg = null, animBotSideDeg = null, animTapeProgress = 1.0;
 
 function createPanelMaterial3D(panelIdx, regionType, d) {
   const texCanvas = document.createElement('canvas');
@@ -1282,17 +1417,17 @@ function createPanelMaterial3D(panelIdx, regionType, d) {
   ctx.fillStyle = paperColor;
   ctx.fillRect(0, 0, 1024, 1024);
 
+  let panelX = d.TS;
+  if (panelIdx === 1) panelX = d.TS + d.L;
+  else if (panelIdx === 2) panelX = d.TS + d.L + d.W;
+  else if (panelIdx === 3) panelX = d.TS + d.L + d.W + d.L;
+  const pw = (panelIdx % 2 === 0) ? d.L : d.W;
+
+  let regionY = d.topFlapH, rh = d.H;
+  if (regionType === 'top') { regionY = 0; rh = d.topFlapH; }
+  else if (regionType === 'bottom') { regionY = d.topFlapH + d.H; rh = d.botFlapH; }
+
   if (loadedArtImg) {
-    let panelX = d.TS;
-    if (panelIdx === 1) panelX = d.TS + d.L;
-    else if (panelIdx === 2) panelX = d.TS + d.L + d.W;
-    else if (panelIdx === 3) panelX = d.TS + d.L + d.W + d.L;
-    const pw = (panelIdx % 2 === 0) ? d.L : d.W;
-
-    let regionY = d.topFlapH, rh = d.H;
-    if (regionType === 'top') { regionY = 0; rh = d.topFlapH; }
-    else if (regionType === 'bottom') { regionY = d.topFlapH + d.H; rh = d.botFlapH; }
-
     ctx.save();
     ctx.globalCompositeOperation = 'multiply';
     const pxPerMmX = loadedArtImg.width / artRect.w;
@@ -1307,29 +1442,20 @@ function createPanelMaterial3D(panelIdx, regionType, d) {
     ctx.restore();
   }
 
-  customTextItems.forEach(item => {
-    let panelXStart = d.TS;
-    if (panelIdx === 1) panelXStart = d.TS + d.L;
-    else if (panelIdx === 2) panelXStart = d.TS + d.L + d.W;
-    else if (panelIdx === 3) panelXStart = d.TS + d.L + d.W + d.L;
-    const pw = (panelIdx % 2 === 0) ? d.L : d.W;
-
-    let regionYStart = d.topFlapH, rh = d.H;
-    if (regionType === 'top') { regionYStart = 0; rh = d.topFlapH; }
-    else if (regionType === 'bottom') { regionYStart = d.topFlapH + d.H; rh = d.botFlapH; }
-
-    if (item.x >= panelXStart && item.x < panelXStart + pw && item.y >= regionYStart && item.y < regionYStart + rh) {
-      const localX = ((item.x - panelXStart) / pw) * 1024;
-      const localY = ((item.y - regionYStart) / rh) * 1024;
-      ctx.save();
-      const actualSize = item.fontSize * (item.scale || 1.0) * (1024 / Math.max(pw, rh));
-      ctx.font = `bold ${Math.max(16, actualSize)}px "Be Vietnam Pro", sans-serif`;
-      ctx.fillStyle = item.color || '#0f172a';
-      ctx.textBaseline = 'middle';
-      ctx.textAlign = 'center';
-      ctx.fillText(item.text, localX, localY);
-      ctx.restore();
-    }
+  // Vẽ các lớp CHỮ đúng vị trí mm thật. scale(1024/pw,1024/rh) rồi translate(-panelX,-regionY)
+  // đưa hệ toạ độ hiện tại về ĐÚNG mm thật của dieline, nên chỉ cần ghi thẳng layer.x/y/fontSize
+  // (đều là mm) — phần giãn không đều giữa 2 trục sẽ tự triệt tiêu chính xác khi UV của khối hộp
+  // "trải" lại texture vuông 1024x1024 này lên đúng mặt pw×rh thật, giống hệt cách ảnh nền hoạt động.
+  textLayers.forEach(layer => {
+    ctx.save();
+    ctx.scale(1024 / pw, 1024 / rh);
+    ctx.translate(-panelX, -regionY);
+    ctx.font = `bold ${layer.fontSize}px "Be Vietnam Pro", sans-serif`;
+    ctx.fillStyle = layer.color;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(layer.text, layer.x, layer.y);
+    ctx.restore();
   });
 
   const tex = new THREE.CanvasTexture(texCanvas);
@@ -1349,134 +1475,94 @@ function buildCarton3D() {
   cartonRoot = new THREE.Group();
   scene.add(cartonRoot);
   flapControllers = [];
-  wallHinges = [];
-  tsHinge = null;
   topTapeGroup = null;
   botTapeGroup = null;
 
   const d = getDims();
   const { L, W, H, T, TS, topFlapH, botFlapH, slotGap, fluteLayers, tapeWidthMm, tapeOverlapMm } = d;
   const paperColor = document.getElementById('paperColorPicker').value;
+  // Khe hở cực nhỏ giữa 2 lớp cánh khi xếp chồng (chống xuyên hình/z-fighting), không đáng kể về thị giác
+  const STACK_GAP = 0.15;
 
   const innerMat = new THREE.MeshStandardMaterial({ map: createPaperTexture(paperColor), roughness: 0.92 });
   const edgeMat = new THREE.MeshStandardMaterial({ map: createCorrugatedEdgeTexture(paperColor, fluteLayers), roughness: 0.95 });
 
-  // SỬA LỖI TỐI CAO CHO BẢN V2.0:
-  // 1. Mối nối TS: Đặt tai dán nằm LÙI hẳn vào phía TRONG tường L1 (z = -T/2) và dịch sang phải một khoảng bằng T,
-  //    khi gập 90 độ dán vào W2 sẽ NẰM GỌN LỎN TRONG LÒNG THÙNG, TUYỆT ĐỐI KHÔNG BỊ LÒI RA NGOÀI VÀ KHÔNG GÂY CẤN GÓC!
-  // 2. Chống hở & đội nắp: Đặt bản lề nắp ngay mép trong (z = -T/2) và định vị offset lớp lót chuẩn xác.
-  
-  const createWallAssembly = (panelIdx, panelW, isLong) => {
-    const group = new THREE.Group();
-    const bodyMat = createPanelMaterial3D(panelIdx, 'body', d);
-    const bodyBox = new THREE.Mesh(
-      new THREE.BoxGeometry(panelW, H, T),
-      [edgeMat, edgeMat, edgeMat, edgeMat, bodyMat, innerMat]
-    );
-    bodyBox.position.set(panelW / 2, H / 2, 0);
-    bodyBox.castShadow = true;
-    bodyBox.receiveShadow = true;
-    group.add(bodyBox);
+  const wallConfigs = [
+    { panelIdx: 0, w: L, pos: [0, H / 2, W / 2 - T / 2], rotY: 0, isLong: true },
+    { panelIdx: 1, w: W - T * 2, pos: [L / 2 - T / 2, H / 2, 0], rotY: Math.PI / 2, isLong: false },
+    { panelIdx: 2, w: L, pos: [0, H / 2, -W / 2 + T / 2], rotY: Math.PI, isLong: true },
+    { panelIdx: 3, w: W - T * 2, pos: [-L / 2 + T / 2, H / 2, 0], rotY: -Math.PI / 2, isLong: false }
+  ];
 
-    const flapW = Math.max(10, panelW - slotGap - 2 * T);
-    // Khe ghép được chia đều cho hai cánh đối diện. Dùng isLong thay vì
-    // so sánh panelW === L để tránh nhận nhầm khi L và W bằng nhau.
-    const seamGap = Math.max(3, Math.min(6, T * 0.6));
-    const halfOpening = (isLong ? W : L) / 2;
-    const safeDepth = Math.max(8, halfOpening - seamGap / 2);
+  wallConfigs.forEach(cfg => {
+    const wallGroup = new THREE.Group();
+    wallGroup.position.set(...cfg.pos);
+    wallGroup.rotation.y = cfg.rotY;
+    cartonRoot.add(wallGroup);
+
+    const bodyMat = createPanelMaterial3D(cfg.panelIdx, 'body', d);
+    const bodyBox = new THREE.Mesh(new THREE.BoxGeometry(cfg.w, H, T), [edgeMat, edgeMat, edgeMat, edgeMat, bodyMat, innerMat]);
+    bodyBox.castShadow = true; bodyBox.receiveShadow = true;
+    wallGroup.add(bodyBox);
+
+    // Bản lề (trục gập) đặt CỐ ĐỊNH tại đúng mép thật của vách — không suy chuyển theo góc
+    // mở/đóng nữa. Cánh CHÍNH (isLong, dài L) bản lề ở mặt TRONG vách -> khi đóng kín sẽ
+    // nằm Ở TRÊN lớp cánh phụ. Cánh PHỤ (dài W) bản lề ở mặt NGOÀI vách -> khi đóng kín nằm
+    // SÁT mép vách, làm lớp DƯỚI. Nhờ vậy khi gập kín 2 lớp khớp khít, không hở cũng không
+    // xuyên qua nhau, và khi mở thẳng 90° vẫn liền mạch với vách vì đây là một phép QUAY
+    // thuần tuý quanh 1 trục cố định (tính đúng từ trạng thái trải phẳng gập lại).
+    const kz = cfg.isLong ? -(T / 2 + STACK_GAP) : (T / 2);
 
     if (topFlapH > 0) {
-      const topDepth = Math.max(8, Math.min(topFlapH, safeDepth));
-      const hinge = new THREE.Group();
-      hinge.position.set(panelW / 2, H, -T / 2);
-      group.add(hinge);
-
-      const flapMat = createPanelMaterial3D(panelIdx, 'top', d);
-      const flapBox = new THREE.Mesh(
-        new THREE.BoxGeometry(flapW, topDepth, T),
-        [edgeMat, edgeMat, edgeMat, edgeMat, flapMat, innerMat]
-      );
-      flapBox.position.set(0, topDepth / 2, T / 2);
-      flapBox.castShadow = true;
-      flapBox.receiveShadow = true;
+      const hinge = new THREE.Group(); hinge.position.set(0, H / 2, kz); wallGroup.add(hinge);
+      const flapMat = createPanelMaterial3D(cfg.panelIdx, 'top', d);
+      const flapBox = new THREE.Mesh(new THREE.BoxGeometry(cfg.w - slotGap, topFlapH, T), [edgeMat, edgeMat, edgeMat, edgeMat, flapMat, innerMat]);
+      flapBox.position.set(0, topFlapH / 2, -kz);
+      flapBox.castShadow = true; flapBox.receiveShadow = true;
       hinge.add(flapBox);
-      flapControllers.push({ hinge, isTop: true, isLong, baseY: H });
+      flapControllers.push({ hinge, isTop: true, isLong: cfg.isLong, type: 'top' });
     }
 
     if (botFlapH > 0) {
-      const bottomDepth = Math.max(8, Math.min(botFlapH, safeDepth));
-      const hinge = new THREE.Group();
-      hinge.position.set(panelW / 2, 0, -T / 2);
-      group.add(hinge);
-
-      const flapMat = createPanelMaterial3D(panelIdx, 'bottom', d);
-      const flapBox = new THREE.Mesh(
-        new THREE.BoxGeometry(flapW, bottomDepth, T),
-        [edgeMat, edgeMat, edgeMat, edgeMat, flapMat, innerMat]
-      );
-      flapBox.position.set(0, -bottomDepth / 2, T / 2);
-      flapBox.castShadow = true;
-      flapBox.receiveShadow = true;
+      const hinge = new THREE.Group(); hinge.position.set(0, -H / 2, kz); wallGroup.add(hinge);
+      const flapMat = createPanelMaterial3D(cfg.panelIdx, 'bottom', d);
+      const flapBox = new THREE.Mesh(new THREE.BoxGeometry(cfg.w - slotGap, botFlapH, T), [edgeMat, edgeMat, edgeMat, edgeMat, flapMat, innerMat]);
+      flapBox.position.set(0, -botFlapH / 2, -kz);
+      flapBox.castShadow = true; flapBox.receiveShadow = true;
       hinge.add(flapBox);
-      flapControllers.push({ hinge, isTop: false, isLong, baseY: 0 });
+      flapControllers.push({ hinge, isTop: false, isLong: cfg.isLong, type: 'bottom' });
     }
+  });
 
-    return group;
-  };
-
-  const wallL1 = createWallAssembly(0, L, true);
-  wallL1.position.set(-L / 2, 0, W / 2 - T / 2);
-  cartonRoot.add(wallL1);
-
+  // MỐI NỐI TS (keo dán ráp thùng): đây là phần nối dài của vách panel0 (mặt L đầu tiên),
+  // nên khi gập vào phải NẰM CÙNG HƯỚNG với panel3 (vách W bên trái) và dán ÁP SÁT mặt
+  // trong của panel3, ngay tại góc giáp panel0 — không được chờm ra ngoài hay xuyên qua
+  // vách nào. Trước đây tab bị đặt sai trục (trải theo X thay vì theo Z) nên người ta thấy
+  // mối nối "lòi ra ngoài".
   if (TS > 0 && H > 6) {
-    const effectiveTS = Math.min(TS, Math.max(8, W - T * 2));
-    const tabDepth = T * 0.9;
-    tsHinge = new THREE.Group();
-    // Bản lề nằm đúng mép trái L1; hình lưỡi gà kéo theo trục -X nên nằm ngoài tấm thân khi trải phẳng.
-    tsHinge.position.set(0, H / 2, T / 2);
-    wallL1.add(tsHinge);
-
+    const tabDepth = Math.min(T * 0.8, T);
+    const tabGroup = new THREE.Group();
+    // Dán sát mặt trong panel3 (x = -L/2+T), chờm dần vào trong thùng đúng 1 lớp dày tabDepth;
+    // theo trục Z, mép tab khớp đúng góc trong của panel0 (z = W/2-T) rồi chạy dọc vào TS(mm)
+    tabGroup.position.set(-L / 2 + T + tabDepth / 2, H / 2, (W / 2 - T) - TS / 2);
+    tabGroup.rotation.y = Math.PI / 2;
     const shape = new THREE.Shape();
-    const tw = effectiveTS, th = H - 6;
+    const tw = TS, th = H - 6;
     const bevel = Math.min(th * 0.12, 18);
-    shape.moveTo(0, -th / 2);
-    shape.lineTo(-tw, -th / 2 + bevel);
-    shape.lineTo(-tw, th / 2 - bevel);
-    shape.lineTo(0, th / 2);
+    shape.moveTo(0, -th / 2 + bevel);
+    shape.lineTo(tw, -th / 2);
+    shape.lineTo(tw, th / 2);
+    shape.lineTo(0, th / 2 - bevel);
     shape.closePath();
 
-    const tabGeo = new THREE.ExtrudeGeometry(shape, {
-      depth: tabDepth,
-      bevelEnabled: false
-    });
+    const extrudeSettings = { depth: tabDepth, bevelEnabled: true, bevelSegments: 2, steps: 1, bevelSize: 0.5, bevelThickness: 0.5 };
+    const tabGeo = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+    tabGeo.center();
     const tabMesh = new THREE.Mesh(tabGeo, innerMat);
-    // Lưỡi gà nằm ngoài mép trái L1 khi trải phẳng; khi gập chuỗi vách,
-    // nó quay vào trong và áp vào mặt trong vách cuối để tạo mối dán.
-    tabMesh.position.set(0, 0, -tabDepth);
     tabMesh.castShadow = true;
-    tsHinge.add(tabMesh);
+    tabGroup.add(tabMesh);
+    cartonRoot.add(tabGroup);
   }
-
-  const hingeW1 = new THREE.Group();
-  hingeW1.position.set(L, 0, 0);
-  wallL1.add(hingeW1);
-  const wallW1 = createWallAssembly(1, W, false);
-  hingeW1.add(wallW1);
-  wallHinges.push(hingeW1);
-
-  const hingeL2 = new THREE.Group();
-  hingeL2.position.set(W, 0, 0);
-  wallW1.add(hingeL2);
-  const wallL2 = createWallAssembly(2, L, true);
-  hingeL2.add(wallL2);
-  wallHinges.push(hingeL2);
-
-  const hingeW2 = new THREE.Group();
-  hingeW2.position.set(L, 0, 0);
-  wallL2.add(hingeW2);
-  const wallW2 = createWallAssembly(3, W, false);
-  hingeW2.add(wallW2);
-  wallHinges.push(hingeW2);
 
   const createFoldedTapeGroup = (isTop) => {
     const group = new THREE.Group();
@@ -1487,8 +1573,11 @@ function buildCarton3D() {
       transparent: true, opacity: isClear ? 0.35 : 0.92, roughness: 0.18, side: THREE.DoubleSide
     });
 
-    const eps = 0.4;
-    const outerSurfaceY = isTop ? (H + T + eps) : -(T + eps);
+    const eps = 0.3;
+    // Lớp cánh CHÍNH (trên cùng khi đóng kín) có mặt ngoài tại H+T+STACK_GAP / -(T+STACK_GAP) —
+    // khớp đúng với kz ở trên — nên băng keo chỉ cần thêm 1 khoảng hở nhỏ "eps" là đủ, không
+    // cần đợi 2 lần độ dày T như trước (lý do băng keo từng bị "chìm" không hiện ra).
+    const outerSurfaceY = isTop ? (H + T + STACK_GAP + eps) : -(T + STACK_GAP + eps);
 
     const mainGeo = new THREE.PlaneGeometry(L + eps * 2, tapeWidthMm);
     const mainMesh = new THREE.Mesh(mainGeo, tapeMat);
@@ -1518,71 +1607,28 @@ function buildCarton3D() {
   if (topFlapH > 0) topTapeGroup = createFoldedTapeGroup(true);
   if (botFlapH > 0) botTapeGroup = createFoldedTapeGroup(false);
 
-  setBodyFoldFactor(1.0);
   applyFlapAngles();
-}
-
-function setBodyFoldFactor(factor) {
-  const f = Math.max(0, Math.min(1, factor));
-  wallHinges.forEach(h => {
-    h.rotation.y = f * (Math.PI / 2);
-  });
-  if (tsHinge) {
-    tsHinge.rotation.y = f * (Math.PI / 2);
-  }
 }
 
 function applyFlapAngles() {
   const topMainDeg = +document.getElementById('topMainOpen').value;
   const topSideDeg = +document.getElementById('topSideOpen').value;
-  const botSliderDeg = +document.getElementById('bottomOpen').value;
-
-  let botSideDeg, botMainDeg;
-  if (animBotSideDeg !== null && animBotMainDeg !== null) {
-    botSideDeg = animBotSideDeg;
-    botMainDeg = animBotMainDeg;
-  } else if (botSliderDeg <= 90) {
-    botSideDeg = Math.max(0, Math.min(90, (botSliderDeg - 45) * 2));
-    botMainDeg = Math.max(0, Math.min(90, botSliderDeg * 2));
-  } else {
-    botSideDeg = botSliderDeg;
-    botMainDeg = botSliderDeg;
-  }
-
-  const d = getDims();
-  const T = d.T;
+  const botDeg = +document.getElementById('bottomOpen').value;
 
   flapControllers.forEach(fc => {
-    let openDeg;
-    if (fc.isTop) {
-      openDeg = fc.isLong ? topMainDeg : topSideDeg;
-    } else {
-      openDeg = fc.isLong ? botMainDeg : botSideDeg;
-    }
-
+    let openDeg = fc.isTop ? (fc.isLong ? topMainDeg : topSideDeg) : botDeg;
     const sign = fc.isTop ? -1 : 1;
-    const openRad = THREE.MathUtils.degToRad(openDeg);
-
-    fc.hinge.rotation.x = sign * (Math.PI / 2 - openRad);
-
-    // Giữ trục bản lề cố định đúng tại mép miệng thùng.
-    // Không cộng thêm T vào tọa độ Y của cánh chính: thao tác đó nâng cả cánh
-    // khỏi miệng thùng và tạo cảm giác nắp bị đội/lơ lửng khi đóng.
-    fc.hinge.position.y = fc.baseY;
+    // Chỉ XOAY quanh bản lề cố định — không còn dịch chuyển vị trí bản lề theo góc mở/đóng
+    // (bản lề đã được đặt đúng vị trí vật lý một lần duy nhất khi dựng hình ở buildCarton3D).
+    fc.hinge.rotation.x = sign * (Math.PI / 2) - sign * THREE.MathUtils.degToRad(openDeg);
   });
 
   const mode = document.getElementById('tapeMode').value;
   const isClear = mode === 'clear';
   const tapeColor = document.getElementById('tapeColorPicker').value || '#facc15';
 
-  if (topTapeGroup) {
-    topTapeGroup.visible = (mode !== 'none' && topMainDeg === 0 && topSideDeg === 0 && animTapeProgress > 0.01);
-    topTapeGroup.scale.set(Math.max(0.01, animTapeProgress), 1, 1);
-  }
-  if (botTapeGroup) {
-    botTapeGroup.visible = (mode !== 'none' && botMainDeg === 0 && botSideDeg === 0 && animTapeProgress > 0.01);
-    botTapeGroup.scale.set(Math.max(0.01, animTapeProgress), 1, 1);
-  }
+  if (topTapeGroup) topTapeGroup.visible = (mode !== 'none' && topMainDeg === 0 && topSideDeg === 0);
+  if (botTapeGroup) botTapeGroup.visible = (mode !== 'none' && botDeg === 0);
 
   [topTapeGroup, botTapeGroup].forEach(group => {
     if (!group) return;
@@ -1593,10 +1639,10 @@ function applyFlapAngles() {
   });
 }
 
-// --- CLIP RÁP THÙNG 4 GIAI ĐOẠN CHUẨN KỸ THUẬT ---
+// --- HỆ THỐNG HIỆU ỨNG CLIP NGẮN (ANIMATION CLIP PLAYER) ---
 let isAnimating = false;
-let animProgress = 0;
-let animDuration = 7.0;
+let animProgress = 0; // Từ 0.0 (Trải phẳng) đến 1.0 (Đóng hoàn chỉnh)
+let animDuration = 6.0; // 6 giây cho toàn clip
 let animLastTime = null;
 
 const animBar = document.getElementById('animBar');
@@ -1605,57 +1651,18 @@ const animResetBtn = document.getElementById('animResetBtn');
 const animSeekSlider = document.getElementById('animSeekSlider');
 const animTimeStatus = document.getElementById('animTimeStatus');
 
-function smoothstep(edge0, edge1, x) {
-  const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
-  return t * t * (3 - 2 * t);
-}
-
 function setAnimationProgress(prog) {
   animProgress = Math.max(0, Math.min(1, prog));
   animSeekSlider.value = animProgress * 1000;
+  animTimeStatus.textContent = (animProgress * animDuration).toFixed(1) + 's';
 
-  let phaseLabel = '';
-  let sideOpenAngle = 90;
-  let mainOpenAngle = 90;
+  const topMainVal = (1 - animProgress) * 90;
+  const topSideVal = (1 - animProgress) * 90;
+  const botVal = (1 - animProgress) * 90;
 
-  if (animProgress <= 0.32) {
-    const tBody = smoothstep(0.0, 0.32, animProgress);
-    setBodyFoldFactor(tBody);
-    sideOpenAngle = 90;
-    mainOpenAngle = 90;
-    animTapeProgress = 0;
-    phaseLabel = 'Dán mối nối TS & W2';
-  } else if (animProgress <= 0.62) {
-    setBodyFoldFactor(1.0);
-    const tSide = smoothstep(0.32, 0.62, animProgress);
-    sideOpenAngle = (1.0 - tSide) * 90;
-    mainOpenAngle = 90;
-    animTapeProgress = 0;
-    phaseLabel = 'Gập 2 cánh phụ W';
-  } else if (animProgress <= 0.90) {
-    setBodyFoldFactor(1.0);
-    const tMain = smoothstep(0.62, 0.90, animProgress);
-    sideOpenAngle = 0;
-    mainOpenAngle = (1.0 - tMain) * 90;
-    animTapeProgress = 0;
-    phaseLabel = 'Gập 2 cánh chính L';
-  } else {
-    setBodyFoldFactor(1.0);
-    const tTape = smoothstep(0.90, 1.0, animProgress);
-    sideOpenAngle = 0;
-    mainOpenAngle = 0;
-    animTapeProgress = tTape;
-    phaseLabel = 'Dán băng keo niêm phong';
-  }
-
-  animTimeStatus.textContent = `${(animProgress * animDuration).toFixed(1)}s • ${phaseLabel}`;
-
-  document.getElementById('topSideOpen').value = sideOpenAngle;
-  document.getElementById('topMainOpen').value = mainOpenAngle;
-  document.getElementById('bottomOpen').value = Math.round((sideOpenAngle + mainOpenAngle) / 2);
-
-  animBotSideDeg = sideOpenAngle;
-  animBotMainDeg = mainOpenAngle;
+  document.getElementById('topMainOpen').value = topMainVal;
+  document.getElementById('topSideOpen').value = topSideVal;
+  document.getElementById('bottomOpen').value = botVal;
 
   applyFlapAngles();
 }
@@ -1665,17 +1672,12 @@ document.getElementById('playAnimBtn').onclick = () => {
     document.getElementById('build3DBtn').click();
   }
   animBar.classList.add('visible');
-  if (animProgress >= 1.0) animProgress = 0;
-  setAnimationProgress(animProgress);
   isAnimating = true;
   animPlayPauseBtn.textContent = '⏸ Tạm dừng';
   animLastTime = performance.now();
 };
 
 animPlayPauseBtn.onclick = () => {
-  if (!isAnimating && animProgress >= 1.0) {
-    animProgress = 0;
-  }
   isAnimating = !isAnimating;
   animPlayPauseBtn.textContent = isAnimating ? '⏸ Tạm dừng' : '▶ Tiếp tục';
   if (isAnimating) animLastTime = performance.now();
@@ -1696,12 +1698,7 @@ animSeekSlider.oninput = e => {
 
 document.getElementById('animCloseBtn').onclick = () => {
   isAnimating = false;
-  setBodyFoldFactor(1.0);
-  animBotSideDeg = null;
-  animBotMainDeg = null;
-  animTapeProgress = 1.0;
   animBar.classList.remove('visible');
-  applyFlapAngles();
 };
 
 function updateAnimation(timestamp) {
@@ -1714,7 +1711,7 @@ function updateAnimation(timestamp) {
     if (animProgress >= 1.0) {
       animProgress = 1.0;
       isAnimating = false;
-      animPlayPauseBtn.textContent = '▶ Phát lại';
+      animPlayPauseBtn.textContent = '▶ Tiếp tục';
     }
     setAnimationProgress(animProgress);
   }
@@ -1752,6 +1749,9 @@ toggleLabelsBtn.onclick = () => {
 function clearUploadedArtwork(recordHistory = true) {
   loadedArtImg = null;
   document.getElementById('artInput').value = '';
+  // Xóa file cũng dọn sạch mọi lớp chữ đã chèn, để chỉ còn lại đúng bản trải phẳng 2D trơn.
+  textLayers = [];
+  selectedTextId = null;
   if (recordHistory) pushHistory();
   if (currentMode === '2d') resizeCanvas2D(); else buildCarton3D();
 }
@@ -1772,9 +1772,6 @@ document.getElementById('updateDielineBtn').onclick = () => {
 document.getElementById('build3DBtn').onclick = () => {
   setEraserMode(false);
   setTextToolMode(false);
-  animBotSideDeg = null;
-  animBotMainDeg = null;
-  animTapeProgress = 1.0;
   currentMode = '3d';
   canvas2D.style.display = 'none';
   threeContainer.style.display = 'block';
@@ -1835,14 +1832,7 @@ document.getElementById('paperPreset').onchange = e => {
 };
 
 ['topMainOpen', 'topSideOpen', 'bottomOpen'].forEach(id => {
-  document.getElementById(id).oninput = () => {
-    isAnimating = false;
-    setBodyFoldFactor(1.0);
-    animBotSideDeg = null;
-    animBotMainDeg = null;
-    animTapeProgress = 1.0;
-    applyFlapAngles();
-  };
+  document.getElementById(id).oninput = applyFlapAngles;
 });
 
 document.getElementById('tapeMode').onchange = e => {
@@ -1852,22 +1842,12 @@ document.getElementById('tapeMode').onchange = e => {
 document.getElementById('tapeColorPicker').oninput = applyFlapAngles;
 
 document.getElementById('presetStudio').onclick = () => {
-  isAnimating = false;
-  setBodyFoldFactor(1.0);
-  animBotSideDeg = null;
-  animBotMainDeg = null;
-  animTapeProgress = 1.0;
   document.getElementById('topMainOpen').value = 32;
   document.getElementById('topSideOpen').value = 12;
   document.getElementById('bottomOpen').value = 0;
   applyFlapAngles();
 };
 document.getElementById('presetClosed').onclick = () => {
-  isAnimating = false;
-  setBodyFoldFactor(1.0);
-  animBotSideDeg = null;
-  animBotMainDeg = null;
-  animTapeProgress = 1.0;
   document.getElementById('topMainOpen').value = 0;
   document.getElementById('topSideOpen').value = 0;
   document.getElementById('bottomOpen').value = 0;
