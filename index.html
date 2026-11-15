@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AUTO MOCKUP 3D STUDIO - V1.7 PRO</title>
+<title>AUTO MOCKUP 3D STUDIO - V1.8 PRO</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700;800;900&family=Montserrat:wght@600;700;800;900&family=Roboto+Mono:wght@600;700&display=swap" rel="stylesheet">
@@ -204,7 +204,7 @@ button.sm{padding:5px 9px;font-size:11.5px}
           <line x1="12" y1="22.08" x2="12" y2="12"></line>
         </svg>
       </div>
-      <h1 class="brand-title">AUTO MOCKUP 3D STUDIO <span class="ver-pill">V1.7 PRO</span></h1>
+      <h1 class="brand-title">AUTO MOCKUP 3D STUDIO <span class="ver-pill">V1.8 PRO</span></h1>
     </div>
 
     <div class="brand-divider" aria-hidden="true"></div>
@@ -1452,7 +1452,6 @@ let cartonRoot = new THREE.Group();
 scene.add(cartonRoot);
 let flapControllers = [];
 let topTapeGroup = null, botTapeGroup = null;
-// Seam meshes để hiển thị đường tiếp xúc giữa 2 cánh mặt chính khi ráp lại
 let topSeamMesh = null, botSeamMesh = null;
 
 function createPanelMaterial3D(panelIdx, regionType, d) {
@@ -1581,8 +1580,17 @@ function buildCarton3D() {
   });
 
   // ============================================================================
-  // MỐI NỐI TS (Glue Tab) — cạnh vát xéo hướng sâu vào trong, áp lên mặt trong panel3
+  // TÍNH TOÁN VỊ TRÍ ĐƯỜNG TIẾP XÚC (SEAM) VÀ BĂNG KEO
   // ============================================================================
+  // Vị trí mép của cánh trên (Panel 0) khi đóng kín
+  const seamZ = (W / 2 - T - STACK_GAP) - topFlapH;
+  const seamZ_bot = (W / 2 - T - STACK_GAP) - botFlapH;
+  // Nếu seamZ < 0: 2 cánh đè lên nhau, mép cánh trên ở seamZ -> Băng keo căn giữa theo seamZ
+  // Nếu seamZ >= 0: 2 cánh có khe hở, khe hở đối xứng qua 0 -> Băng keo căn giữa theo 0
+  const tapeTopZ = seamZ < 0 ? seamZ : 0;
+  const tapeBotZ = seamZ_bot < 0 ? seamZ_bot : 0;
+
+  // MỐI NỐI TS (Glue Tab)
   if (TS > 2 && H > 6) {
     const tabDepth = Math.min(T * 0.85, T);
     const tabGroup = new THREE.Group();
@@ -1608,7 +1616,7 @@ function buildCarton3D() {
     cartonRoot.add(tabGroup);
   }
 
-  const createFoldedTapeGroup = (isTop) => {
+  const createFoldedTapeGroup = (isTop, tapeZ) => {
     const group = new THREE.Group();
     const isClear = document.getElementById('tapeMode').value === 'clear';
     const tapeColor = document.getElementById('tapeColorPicker').value || '#facc15';
@@ -1618,13 +1626,12 @@ function buildCarton3D() {
     });
 
     const eps = 0.3;
-    // Băng keo đặt TRÊN CÙNG của chồng 2 cánh (đã stack): mặt trên cánh chính trước = H + 2T + STACK_GAP
     const outerSurfaceY = isTop ? (H + 2 * T + STACK_GAP + eps) : -(2 * T + STACK_GAP + eps);
 
     const mainGeo = new THREE.PlaneGeometry(L + eps * 2, tapeWidthMm);
     const mainMesh = new THREE.Mesh(mainGeo, tapeMat);
     mainMesh.rotation.x = isTop ? -Math.PI / 2 : Math.PI / 2;
-    mainMesh.position.set(0, outerSurfaceY, 0);
+    mainMesh.position.set(0, outerSurfaceY, tapeZ);
     group.add(mainMesh);
 
     if (tapeOverlapMm > 0) {
@@ -1633,12 +1640,12 @@ function buildCarton3D() {
 
       const leftMesh = new THREE.Mesh(sideGeo, tapeMat);
       leftMesh.rotation.y = Math.PI / 2;
-      leftMesh.position.set(-(L / 2 + eps), wrapY, 0);
+      leftMesh.position.set(-(L / 2 + eps), wrapY, tapeZ);
       group.add(leftMesh);
 
       const rightMesh = new THREE.Mesh(sideGeo, tapeMat);
       rightMesh.rotation.y = Math.PI / 2;
-      rightMesh.position.set(L / 2 + eps, wrapY, 0);
+      rightMesh.position.set(L / 2 + eps, wrapY, tapeZ);
       group.add(rightMesh);
     }
 
@@ -1646,14 +1653,11 @@ function buildCarton3D() {
     return group;
   };
 
-  if (topFlapH > 0) topTapeGroup = createFoldedTapeGroup(true);
-  if (botFlapH > 0) botTapeGroup = createFoldedTapeGroup(false);
+  if (topFlapH > 0) topTapeGroup = createFoldedTapeGroup(true, tapeTopZ);
+  if (botFlapH > 0) botTapeGroup = createFoldedTapeGroup(false, tapeBotZ);
 
-  // ---- ĐƯỜNG TIẾP XÚC GIỮA 2 CÁNH MẶT CHÍNH (Seam) ----
-  // Khi ráp thùng, 2 cánh mặt chính (L) chồng lên nhau tại z = 0.
-  // Để người dùng thấy rõ đây là 2 cánh ráp lại (không phải 1 mặt phẳng liền),
-  // ta vẽ 1 đường mảnh tối màu tại tâm z = 0, phía trên mặt trên cùng của cánh chính.
-  const seamWidthZ = 1.6; // mm
+  // ---- ĐƯỜNG TIẾP XÚC GIỮA 2 CÁNH MẶT CHÍNH (Seam line) ----
+  const seamWidthZ = 1.6;
   const seamInset = Math.max(2, T * 2);
   const seamLen = Math.max(10, L - slotGap - seamInset);
   const seamY_top = H + 2 * T + STACK_GAP + 0.16;
@@ -1666,9 +1670,10 @@ function buildCarton3D() {
     const seamGeo = new THREE.PlaneGeometry(seamLen, seamWidthZ);
     topSeamMesh = new THREE.Mesh(seamGeo, seamMat);
     topSeamMesh.rotation.x = -Math.PI / 2;
-    topSeamMesh.position.set(0, seamY_top, 0);
+    topSeamMesh.position.set(0, seamY_top, seamZ); // Đặt đúng mép cánh
     topSeamMesh.visible = false;
     topSeamMesh.renderOrder = 2;
+    topSeamMesh.userData.isOverlap = seamZ < 0;
     cartonRoot.add(topSeamMesh);
   }
 
@@ -1679,9 +1684,10 @@ function buildCarton3D() {
     const seamGeoB = new THREE.PlaneGeometry(seamLen, seamWidthZ);
     botSeamMesh = new THREE.Mesh(seamGeoB, seamMatB);
     botSeamMesh.rotation.x = Math.PI / 2;
-    botSeamMesh.position.set(0, seamY_bot, 0);
+    botSeamMesh.position.set(0, seamY_bot, seamZ_bot);
     botSeamMesh.visible = false;
     botSeamMesh.renderOrder = 2;
+    botSeamMesh.userData.isOverlap = seamZ_bot < 0;
     cartonRoot.add(botSeamMesh);
   }
 
@@ -1714,16 +1720,14 @@ function applyFlapAngles() {
     });
   });
 
-  // Hiển thị đường seam giữa 2 cánh mặt chính:
-  // — Chỉ hiện khi KHÔNG dán băng keo màu (băng keo trong vẫn nhìn xuyên qua được)
-  // — Và 2 cánh chính đã gần khép / khép hẳn
+  // Chỉ hiện seam line khi 2 cánh THỰC SỰ ĐÈ LÊN NHAU (isOverlap) và đang khép
   const showTopSeam = (mode !== 'color') && topMainDeg < 5;
   const showBotSeam = (mode !== 'color') && botDeg < 5;
-  if (topSeamMesh) topSeamMesh.visible = showTopSeam;
-  if (botSeamMesh) botSeamMesh.visible = showBotSeam;
+  if (topSeamMesh) topSeamMesh.visible = showTopSeam && topSeamMesh.userData.isOverlap;
+  if (botSeamMesh) botSeamMesh.visible = showBotSeam && botSeamMesh.userData.isOverlap;
 }
 
-// --- HIỆU ỨNG CLIP NGẮN: 3 PHA (ĐÁY → CÁNH PHỤ TRÊN → CÁNH CHÍNH TRÊN) ---
+// --- HIỆU ỨNG CLIP NGẮN ---
 let isAnimating = false;
 let animProgress = 0;
 let animDuration = 6.0;
@@ -1740,16 +1744,13 @@ function setAnimationProgress(prog) {
   animSeekSlider.value = animProgress * 1000;
   animTimeStatus.textContent = (animProgress * animDuration).toFixed(1) + 's';
 
-  // Pha 1: 0.00 – 0.35  → ĐÁY đóng hoàn toàn (cả cánh chính + cánh phụ đáy cùng lúc)
-  // Pha 2: 0.35 – 0.70  → CÁNH PHỤ TRÊN (W, nhỏ) đóng trước
-  // Pha 3: 0.70 – 1.00  → CÁNH CHÍNH TRÊN (L, lớn) đóng sau, đè lên cánh phụ
   const p1 = Math.min(1, Math.max(0, animProgress / 0.35));
   const p2 = Math.min(1, Math.max(0, (animProgress - 0.35) / 0.35));
   const p3 = Math.min(1, Math.max(0, (animProgress - 0.70) / 0.30));
 
   const botVal = (1 - p1) * 90;
-  const topSideVal = (1 - p2) * 90;   // cánh phụ trên đóng ở pha 2
-  const topMainVal = (1 - p3) * 90;   // cánh chính trên đóng ở pha 3
+  const topSideVal = (1 - p2) * 90;
+  const topMainVal = (1 - p3) * 90;
 
   document.getElementById('bottomOpen').value = botVal;
   document.getElementById('topSideOpen').value = topSideVal;
