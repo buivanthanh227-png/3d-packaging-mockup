@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AUTO MOCKUP 3D STUDIO - V1.6 PRO</title>
+<title>AUTO MOCKUP 3D STUDIO - V1.7 PRO</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700;800;900&family=Montserrat:wght@600;700;800;900&family=Roboto+Mono:wght@600;700&display=swap" rel="stylesheet">
@@ -204,7 +204,7 @@ button.sm{padding:5px 9px;font-size:11.5px}
           <line x1="12" y1="22.08" x2="12" y2="12"></line>
         </svg>
       </div>
-      <h1 class="brand-title">AUTO MOCKUP 3D STUDIO <span class="ver-pill">V1.6 PRO</span></h1>
+      <h1 class="brand-title">AUTO MOCKUP 3D STUDIO <span class="ver-pill">V1.7 PRO</span></h1>
     </div>
 
     <div class="brand-divider" aria-hidden="true"></div>
@@ -467,7 +467,6 @@ let artRect = { x: 0, y: 0, w: 300, h: 200 };
 let activeHandle = null;
 let dragStart2D = { x: 0, y: 0 };
 
-// --- CÔNG CỤ GÔM TẨY & CHÈN CHỮ ---
 let eraserMode = false;
 let eraserSizeMm = 35;
 let isErasing = false;
@@ -479,7 +478,6 @@ let textLayers = [];
 let selectedTextId = null;
 let nextTextId = 1;
 
-// --- LỊCH SỬ UNDO / REDO ---
 let historyStack = [];
 let historyIndex = -1;
 const MAX_HISTORY = 40;
@@ -1312,7 +1310,7 @@ function createPaperTexture(hexColor) {
   return tex;
 }
 
-// --- VẼ LỚP SÓNG CARTON CHÂN THỰC (theo ảnh tham chiếu 3/5/7 lớp) ---
+// --- VẼ LỚP SÓNG CARTON CHÂN THỰC ---
 function shadeColor(hex, percent) {
   const n = parseInt(hex.replace('#', ''), 16);
   const amt = Math.round(2.55 * percent);
@@ -1328,12 +1326,9 @@ function createCorrugatedEdgeTexture(hexColor, layers = 5) {
   c.width = W; c.height = H;
   const ctx = c.getContext('2d');
 
-  // Nền
   ctx.fillStyle = hexColor;
   ctx.fillRect(0, 0, W, H);
 
-  // Tính chiều cao từng dải: liner (phẳng) mỏng, flute (sóng) dày
-  // 3 lớp: L-F-L; 5 lớp: L-F-L-F-L; 7 lớp: L-F-L-F-L-F-L
   const numLiners = Math.ceil(layers / 2);
   const numFlutes = Math.floor(layers / 2);
   const linerWeight = 1.2;
@@ -1348,7 +1343,6 @@ function createCorrugatedEdgeTexture(hexColor, layers = 5) {
   const fluteStroke = shadeColor(hexColor, -50);
   const fluteHighlight = shadeColor(hexColor, 25);
 
-  // Số lượng sóng trên toàn bộ chiều ngang
   const numWaves = 10;
   const period = W / numWaves;
 
@@ -1361,7 +1355,6 @@ function createCorrugatedEdgeTexture(hexColor, layers = 5) {
     const y1 = (i === layers - 1) ? H : cumY;
 
     if (isLiner) {
-      // Dải phẳng (liner)
       const grad = ctx.createLinearGradient(0, y0, 0, y1);
       grad.addColorStop(0, shadeColor(hexColor, -12));
       grad.addColorStop(0.5, hexColor);
@@ -1369,7 +1362,6 @@ function createCorrugatedEdgeTexture(hexColor, layers = 5) {
       ctx.fillStyle = grad;
       ctx.fillRect(0, y0, W, y1 - y0);
 
-      // Vân giấy nhẹ
       ctx.strokeStyle = shadeColor(hexColor, -22);
       ctx.globalAlpha = 0.18;
       ctx.lineWidth = 0.6;
@@ -1381,7 +1373,6 @@ function createCorrugatedEdgeTexture(hexColor, layers = 5) {
       }
       ctx.globalAlpha = 1;
 
-      // Đường viền đậm trên đỉnh dải (ranh giới với sóng)
       ctx.strokeStyle = linerEdgeDark;
       ctx.lineWidth = 1;
       ctx.beginPath();
@@ -1389,7 +1380,6 @@ function createCorrugatedEdgeTexture(hexColor, layers = 5) {
       ctx.lineTo(W, y0);
       ctx.stroke();
 
-      // Highlight dưới đáy
       ctx.strokeStyle = linerEdgeLight;
       ctx.globalAlpha = 0.35;
       ctx.lineWidth = 0.8;
@@ -1399,8 +1389,6 @@ function createCorrugatedEdgeTexture(hexColor, layers = 5) {
       ctx.stroke();
       ctx.globalAlpha = 1;
     } else {
-      // Dải sóng (flute) — vẽ sóng sin dạng band có độ dày
-      // Nền tối (không gian rỗng giữa các đỉnh sóng)
       ctx.fillStyle = fluteDark;
       ctx.fillRect(0, y0, W, y1 - y0);
 
@@ -1410,7 +1398,6 @@ function createCorrugatedEdgeTexture(hexColor, layers = 5) {
 
       const waveY = (x) => centerY + Math.sin((x / period) * Math.PI * 2 - Math.PI / 2) * amplitude;
 
-      // Band của tấm sóng (medium)
       ctx.beginPath();
       for (let x = 0; x <= W; x += 2) {
         const wy = waveY(x) - medThick / 2;
@@ -1429,12 +1416,10 @@ function createCorrugatedEdgeTexture(hexColor, layers = 5) {
       ctx.fillStyle = fGrad;
       ctx.fill();
 
-      // Viền tối cho tấm sóng
       ctx.strokeStyle = fluteStroke;
       ctx.lineWidth = 1.6;
       ctx.stroke();
 
-      // Highlight trên đỉnh tấm sóng
       ctx.strokeStyle = fluteHighlight;
       ctx.globalAlpha = 0.55;
       ctx.lineWidth = 1;
@@ -1446,7 +1431,6 @@ function createCorrugatedEdgeTexture(hexColor, layers = 5) {
       ctx.stroke();
       ctx.globalAlpha = 1;
 
-      // Bóng mờ trong lòng sóng (tạo cảm giác chiều sâu)
       const shadowGrad = ctx.createLinearGradient(0, y0, 0, y1);
       shadowGrad.addColorStop(0, 'rgba(0,0,0,0)');
       shadowGrad.addColorStop(0.5, 'rgba(0,0,0,0.08)');
@@ -1468,6 +1452,8 @@ let cartonRoot = new THREE.Group();
 scene.add(cartonRoot);
 let flapControllers = [];
 let topTapeGroup = null, botTapeGroup = null;
+// Seam meshes để hiển thị đường tiếp xúc giữa 2 cánh mặt chính khi ráp lại
+let topSeamMesh = null, botSeamMesh = null;
 
 function createPanelMaterial3D(panelIdx, regionType, d) {
   const texCanvas = document.createElement('canvas');
@@ -1534,6 +1520,8 @@ function buildCarton3D() {
   flapControllers = [];
   topTapeGroup = null;
   botTapeGroup = null;
+  topSeamMesh = null;
+  botSeamMesh = null;
 
   const d = getDims();
   const { L, W, H, T, TS, topFlapH, botFlapH, slotGap, fluteLayers, tapeWidthMm, tapeOverlapMm } = d;
@@ -1563,21 +1551,29 @@ function buildCarton3D() {
 
     const kz = cfg.isLong ? -(T / 2 + STACK_GAP) : (T / 2);
 
+    // ---- CÁNH TRÊN ----
     if (topFlapH > 0) {
       const hinge = new THREE.Group(); hinge.position.set(0, H / 2, kz); wallGroup.add(hinge);
       const flapMat = createPanelMaterial3D(cfg.panelIdx, 'top', d);
       const flapBox = new THREE.Mesh(new THREE.BoxGeometry(cfg.w - slotGap, topFlapH, T), [edgeMat, edgeMat, edgeMat, edgeMat, flapMat, innerMat]);
-      flapBox.position.set(0, topFlapH / 2, -kz);
+      // Cánh CHÍNH phía trước (panelIdx 0) được nâng lên T để nằm TRÊN cánh mặt phụ khi đóng,
+      // tránh xuyên hình và tạo 2 lớp cánh chồng khít khi ráp thùng.
+      let stackOffsetTop = 0;
+      if (cfg.isLong && cfg.panelIdx === 0) stackOffsetTop = T;
+      flapBox.position.set(0, topFlapH / 2, -kz + stackOffsetTop);
       flapBox.castShadow = true; flapBox.receiveShadow = true;
       hinge.add(flapBox);
       flapControllers.push({ hinge, isTop: true, isLong: cfg.isLong, type: 'top' });
     }
 
+    // ---- CÁNH ĐÁY ----
     if (botFlapH > 0) {
       const hinge = new THREE.Group(); hinge.position.set(0, -H / 2, kz); wallGroup.add(hinge);
       const flapMat = createPanelMaterial3D(cfg.panelIdx, 'bottom', d);
       const flapBox = new THREE.Mesh(new THREE.BoxGeometry(cfg.w - slotGap, botFlapH, T), [edgeMat, edgeMat, edgeMat, edgeMat, flapMat, innerMat]);
-      flapBox.position.set(0, -botFlapH / 2, -kz);
+      let stackOffsetBot = 0;
+      if (cfg.isLong && cfg.panelIdx === 0) stackOffsetBot = T;
+      flapBox.position.set(0, -botFlapH / 2, -kz + stackOffsetBot);
       flapBox.castShadow = true; flapBox.receiveShadow = true;
       hinge.add(flapBox);
       flapControllers.push({ hinge, isTop: false, isLong: cfg.isLong, type: 'bottom' });
@@ -1585,25 +1581,17 @@ function buildCarton3D() {
   });
 
   // ============================================================================
-  // MỐI NỐI TS (Glue Tab) — ĐÃ SỬA HƯỚNG VÁT XÉO ĐÚNG CHUẨN:
-  //  • Cạnh thẳng (crease) áp sát vào mép trong panel0 (mặt chính L)
-  //  • Cạnh vát xéo (free edge) hướng sâu vào trong, áp lên mặt trong panel3 (mặt phụ W)
-  //  • Tab nằm gọn phía trong thùng, không lòi ra ngoài
+  // MỐI NỐI TS (Glue Tab) — cạnh vát xéo hướng sâu vào trong, áp lên mặt trong panel3
   // ============================================================================
   if (TS > 2 && H > 6) {
     const tabDepth = Math.min(T * 0.85, T);
     const tabGroup = new THREE.Group();
-    // Đặt tab nằm sát mặt trong panel3, thụt vào 0.2mm chống z-fighting
     tabGroup.position.set(-L / 2 + T + 0.2 + tabDepth / 2, H / 2, (W / 2 - T) - TS / 2);
     tabGroup.rotation.y = Math.PI / 2;
 
     const tw = TS, th = H - 2;
     const bevel = Math.min(tw * 0.5, th * 0.10, 20);
 
-    // 2D Shape: x=0 là cạnh thẳng (áp panel0), x=tw là cạnh vát (sâu trong thùng)
-    // Sau khi center và xoay Y=π/2:
-    //   - x=0 (local -tw/2) → world z = W/2 - T (sát panel0)
-    //   - x=tw (local +tw/2) → world z = W/2 - T - TS (sâu trong thùng, hướng panel3)
     const shape = new THREE.Shape();
     shape.moveTo(0, -th / 2);
     shape.lineTo(tw, -th / 2 + bevel);
@@ -1630,7 +1618,8 @@ function buildCarton3D() {
     });
 
     const eps = 0.3;
-    const outerSurfaceY = isTop ? (H + T + STACK_GAP + eps) : -(T + STACK_GAP + eps);
+    // Băng keo đặt TRÊN CÙNG của chồng 2 cánh (đã stack): mặt trên cánh chính trước = H + 2T + STACK_GAP
+    const outerSurfaceY = isTop ? (H + 2 * T + STACK_GAP + eps) : -(2 * T + STACK_GAP + eps);
 
     const mainGeo = new THREE.PlaneGeometry(L + eps * 2, tapeWidthMm);
     const mainMesh = new THREE.Mesh(mainGeo, tapeMat);
@@ -1660,6 +1649,42 @@ function buildCarton3D() {
   if (topFlapH > 0) topTapeGroup = createFoldedTapeGroup(true);
   if (botFlapH > 0) botTapeGroup = createFoldedTapeGroup(false);
 
+  // ---- ĐƯỜNG TIẾP XÚC GIỮA 2 CÁNH MẶT CHÍNH (Seam) ----
+  // Khi ráp thùng, 2 cánh mặt chính (L) chồng lên nhau tại z = 0.
+  // Để người dùng thấy rõ đây là 2 cánh ráp lại (không phải 1 mặt phẳng liền),
+  // ta vẽ 1 đường mảnh tối màu tại tâm z = 0, phía trên mặt trên cùng của cánh chính.
+  const seamWidthZ = 1.6; // mm
+  const seamInset = Math.max(2, T * 2);
+  const seamLen = Math.max(10, L - slotGap - seamInset);
+  const seamY_top = H + 2 * T + STACK_GAP + 0.16;
+  const seamY_bot = -(2 * T + STACK_GAP + 0.16);
+
+  if (topFlapH > 0) {
+    const seamMat = new THREE.MeshBasicMaterial({
+      color: 0x221408, side: THREE.DoubleSide, transparent: true, opacity: 0.82, depthWrite: false
+    });
+    const seamGeo = new THREE.PlaneGeometry(seamLen, seamWidthZ);
+    topSeamMesh = new THREE.Mesh(seamGeo, seamMat);
+    topSeamMesh.rotation.x = -Math.PI / 2;
+    topSeamMesh.position.set(0, seamY_top, 0);
+    topSeamMesh.visible = false;
+    topSeamMesh.renderOrder = 2;
+    cartonRoot.add(topSeamMesh);
+  }
+
+  if (botFlapH > 0) {
+    const seamMatB = new THREE.MeshBasicMaterial({
+      color: 0x221408, side: THREE.DoubleSide, transparent: true, opacity: 0.82, depthWrite: false
+    });
+    const seamGeoB = new THREE.PlaneGeometry(seamLen, seamWidthZ);
+    botSeamMesh = new THREE.Mesh(seamGeoB, seamMatB);
+    botSeamMesh.rotation.x = Math.PI / 2;
+    botSeamMesh.position.set(0, seamY_bot, 0);
+    botSeamMesh.visible = false;
+    botSeamMesh.renderOrder = 2;
+    cartonRoot.add(botSeamMesh);
+  }
+
   applyFlapAngles();
 }
 
@@ -1688,9 +1713,17 @@ function applyFlapAngles() {
       mesh.material.opacity = isClear ? 0.35 : 0.92;
     });
   });
+
+  // Hiển thị đường seam giữa 2 cánh mặt chính:
+  // — Chỉ hiện khi KHÔNG dán băng keo màu (băng keo trong vẫn nhìn xuyên qua được)
+  // — Và 2 cánh chính đã gần khép / khép hẳn
+  const showTopSeam = (mode !== 'color') && topMainDeg < 5;
+  const showBotSeam = (mode !== 'color') && botDeg < 5;
+  if (topSeamMesh) topSeamMesh.visible = showTopSeam;
+  if (botSeamMesh) botSeamMesh.visible = showBotSeam;
 }
 
-// --- HIỆU ỨNG CLIP NGẮN ---
+// --- HIỆU ỨNG CLIP NGẮN: 3 PHA (ĐÁY → CÁNH PHỤ TRÊN → CÁNH CHÍNH TRÊN) ---
 let isAnimating = false;
 let animProgress = 0;
 let animDuration = 6.0;
@@ -1707,13 +1740,20 @@ function setAnimationProgress(prog) {
   animSeekSlider.value = animProgress * 1000;
   animTimeStatus.textContent = (animProgress * animDuration).toFixed(1) + 's';
 
-  const topMainVal = (1 - animProgress) * 90;
-  const topSideVal = (1 - animProgress) * 90;
-  const botVal = (1 - animProgress) * 90;
+  // Pha 1: 0.00 – 0.35  → ĐÁY đóng hoàn toàn (cả cánh chính + cánh phụ đáy cùng lúc)
+  // Pha 2: 0.35 – 0.70  → CÁNH PHỤ TRÊN (W, nhỏ) đóng trước
+  // Pha 3: 0.70 – 1.00  → CÁNH CHÍNH TRÊN (L, lớn) đóng sau, đè lên cánh phụ
+  const p1 = Math.min(1, Math.max(0, animProgress / 0.35));
+  const p2 = Math.min(1, Math.max(0, (animProgress - 0.35) / 0.35));
+  const p3 = Math.min(1, Math.max(0, (animProgress - 0.70) / 0.30));
 
-  document.getElementById('topMainOpen').value = topMainVal;
-  document.getElementById('topSideOpen').value = topSideVal;
+  const botVal = (1 - p1) * 90;
+  const topSideVal = (1 - p2) * 90;   // cánh phụ trên đóng ở pha 2
+  const topMainVal = (1 - p3) * 90;   // cánh chính trên đóng ở pha 3
+
   document.getElementById('bottomOpen').value = botVal;
+  document.getElementById('topSideOpen').value = topSideVal;
+  document.getElementById('topMainOpen').value = topMainVal;
 
   applyFlapAngles();
 }
@@ -1937,7 +1977,6 @@ function export2DAsHighResPNG() {
   const oldPanX = pan2D.x;
   const oldPanY = pan2D.y;
 
-  // 4× canvas → ảnh nét gấp 4, đủ in ấn cơ bản
   const scaleFactor = 4;
   canvas2D.width = oldW * scaleFactor;
   canvas2D.height = oldH * scaleFactor;
@@ -1981,7 +2020,6 @@ function export2DAsSVG() {
   parts.push(`<?xml version="1.0" encoding="UTF-8"?>`);
   parts.push(`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${mmW}mm" height="${mmH}mm" viewBox="0 0 ${mmW} ${mmH}">`);
 
-  // 1) Đường bao ngoài + nền giấy
   const x0 = 0, x1 = d.TS, xEnd = mmW;
   const y0 = 0, y1 = d.topFlapH, y2 = d.topFlapH + d.H, yEnd = mmH;
   let outline = '';
@@ -2007,11 +2045,9 @@ function export2DAsSVG() {
     outline = `M 0 0 L ${mmW} 0 L ${mmW} ${mmH} L 0 ${mmH} Z`;
   }
 
-  // ClipPath cho ảnh thiết kế để không tràn ra ngoài dieline
   parts.push(`<defs><clipPath id="dielineClip"><path d="${outline}"/></clipPath></defs>`);
   parts.push(`<path d="${outline}" fill="${paperColor}" stroke="#0f172a" stroke-width="0.5"/>`);
 
-  // 2) Ảnh thiết kế (nếu có) — nhúng base64
   if (loadedArtImg) {
     const dataURL = loadedArtImg.toDataURL('image/png');
     parts.push(`<g clip-path="url(#dielineClip)">`);
@@ -2019,7 +2055,6 @@ function export2DAsSVG() {
     parts.push(`</g>`);
   }
 
-  // 3) Đường cấn (creases) — nét đứt
   let creaseD = '';
   if (d.topFlapH > 0) creaseD += `M ${d.TS} ${d.topFlapH} L ${mmW} ${d.topFlapH} `;
   if (d.botFlapH > 0) creaseD += `M ${d.TS} ${y2} L ${mmW} ${y2} `;
@@ -2033,7 +2068,6 @@ function export2DAsSVG() {
   });
   parts.push(`<path d="${creaseD}" fill="none" stroke="#ec4899" stroke-width="0.35" stroke-dasharray="2,1.5"/>`);
 
-  // 4) Khe xẻ rãnh (slots) — cắt bỏ
   let slotD = '';
   curX = d.TS;
   pw.forEach((w, idx) => {
@@ -2052,14 +2086,12 @@ function export2DAsSVG() {
     parts.push(`<path d="${slotD}" fill="#ffffff" stroke="#0f172a" stroke-width="0.25"/>`);
   }
 
-  // 5) Các lớp chữ (text layers) — giữ dạng text để chỉnh sửa trong AI/Corel
   textLayers.forEach(layer => {
     const escaped = (layer.text || '')
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     parts.push(`<text x="${layer.x}" y="${layer.y}" font-family="'Be Vietnam Pro', Arial, sans-serif" font-weight="bold" font-size="${layer.fontSize}" fill="${layer.color}" text-anchor="middle" dominant-baseline="central">${escaped}</text>`);
   });
 
-  // 6) Nhãn kích thước (nếu đang bật hiển thị)
   if (show2DLabels) {
     curX = d.TS;
     pw.forEach((w, idx) => {
