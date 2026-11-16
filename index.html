@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AUTO MOCKUP 3D STUDIO - V1.8 PRO</title>
+.title>AUTO MOCKUP 3D STUDIO - V1.9 PRO</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700;800;900&family=Montserrat:wght@600;700;800;900&family=Roboto+Mono:wght@600;700&display=swap" rel="stylesheet">
@@ -185,6 +185,21 @@ button.sm{padding:5px 9px;font-size:11.5px}
   .panel{height:auto}
   .stage{height:560px}
 }
+.dim-warn{
+  display:none;margin-top:6px;padding:7px 9px;border-radius:7px;
+  background:#fff7ed;border:1px solid #fdba74;color:#9a3412;
+  font-size:11.5px;font-weight:650;line-height:1.35;
+}
+.dim-warn.visible{display:block}
+.glue-hint{margin:2px 0 0;font-size:11px;color:#0369a1;font-weight:700}
+button.flip-glue{
+  width:100%;background:#0f172a;color:#fff;border:1px solid #334155;
+  box-shadow:none;letter-spacing:.2px;
+}
+button.flip-glue:hover{background:#1e293b}
+button.flip-glue.right{
+  background:linear-gradient(135deg,#7c3aed,#6d28d9);border-color:#c4b5fd;
+}
 </style>
 </head>
 <body>
@@ -204,7 +219,7 @@ button.sm{padding:5px 9px;font-size:11.5px}
           <line x1="12" y1="22.08" x2="12" y2="12"></line>
         </svg>
       </div>
-      <h1 class="brand-title">AUTO MOCKUP 3D STUDIO <span class="ver-pill">V1.8 PRO</span></h1>
+      <h1 class="brand-title">AUTO MOCKUP 3D STUDIO <span class="ver-pill">V1.9 PRO</span></h1>
     </div>
 
     <div class="brand-divider" aria-hidden="true"></div>
@@ -266,6 +281,11 @@ button.sm{padding:5px 9px;font-size:11.5px}
         </svg>
         <span id="toggle2DLabelsText">Ẩn thông số trên bản 2D</span>
       </button>
+      <button type="button" id="flipGlueBtn" class="flip-glue" title="Đảo toàn bộ bản trải để mối nối TS sang bên phải hoặc trái">
+        Đảo mối nối sang PHẢI
+      </button>
+      <p id="glueSideHint" class="glue-hint">Mối nối TS đang ở bên TRÁI bản trải 2D.</p>
+      <div id="dimWarn" class="dim-warn"></div>
     </div>
   </div>
 
@@ -458,6 +478,7 @@ updateLiveClock();
 setInterval(updateLiveClock, 1000);
 
 let currentMode = '2d';
+let glueOnRight = false;
 let loadedArtImg = null;
 let show2DLabels = true;
 
@@ -709,20 +730,96 @@ function getRawNum(id, fallback) {
   return +val;
 }
 
+function clampNum(v, min, max) {
+  return Math.min(max, Math.max(min, v));
+}
+
 function getDims() {
+  const L = clampNum(getRawNum('L', 545), 30, 4000);
+  const W = clampNum(getRawNum('W', 305), 30, 4000);
+  const H = clampNum(getRawNum('H', 410), 30, 4000);
+  const T = clampNum(getRawNum('thick', 5), 1, Math.min(20, L * 0.22, W * 0.22, H * 0.3));
+  const TS = clampNum(getRawNum('glueTS', 35), 0, Math.min(90, Math.min(L, W) * 0.45));
+  const topFlapH = clampNum(getRawNum('topFlapH', W / 2), 0, Math.min(2500, Math.max(L, W)));
+  const botFlapH = clampNum(getRawNum('botFlapH', W / 2), 0, Math.min(2500, Math.max(L, W)));
+  const slotGap = clampNum(getRawNum('slotGap', 6), 0, 15);
   return {
-    L: Math.max(30, getRawNum('L', 545)),
-    W: Math.max(30, getRawNum('W', 305)),
-    H: Math.max(30, getRawNum('H', 410)),
-    T: Math.max(1, getRawNum('thick', 5)),
-    TS: Math.max(0, getRawNum('glueTS', 35)),
-    topFlapH: Math.max(0, getRawNum('topFlapH', 155.5)),
-    botFlapH: Math.max(0, getRawNum('botFlapH', 155.5)),
-    slotGap: Math.max(0, getRawNum('slotGap', 6)),
-    fluteLayers: parseInt(document.getElementById('fluteLayers').value || 5),
-    tapeWidthMm: Math.max(10, getRawNum('tapeWidthMm', 60)),
-    tapeOverlapMm: Math.max(0, getRawNum('tapeOverlapMm', 60))
+    L, W, H, T, TS, topFlapH, botFlapH, slotGap,
+    fluteLayers: parseInt(document.getElementById('fluteLayers').value || 5, 10),
+    tapeWidthMm: clampNum(getRawNum('tapeWidthMm', 60), 20, 100),
+    tapeOverlapMm: clampNum(getRawNum('tapeOverlapMm', 60), 0, 150)
   };
+}
+
+function formatDim(n) {
+  return Math.abs(n - Math.round(n)) < 0.05 ? String(Math.round(n)) : String(Math.round(n * 10) / 10);
+}
+
+function writeDim(id, value) {
+  const el = document.getElementById(id);
+  const next = formatDim(value);
+  if (el.value !== next) el.value = next;
+}
+
+function sanitizeDims(showMsg) {
+  const d = getDims();
+  writeDim('L', d.L);
+  writeDim('W', d.W);
+  writeDim('H', d.H);
+  writeDim('thick', d.T);
+  writeDim('glueTS', d.TS);
+  writeDim('topFlapH', d.topFlapH);
+  writeDim('botFlapH', d.botFlapH);
+  writeDim('slotGap', d.slotGap);
+  writeDim('tapeWidthMm', d.tapeWidthMm);
+  writeDim('tapeOverlapMm', d.tapeOverlapMm);
+
+  const notes = [];
+  if (d.topFlapH > d.W / 2 + 1 || d.botFlapH > d.W / 2 + 1) {
+    notes.push('Cánh dài hơn nửa mặt Rộng (W/2) — khi đóng kín sẽ chồng lên nhau.');
+  }
+  if (d.T >= Math.min(20, d.W * 0.22, d.L * 0.22) - 0.01) {
+    notes.push('Độ dày sóng đã được giới hạn để thành thùng không bị vỡ.');
+  }
+  const warn = document.getElementById('dimWarn');
+  if (warn) {
+    if (showMsg && notes.length) {
+      warn.textContent = notes.join(' ');
+      warn.classList.add('visible');
+    } else if (!notes.length) {
+      warn.classList.remove('visible');
+      warn.textContent = '';
+    }
+  }
+  return d;
+}
+
+function panelXmm(d, panelIdx) {
+  const widths = [d.L, d.W, d.L, d.W];
+  let x = glueOnRight ? 0 : d.TS;
+  for (let i = 0; i < panelIdx; i++) x += widths[i];
+  return x;
+}
+
+function blankEdges(d) {
+  const bodyLeft = glueOnRight ? 0 : d.TS;
+  const bodyRight = bodyLeft + d.L + d.W + d.L + d.W;
+  return { bodyLeft, bodyRight, tsLeft: glueOnRight ? bodyRight : 0 };
+}
+
+function updateGlueUi() {
+  const btn = document.getElementById('flipGlueBtn');
+  const hint = document.getElementById('glueSideHint');
+  if (!btn || !hint) return;
+  if (glueOnRight) {
+    btn.textContent = 'Đảo mối nối về TRÁI';
+    btn.classList.add('right');
+    hint.textContent = 'Mối nối TS đang ở bên PHẢI bản trải 2D.';
+  } else {
+    btn.textContent = 'Đảo mối nối sang PHẢI';
+    btn.classList.remove('right');
+    hint.textContent = 'Mối nối TS đang ở bên TRÁI bản trải 2D.';
+  }
 }
 
 function getDielineGeometry(d) {
@@ -828,8 +925,16 @@ function render2DDieline() {
   ctx2D.translate(startX, startY);
 
   const buildDielineClipPath = () => {
+    const edges = blankEdges(d);
+    const bodyLeft = edges.bodyLeft * scale;
+    const bodyRight = edges.bodyRight * scale;
+    const tsLeft = edges.tsLeft * scale;
     ctx2D.beginPath();
-    if (d.TS > 0) {
+    if (d.TS <= 0) {
+      ctx2D.rect(0, 0, totalW_px, totalH_px);
+      return;
+    }
+    if (!glueOnRight) {
       ctx2D.moveTo(0, topH_px + tsBevelPx);
       ctx2D.lineTo(ts_px, topH_px);
       if (d.topFlapH > 0) {
@@ -848,9 +953,27 @@ function render2DDieline() {
       }
       ctx2D.lineTo(0, topH_px + h_px - tsBevelPx);
       ctx2D.closePath();
-    } else {
-      ctx2D.rect(0, 0, totalW_px, totalH_px);
+      return;
     }
+    if (d.topFlapH > 0) {
+      ctx2D.moveTo(bodyLeft, 0);
+      ctx2D.lineTo(bodyRight, 0);
+      ctx2D.lineTo(bodyRight, topH_px);
+    } else {
+      ctx2D.moveTo(bodyLeft, topH_px);
+      ctx2D.lineTo(bodyRight, topH_px);
+    }
+    ctx2D.lineTo(totalW_px, topH_px + tsBevelPx);
+    ctx2D.lineTo(totalW_px, topH_px + h_px - tsBevelPx);
+    ctx2D.lineTo(bodyRight, topH_px + h_px);
+    if (d.botFlapH > 0) {
+      ctx2D.lineTo(bodyRight, totalH_px);
+      ctx2D.lineTo(bodyLeft, totalH_px);
+    } else {
+      ctx2D.lineTo(bodyLeft, topH_px + h_px);
+    }
+    ctx2D.closePath();
+    void tsLeft;
   };
 
   ctx2D.save();
@@ -882,27 +1005,32 @@ function render2DDieline() {
     }
   }
 
+  const edgesPx = blankEdges(d);
+  const bodyLeftPx = edgesPx.bodyLeft * scale;
+  const bodyRightPx = edgesPx.bodyRight * scale;
+  const tsCenterPx = (edgesPx.tsLeft + d.TS / 2) * scale;
+
   ctx2D.strokeStyle = '#ec4899';
   ctx2D.lineWidth = 1.5;
 
   ctx2D.beginPath();
   if (d.topFlapH > 0) {
-    ctx2D.moveTo(ts_px, topH_px);
-    ctx2D.lineTo(totalW_px, topH_px);
+    ctx2D.moveTo(bodyLeftPx, topH_px);
+    ctx2D.lineTo(bodyRightPx, topH_px);
   }
   if (d.botFlapH > 0) {
-    ctx2D.moveTo(ts_px, topH_px + h_px);
-    ctx2D.lineTo(totalW_px, topH_px + h_px);
+    ctx2D.moveTo(bodyLeftPx, topH_px + h_px);
+    ctx2D.lineTo(bodyRightPx, topH_px + h_px);
   }
   if (d.TS > 0) {
-    ctx2D.moveTo(ts_px, topH_px);
-    ctx2D.lineTo(ts_px, topH_px + h_px);
+    ctx2D.moveTo(bodyLeftPx === 0 ? bodyRightPx : bodyLeftPx, topH_px);
+    ctx2D.lineTo(glueOnRight ? bodyRightPx : bodyLeftPx, topH_px + h_px);
   }
   ctx2D.stroke();
 
   if (d.TS > 0 && show2DLabels) {
     ctx2D.save();
-    ctx2D.translate(ts_px / 2, topH_px + h_px / 2);
+    ctx2D.translate(tsCenterPx, topH_px + h_px / 2);
     ctx2D.rotate(-Math.PI / 2);
     ctx2D.fillStyle = 'rgba(15, 23, 42, 0.88)';
     ctx2D.font = 'bold 11px "Be Vietnam Pro", sans-serif';
@@ -912,7 +1040,7 @@ function render2DDieline() {
     ctx2D.restore();
   }
 
-  let curX = ts_px;
+  let curX = bodyLeftPx;
   const panelWidths = [d.L, d.W, d.L, d.W];
 
   panelWidths.forEach((pw, idx) => {
@@ -1463,10 +1591,7 @@ function createPanelMaterial3D(panelIdx, regionType, d) {
   ctx.fillStyle = paperColor;
   ctx.fillRect(0, 0, 1024, 1024);
 
-  let panelX = d.TS;
-  if (panelIdx === 1) panelX = d.TS + d.L;
-  else if (panelIdx === 2) panelX = d.TS + d.L + d.W;
-  else if (panelIdx === 3) panelX = d.TS + d.L + d.W + d.L;
+  const panelX = panelXmm(d, panelIdx);
   const pw = (panelIdx % 2 === 0) ? d.L : d.W;
 
   let regionY = d.topFlapH, rh = d.H;
@@ -1530,11 +1655,12 @@ function buildCarton3D() {
   const innerMat = new THREE.MeshStandardMaterial({ map: createPaperTexture(paperColor), roughness: 0.92 });
   const edgeMat = new THREE.MeshStandardMaterial({ map: createCorrugatedEdgeTexture(paperColor, fluteLayers), roughness: 0.95 });
 
+  const sideW = Math.max(8, W - T * 2);
   const wallConfigs = [
     { panelIdx: 0, w: L, pos: [0, H / 2, W / 2 - T / 2], rotY: 0, isLong: true },
-    { panelIdx: 1, w: W - T * 2, pos: [L / 2 - T / 2, H / 2, 0], rotY: Math.PI / 2, isLong: false },
+    { panelIdx: 1, w: sideW, pos: [L / 2 - T / 2, H / 2, 0], rotY: Math.PI / 2, isLong: false },
     { panelIdx: 2, w: L, pos: [0, H / 2, -W / 2 + T / 2], rotY: Math.PI, isLong: true },
-    { panelIdx: 3, w: W - T * 2, pos: [-L / 2 + T / 2, H / 2, 0], rotY: -Math.PI / 2, isLong: false }
+    { panelIdx: 3, w: sideW, pos: [-L / 2 + T / 2, H / 2, 0], rotY: -Math.PI / 2, isLong: false }
   ];
 
   wallConfigs.forEach(cfg => {
@@ -1554,7 +1680,8 @@ function buildCarton3D() {
     if (topFlapH > 0) {
       const hinge = new THREE.Group(); hinge.position.set(0, H / 2, kz); wallGroup.add(hinge);
       const flapMat = createPanelMaterial3D(cfg.panelIdx, 'top', d);
-      const flapBox = new THREE.Mesh(new THREE.BoxGeometry(cfg.w - slotGap, topFlapH, T), [edgeMat, edgeMat, edgeMat, edgeMat, flapMat, innerMat]);
+      const flapW = Math.max(4, cfg.w - slotGap);
+      const flapBox = new THREE.Mesh(new THREE.BoxGeometry(flapW, topFlapH, T), [edgeMat, edgeMat, edgeMat, edgeMat, flapMat, innerMat]);
       // Cánh CHÍNH phía trước (panelIdx 0) được nâng lên T để nằm TRÊN cánh mặt phụ khi đóng,
       // tránh xuyên hình và tạo 2 lớp cánh chồng khít khi ráp thùng.
       let stackOffsetTop = 0;
@@ -1569,7 +1696,8 @@ function buildCarton3D() {
     if (botFlapH > 0) {
       const hinge = new THREE.Group(); hinge.position.set(0, -H / 2, kz); wallGroup.add(hinge);
       const flapMat = createPanelMaterial3D(cfg.panelIdx, 'bottom', d);
-      const flapBox = new THREE.Mesh(new THREE.BoxGeometry(cfg.w - slotGap, botFlapH, T), [edgeMat, edgeMat, edgeMat, edgeMat, flapMat, innerMat]);
+      const flapW = Math.max(4, cfg.w - slotGap);
+      const flapBox = new THREE.Mesh(new THREE.BoxGeometry(flapW, botFlapH, T), [edgeMat, edgeMat, edgeMat, edgeMat, flapMat, innerMat]);
       let stackOffsetBot = 0;
       if (cfg.isLong && cfg.panelIdx === 0) stackOffsetBot = T;
       flapBox.position.set(0, -botFlapH / 2, -kz + stackOffsetBot);
@@ -1594,8 +1722,10 @@ function buildCarton3D() {
   if (TS > 2 && H > 6) {
     const tabDepth = Math.min(T * 0.85, T);
     const tabGroup = new THREE.Group();
-    tabGroup.position.set(-L / 2 + T + 0.2 + tabDepth / 2, H / 2, (W / 2 - T) - TS / 2);
-    tabGroup.rotation.y = Math.PI / 2;
+    const xLeft = -L / 2 + T + 0.2 + tabDepth / 2;
+    const zFront = (W / 2 - T) - TS / 2;
+    tabGroup.position.set(glueOnRight ? -xLeft : xLeft, H / 2, glueOnRight ? -zFront : zFront);
+    tabGroup.rotation.y = glueOnRight ? -Math.PI / 2 : Math.PI / 2;
 
     const tw = TS, th = H - 2;
     const bevel = Math.min(tw * 0.5, th * 0.10, 20);
@@ -1850,17 +1980,12 @@ function clearUploadedArtwork(recordHistory = true) {
 document.getElementById('clearArtBtn').onclick = () => clearUploadedArtwork(true);
 
 document.getElementById('updateDielineBtn').onclick = () => {
-  currentMode = '2d';
-  canvas2D.style.display = 'block';
-  threeContainer.style.display = 'none';
-  document.getElementById('toolbar2D').style.display = 'flex';
-  document.getElementById('camToolbar').style.display = 'none';
-  document.getElementById('controls3DPanel').style.display = 'none';
-  animBar.classList.remove('visible');
-  clearUploadedArtwork(true);
+  sanitizeDims(true);
+  switchTo2D();
 };
 
 document.getElementById('build3DBtn').onclick = () => {
+  sanitizeDims(true);
   setEraserMode(false);
   setTextToolMode(false);
   currentMode = '3d';
@@ -1890,6 +2015,18 @@ const switchTo2D = () => {
 };
 document.getElementById('switchMode2D_bottom').onclick = switchTo2D;
 
+document.getElementById('flipGlueBtn').onclick = () => {
+  const ts = getDims().TS;
+  glueOnRight = !glueOnRight;
+  const delta = glueOnRight ? -ts : ts;
+  artRect.x += delta;
+  textLayers.forEach(layer => { layer.x += delta; });
+  updateGlueUi();
+  if (currentMode === '2d') render2DDieline();
+  else buildCarton3D();
+};
+updateGlueUi();
+
 document.getElementById('artInput').addEventListener('change', e => {
   const file = e.target.files[0];
   if (!file) return;
@@ -1912,9 +2049,16 @@ document.getElementById('artInput').addEventListener('change', e => {
 });
 
 ['L', 'W', 'H', 'thick', 'glueTS', 'topFlapH', 'botFlapH', 'slotGap', 'paperColorPicker', 'fluteLayers', 'tapeWidthMm', 'tapeOverlapMm'].forEach(id => {
-  document.getElementById(id).onchange = () => {
+  const el = document.getElementById(id);
+  el.addEventListener('input', () => {
+    const raw = parseFloat(el.value);
+    if (el.type === 'number' && !isFinite(raw)) return;
     if (currentMode === '2d') render2DDieline(); else buildCarton3D();
-  };
+  });
+  el.addEventListener('change', () => {
+    sanitizeDims(true);
+    if (currentMode === '2d') render2DDieline(); else buildCarton3D();
+  });
 });
 
 document.getElementById('paperPreset').onchange = e => {
@@ -2021,27 +2165,45 @@ function export2DAsSVG() {
   parts.push(`<?xml version="1.0" encoding="UTF-8"?>`);
   parts.push(`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${mmW}mm" height="${mmH}mm" viewBox="0 0 ${mmW} ${mmH}">`);
 
-  const x0 = 0, x1 = d.TS, xEnd = mmW;
+  const edges = blankEdges(d);
+  const x0 = 0, xEnd = mmW;
   const y0 = 0, y1 = d.topFlapH, y2 = d.topFlapH + d.H, yEnd = mmH;
+  const bodyLeft = edges.bodyLeft;
+  const bodyRight = edges.bodyRight;
   let outline = '';
-  if (d.TS > 0) {
+  if (d.TS > 0 && !glueOnRight) {
     outline = `M ${x0} ${y1 + tsBevel}`;
-    outline += ` L ${x1} ${y1}`;
+    outline += ` L ${d.TS} ${y1}`;
     if (d.topFlapH > 0) {
-      outline += ` L ${x1} ${y0}`;
+      outline += ` L ${d.TS} ${y0}`;
       outline += ` L ${xEnd} ${y0}`;
     } else {
       outline += ` L ${xEnd} ${y1}`;
     }
     if (d.botFlapH > 0) {
       outline += ` L ${xEnd} ${yEnd}`;
-      outline += ` L ${x1} ${yEnd}`;
-      outline += ` L ${x1} ${y2}`;
+      outline += ` L ${d.TS} ${yEnd}`;
+      outline += ` L ${d.TS} ${y2}`;
     } else {
       outline += ` L ${xEnd} ${y2}`;
-      outline += ` L ${x1} ${y2}`;
+      outline += ` L ${d.TS} ${y2}`;
     }
     outline += ` L ${x0} ${y2 - tsBevel} Z`;
+  } else if (d.TS > 0 && glueOnRight) {
+    if (d.topFlapH > 0) {
+      outline = `M ${bodyLeft} ${y0} L ${bodyRight} ${y0} L ${bodyRight} ${y1}`;
+    } else {
+      outline = `M ${bodyLeft} ${y1} L ${bodyRight} ${y1}`;
+    }
+    outline += ` L ${xEnd} ${y1 + tsBevel}`;
+    outline += ` L ${xEnd} ${y2 - tsBevel}`;
+    outline += ` L ${bodyRight} ${y2}`;
+    if (d.botFlapH > 0) {
+      outline += ` L ${bodyRight} ${yEnd} L ${bodyLeft} ${yEnd}`;
+    } else {
+      outline += ` L ${bodyLeft} ${y2}`;
+    }
+    outline += ` Z`;
   } else {
     outline = `M 0 0 L ${mmW} 0 L ${mmW} ${mmH} L 0 ${mmH} Z`;
   }
@@ -2057,12 +2219,12 @@ function export2DAsSVG() {
   }
 
   let creaseD = '';
-  if (d.topFlapH > 0) creaseD += `M ${d.TS} ${d.topFlapH} L ${mmW} ${d.topFlapH} `;
-  if (d.botFlapH > 0) creaseD += `M ${d.TS} ${y2} L ${mmW} ${y2} `;
-  if (d.TS > 0) creaseD += `M ${d.TS} ${d.topFlapH} L ${d.TS} ${y2} `;
+  if (d.topFlapH > 0) creaseD += `M ${bodyLeft} ${d.topFlapH} L ${bodyRight} ${d.topFlapH} `;
+  if (d.botFlapH > 0) creaseD += `M ${bodyLeft} ${y2} L ${bodyRight} ${y2} `;
+  if (d.TS > 0) creaseD += `M ${glueOnRight ? bodyRight : bodyLeft} ${d.topFlapH} L ${glueOnRight ? bodyRight : bodyLeft} ${y2} `;
 
   const pw = [d.L, d.W, d.L, d.W];
-  let curX = d.TS;
+  let curX = bodyLeft;
   pw.forEach((w, idx) => {
     if (idx > 0) creaseD += `M ${curX} ${d.topFlapH} L ${curX} ${y2} `;
     curX += w;
@@ -2070,7 +2232,7 @@ function export2DAsSVG() {
   parts.push(`<path d="${creaseD}" fill="none" stroke="#ec4899" stroke-width="0.35" stroke-dasharray="2,1.5"/>`);
 
   let slotD = '';
-  curX = d.TS;
+  curX = bodyLeft;
   pw.forEach((w, idx) => {
     if (idx > 0) {
       const gap = d.slotGap;
@@ -2094,7 +2256,7 @@ function export2DAsSVG() {
   });
 
   if (show2DLabels) {
-    curX = d.TS;
+    curX = bodyLeft;
     pw.forEach((w, idx) => {
       const panelName = idx % 2 === 0 ? `L${idx/2+1} (${w}mm)` : `W${(idx+1)/2} (${w}mm)`;
       parts.push(`<text x="${curX + 10}" y="${d.topFlapH + 20}" font-family="'Be Vietnam Pro', Arial, sans-serif" font-weight="bold" font-size="4" fill="#0f172a">${panelName}</text>`);
