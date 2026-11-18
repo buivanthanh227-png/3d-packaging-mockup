@@ -1,10 +1,12 @@
-<html lang="vi"><head>
+<!doctype html>
+<html lang="vi">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AUTO MOCKUP 3D STUDIO - V1.9 PRO Fixed + Zoom (Fixed Inputs & Flaps)</title>
+<title>AUTO MOCKUP 3D STUDIO - V1.9 PRO (Fixed Inputs & Flaps)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700;800;900&amp;family=Montserrat:wght@600;700;800;900&amp;family=Roboto+Mono:wght@600;700&amp;display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700;800;900&family=Montserrat:wght@600;700;800;900&family=Roboto+Mono:wght@600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#0b1120;--panel:#ffffff;--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;
@@ -239,8 +241,8 @@ button.flip-glue.right{
 
 <header>
   <div class="header-clock" aria-label="Đồng hồ thời gian thực">
-    <div id="liveClockTime" class="clock-time">12:28:02</div>
-    <div id="liveClockDate" class="clock-date">Thứ Tư, 18/11/2026</div>
+    <div id="liveClockTime" class="clock-time">00:00:00</div>
+    <div id="liveClockDate" class="clock-date">Đang tải ngày...</div>
   </div>
 
   <div class="brand-center">
@@ -252,7 +254,7 @@ button.flip-glue.right{
           <line x1="12" y1="22.08" x2="12" y2="12"></line>
         </svg>
       </div>
-      <h1 class="brand-title">AUTO MOCKUP 3D STUDIO <span class="ver-pill">V1.9 PRO Fixed + Zoom</span></h1>
+      <h1 class="brand-title">AUTO MOCKUP 3D STUDIO <span class="ver-pill">V1.9 PRO</span></h1>
     </div>
 
     <div class="brand-divider" aria-hidden="true"></div>
@@ -266,7 +268,7 @@ button.flip-glue.right{
 <main>
 <aside class="panel">
   <div class="section">
-    <h2>1. Kích thước thùng &amp; Kết cấu</h2>
+    <h2>1. Kích thước thùng & Kết cấu</h2>
     <div class="grid-2">
       <div class="mini-field"><label>Dài (L), mm</label><input id="L" type="number" min="30" value="545"></div>
       <div class="mini-field"><label>Rộng (W), mm</label><input id="W" type="number" min="30" value="305"></div>
@@ -286,7 +288,7 @@ button.flip-glue.right{
       <label>Cấu trúc sóng giấy</label>
       <select id="fluteLayers">
         <option value="3">Carton 3 lớp (1 sóng)</option>
-        <option value="5" selected="">Carton 5 lớp (2 sóng)</option>
+        <option value="5" selected>Carton 5 lớp (2 sóng)</option>
         <option value="7">Carton 7 lớp (3 sóng)</option>
       </select>
     </div>
@@ -314,7 +316,9 @@ button.flip-glue.right{
         </svg>
         <span id="toggle2DLabelsText">Ẩn thông số trên bản 2D</span>
       </button>
-      <button type="button" id="flipGlueBtn" class="flip-glue" title="Đảo toàn bộ bản trải để mối nối TS sang bên phải hoặc trái">Đảo mối nối sang PHẢI</button>
+      <button type="button" id="flipGlueBtn" class="flip-glue" title="Đảo toàn bộ bản trải để mối nối TS sang bên phải hoặc trái">
+        Đảo mối nối sang PHẢI
+      </button>
       <p id="glueSideHint" class="glue-hint">Mối nối TS đang ở bên TRÁI bản trải 2D.</p>
       <div id="dimWarn" class="dim-warn"></div>
     </div>
@@ -326,12 +330,12 @@ button.flip-glue.right{
       <div class="mini-field"><label>Bản rộng keo (mm)</label><input id="tapeWidthMm" type="number" min="20" max="100" value="60"></div>
       <div class="mini-field"><label>Gập tràn hông (mm)</label><input id="tapeOverlapMm" type="number" min="0" max="150" value="60"></div>
     </div>
-    <div class="field" style="margin-top:5px"><label>Loại &amp; Màu keo</label><select id="tapeMode"><option value="none">Không dán</option><option value="clear">Băng keo trong</option><option value="color">Băng keo màu tùy chỉnh</option></select></div>
+    <div class="field" style="margin-top:5px"><label>Loại & Màu keo</label><select id="tapeMode"><option value="none">Không dán</option><option value="clear">Băng keo trong</option><option value="color">Băng keo màu tùy chỉnh</option></select></div>
     <div id="tapeColorRow" class="field" style="display:none"><label>Chọn màu keo</label><input type="color" id="tapeColorPicker" value="#facc15" style="width:100%;height:24px;border:0;cursor:pointer;padding:0"></div>
   </div>
 
   <div class="section">
-    <h2>3. File thiết kế &amp; Chèn chữ</h2>
+    <h2>3. File thiết kế & Chèn chữ</h2>
     <div class="file-row">
       <input id="artInput" type="file" accept="image/png,image/jpeg,image/webp,application/pdf">
       <button type="button" class="danger sm" id="clearArtBtn" title="Xóa tệp thiết kế hiện tại">✕ Xóa</button>
@@ -387,14 +391,14 @@ button.flip-glue.right{
 <section class="stage">
   <div class="toolbar">
     <div id="toolbar2D" class="toolbar-group">
-      <button type="button" class="secondary sm" id="undoBtn" title="Hoàn tác (Ctrl + Z)" disabled="">
+      <button type="button" class="secondary sm" id="undoBtn" title="Hoàn tác (Ctrl + Z)" disabled>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
           <path d="M3 7v6h6"></path>
           <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path>
         </svg>
         <span>Undo (Ctrl+Z)</span>
       </button>
-      <button type="button" class="secondary sm" id="redoBtn" title="Làm lại (Ctrl + Shift + Z / Ctrl + Y)" disabled="">
+      <button type="button" class="secondary sm" id="redoBtn" title="Làm lại (Ctrl + Shift + Z / Ctrl + Y)" disabled>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 7v6h-6"></path>
           <path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3L21 13"></path>
@@ -429,7 +433,7 @@ button.flip-glue.right{
         <input type="color" id="textColorPicker" value="#0f172a" style="width:28px;height:22px;border:0;cursor:pointer;padding:0">
         <select id="textSizeSelect" style="padding:2px 4px;border:1px solid #93c5fd;border-radius:4px;font-size:11px;font-weight:600">
           <option value="16">16px</option>
-          <option value="24" selected="">24px</option>
+          <option value="24" selected>24px</option>
           <option value="36">36px</option>
           <option value="48">48px</option>
           <option value="64">64px</option>
@@ -449,11 +453,11 @@ button.flip-glue.right{
   </div>
 
   <div id="viewArea">
-    <canvas id="dieline2DCanvas" width="778" height="516"></canvas>
-    <div id="threeCanvas"><canvas data-engine="three.js r160" width="778" height="516" style="display: block; width: 778px; height: 516px; touch-action: none;"></canvas></div>
+    <canvas id="dieline2DCanvas"></canvas>
+    <div id="threeCanvas"></div>
 
     <div class="float-panel" id="controls3DPanel" style="display:none">
-      <h4><span>Điều khiển 3D &amp; Nắp</span> <button class="secondary sm" id="toggleOverlay" style="padding:2px 6px;font-size:10.5px">Thu gọn</button></h4>
+      <h4><span>Điều khiển 3D & Nắp</span> <button class="secondary sm" id="toggleOverlay" style="padding:2px 6px;font-size:10.5px">Thu gọn</button></h4>
       <div id="overlayContent">
         <div class="field"><label>Mở nắp trên lớn (L)</label><input id="topMainOpen" type="range" min="0" max="135" value="32"></div>
         <div class="field"><label>Mở nắp trên nhỏ (W)</label><input id="topSideOpen" type="range" min="0" max="115" value="12"></div>
@@ -804,7 +808,7 @@ function getDims() {
   const H = clampNum(getRawNum('H', 410), 30, 4000);
   const T = clampNum(getRawNum('thick', 5), 1, Math.min(20, L * 0.22, W * 0.22, H * 0.3));
   const TS = clampNum(getRawNum('glueTS', 35), 0, Math.min(90, Math.min(L, W) * 0.45));
-  // Allow free input for flap heights; only soft-warn in sanitizeDims
+  // Allow free input for flap heights
   let topFlapH = clampNum(getRawNum('topFlapH', W / 2), 0, 3000);
   let botFlapH = clampNum(getRawNum('botFlapH', W / 2), 0, 3000);
   const slotGap = clampNum(getRawNum('slotGap', 6), 0, 15);
@@ -1744,7 +1748,7 @@ function buildCarton3D() {
   const d = getDims();
   const { L, W, H, T, TS, topFlapH, botFlapH, slotGap, fluteLayers, tapeWidthMm, tapeOverlapMm } = d;
   const paperColor = document.getElementById('paperColorPicker').value;
-  const STACK_GAP = 0.08;
+  const STACK_GAP = 0.15;
 
   const innerMat = new THREE.MeshStandardMaterial({ map: createPaperTexture(paperColor), roughness: 0.92 });
   const edgeMat = new THREE.MeshStandardMaterial({ map: createCorrugatedEdgeTexture(paperColor, fluteLayers), roughness: 0.95 });
@@ -1780,7 +1784,7 @@ function buildCarton3D() {
       const flapBox = new THREE.Mesh(new THREE.BoxGeometry(flapW, topFlapH, T), [edgeMat, edgeMat, edgeMat, edgeMat, flapMat, innerMat]);
       // Stacking gọn: cánh phụ (minor) lớp dưới, cánh chính (major) chỉ nhích nhẹ ~0.6*T
       // để khi đóng không bị đội cao và không xuyên hình.
-      let stackOffsetTop = cfg.isLong ? (T * 0.28) : 0;
+      let stackOffsetTop = cfg.isLong ? (T * 0.25) : 0;
       flapBox.position.set(0, topFlapH / 2, -kz + stackOffsetTop);
       flapBox.castShadow = true; flapBox.receiveShadow = true;
       hinge.add(flapBox);
@@ -1794,7 +1798,7 @@ function buildCarton3D() {
       const flapW = Math.max(4, cfg.w - slotGap);
       const flapBox = new THREE.Mesh(new THREE.BoxGeometry(flapW, botFlapH, T), [edgeMat, edgeMat, edgeMat, edgeMat, flapMat, innerMat]);
       // Đáy: đảo chiều offset vì hinge + chiều quay ngược → cánh chính vẫn nằm ngoài khi đóng.
-      let stackOffsetBot = cfg.isLong ? -(T * 0.28) : 0;
+      let stackOffsetBot = cfg.isLong ? -(T * 0.25) : 0;
       flapBox.position.set(0, -botFlapH / 2, -kz + stackOffsetBot);
       flapBox.castShadow = true; flapBox.receiveShadow = true;
       hinge.add(flapBox);
@@ -2440,7 +2444,6 @@ function animate(timestamp) {
   }
   animFrameId = requestAnimationFrame(animate);
   updateAnimation(timestamp);
-  
   controls.update();
   renderer.render(scene, camera);
 }
@@ -2453,5 +2456,5 @@ pushHistory();
 resizeCanvas2D();
 if (currentMode === '3d') startAnimationLoop();
 </script>
-
-</body></html>
+</body>
+</html>
