@@ -1467,13 +1467,13 @@ threeContainer.appendChild(renderer.domElement);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
-controls.dampingFactor = 0.08;
-controls.maxPolarAngle = Math.PI * 0.95;
-controls.minPolarAngle = 0.05;
-controls.minDistance = 80;
-controls.maxDistance = 12000;
-controls.zoomSpeed = 0.9;
-controls.panSpeed = 0.85;
+controls.dampingFactor = 0.07;
+controls.maxPolarAngle = Math.PI * 0.92;
+controls.minPolarAngle = 0.08;
+controls.minDistance = 120;
+controls.maxDistance = 15000;
+controls.zoomSpeed = 0.85;
+controls.panSpeed = 0.8;
 controls.enablePan = true;
 controls.enableZoom = true;
 controls.enableRotate = true;
@@ -1484,15 +1484,35 @@ controls.mouseButtons = {
   RIGHT: THREE.MOUSE.PAN
 };
 
-// Prevent near-plane clipping when zooming: dynamically adjust near based on distance
-function updateCameraNear() {
-  if (!camera || !controls) return;
-  const dist = camera.position.distanceTo(controls.target);
-  camera.near = Math.max(0.5, dist * 0.02);
-  camera.far = Math.max(5000, dist * 20);
+// Safe near plane: fixed small value + minDistance prevents entering the model
+camera.near = 1;
+camera.far = 30000;
+camera.updateProjectionMatrix();
+
+function fitCameraToCarton() {
+  if (!cartonRoot || !cartonRoot.children.length) return;
+  const box = new THREE.Box3().setFromObject(cartonRoot);
+  if (box.isEmpty()) return;
+  const center = box.getCenter(new THREE.Vector3());
+  const size = box.getSize(new THREE.Vector3());
+  const maxDim = Math.max(size.x, size.y, size.z, 100);
+  const radius = maxDim * 0.55;
+
+  controls.target.copy(center);
+  controls.minDistance = Math.max(80, radius * 1.8);
+  controls.maxDistance = maxDim * 18;
+
+  const camDist = Math.max(controls.minDistance * 1.6, maxDim * 2.1);
+  camera.position.set(
+    center.x + camDist * 0.7,
+    center.y + camDist * 0.45,
+    center.z + camDist * 0.75
+  );
+  camera.near = Math.max(0.5, camDist * 0.01);
+  camera.far = Math.max(10000, camDist * 30);
   camera.updateProjectionMatrix();
+  controls.update();
 }
-controls.addEventListener('change', updateCameraNear);
 
 scene.add(new THREE.HemisphereLight(0xffffff, 0xd8dee9, 1.35));
 const keyLight = new THREE.DirectionalLight(0xfffaf2, 1.85);
@@ -2091,27 +2111,26 @@ function updateAnimation(timestamp) {
 }
 
 function focusCamera(preset = 'iso') {
+  if (typeof fitCameraToCarton === 'function' && cartonRoot && cartonRoot.children.length) {
+    fitCameraToCarton();
+    // Adjust for preset after fitting
+    const { L, W, H } = getDims();
+    const maxDim = Math.max(L, W, H, 100);
+    const center = controls.target.clone();
+    const dist = camera.position.distanceTo(center);
+    if (preset === 'front') camera.position.set(center.x, center.y, center.z + dist);
+    else if (preset === 'side') camera.position.set(center.x + dist, center.y, center.z);
+    else if (preset === 'top') camera.position.set(center.x, center.y + dist, center.z + 20);
+    else camera.position.set(center.x + dist * 0.65, center.y + dist * 0.4, center.z + dist * 0.7);
+    controls.update();
+    return;
+  }
+  // Fallback
   const { L, W, H } = getDims();
   const maxDim = Math.max(L, W, H, 100);
-  // Center of the box (walls span Y=0..H)
-  const targetY = H * 0.5;
-  controls.target.set(0, targetY, 0);
-
-  const dist = maxDim * 2.2;
-  if (preset === 'front') camera.position.set(0, targetY, dist);
-  else if (preset === 'side') camera.position.set(dist, targetY, 0);
-  else if (preset === 'top') camera.position.set(0, maxDim * 2.8, 30);
-  else camera.position.set(maxDim * 1.6, maxDim * 1.15, maxDim * 1.75);
-
-  // Safe limits so zoom never clips the model
-  controls.minDistance = Math.max(60, maxDim * 0.35);
-  controls.maxDistance = maxDim * 15;
-
-  // Initial near/far based on distance
-  const camDist = camera.position.distanceTo(controls.target);
-  camera.near = Math.max(1, camDist * 0.015);
-  camera.far = Math.max(8000, camDist * 25);
-  camera.updateProjectionMatrix();
+  controls.target.set(0, H * 0.5, 0);
+  camera.position.set(maxDim * 1.5, maxDim * 1.1, maxDim * 1.6);
+  controls.minDistance = Math.max(100, maxDim * 0.5);
   controls.update();
 }
 
@@ -2165,6 +2184,7 @@ document.getElementById('build3DBtn').onclick = () => {
   renderer.setSize(w, h);
 
   buildCarton3D();
+  fitCameraToCarton();
   focusCamera('iso');
 };
 
@@ -2478,7 +2498,7 @@ function animate(timestamp) {
   }
   animFrameId = requestAnimationFrame(animate);
   updateAnimation(timestamp);
-  if (typeof updateCameraNear === 'function') updateCameraNear();
+  
   controls.update();
   renderer.render(scene, camera);
 }
