@@ -6,104 +6,98 @@
 <title>AUTO MOCKUP 3D STUDIO V2.0 PRO</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script type="importmap">
-{
-  "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
-  }
-}
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
 </script>
 <style>
-  :root { --glass: rgba(255,255,255,0.08); }
-  body { font-family: 'Inter', system-ui, sans-serif; }
-  .glass { background: rgba(15,23,42,0.65); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.1); }
-  .dark .glass { background: rgba(2,6,23,0.75); }
-  canvas { display: block; }
-  .slider::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #38bdf8; cursor: pointer; }
+body{font-family:system-ui,sans-serif;margin:0;background:#0f172a;color:#e2e8f0}
+.glass{background:rgba(15,23,42,.7);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.08)}
+#canvas2D,#threeCanvas{width:100%;height:100%;display:block;background:#1e293b}
+.mode-btn.active{background:#0284c7;color:white}
+input,select,button{outline:none}
 </style>
 </head>
-<body class="bg-slate-950 text-slate-100 dark:bg-slate-950">
-<div id="app" class="h-screen flex flex-col">
-  <!-- Header -->
-  <header class="glass px-4 py-3 flex items-center justify-between shrink-0">
-    <div class="flex items-center gap-3">
-      <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center text-white font-black">3D</div>
-      <div>
-        <h1 class="text-lg font-black tracking-tight">AUTO MOCKUP 3D STUDIO <span class="text-xs bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full ml-2">V2.0 PRO</span></h1>
-        <p class="text-xs text-slate-400">RSC • Mailer • Lid & Base • PBR Kraft • Export PNG 4K / GLB</p>
-      </div>
+<body class="h-screen flex flex-col">
+<header class="glass px-4 py-2 flex items-center justify-between shrink-0">
+  <div class="flex items-center gap-3">
+    <div class="w-8 h-8 rounded bg-sky-500 flex items-center justify-center font-bold">3D</div>
+    <div>
+      <h1 class="font-bold text-lg">AUTO MOCKUP 3D STUDIO <span class="text-xs bg-emerald-500/30 text-emerald-300 px-2 py-0.5 rounded-full">V2.0 PRO</span></h1>
+      <p class="text-xs text-slate-400">2D Dieline → Artwork → 3D Carton • RSC / Mailer / Lid-Base</p>
     </div>
-    <div class="flex items-center gap-2">
-      <button id="themeToggle" class="px-3 py-1.5 rounded-lg bg-white/10 text-xs">Dark/Light</button>
-      <span class="text-xs opacity-70">Bùi Văn Thanh</span>
-    </div>
-  </header>
-
-  <div class="flex-1 flex overflow-hidden">
-    <!-- Left Panel -->
-    <aside class="w-80 glass border-r border-white/10 p-4 overflow-y-auto shrink-0">
-      <h2 class="text-xs font-bold uppercase tracking-wider text-sky-300 mb-3">Thông số thùng</h2>
-      
-      <div class="mb-4">
-        <label class="text-xs text-slate-400">Kiểu dáng</label>
-        <select id="boxType" class="w-full mt-1 bg-slate-800 border border-white/10 rounded-lg px-3 py-2 text-sm">
-          <option value="rsc">RSC - Thùng carton thường</option>
-          <option value="mailer">Mailer Box - Hộp nắp gập die-cut</option>
-          <option value="lidbase">Lid & Base - Hộp âm dương</option>
-        </select>
-      </div>
-
-      <div class="grid grid-cols-2 gap-2 mb-3">
-        <div><label class="text-xs text-slate-400">Dài (L) mm</label><input id="L" type="number" value="300" class="w-full bg-slate-800 border border-white/10 rounded px-2 py-1 text-sm"></div>
-        <div><label class="text-xs text-slate-400">Rộng (W) mm</label><input id="W" type="number" value="200" class="w-full bg-slate-800 border border-white/10 rounded px-2 py-1 text-sm"></div>
-        <div><label class="text-xs text-slate-400">Cao (H) mm</label><input id="H" type="number" value="150" class="w-full bg-slate-800 border border-white/10 rounded px-2 py-1 text-sm"></div>
-        <div><label class="text-xs text-slate-400">Độ dày mm</label><input id="thick" type="number" value="3" step="0.5" class="w-full bg-slate-800 border border-white/10 rounded px-2 py-1 text-sm"></div>
-      </div>
-
-      <div class="mb-4">
-        <label class="text-xs text-slate-400">Màu Kraft</label>
-        <input id="paperColor" type="color" value="#c4a574" class="w-full h-8 mt-1 rounded">
-      </div>
-
-      <div class="space-y-2 mb-4">
-        <div>
-          <label class="text-xs text-slate-400 flex justify-between">Mở nắp trên <span id="topOpenVal">0°</span></label>
-          <input id="topOpen" type="range" min="0" max="120" value="0" class="w-full slider">
-        </div>
-        <div>
-          <label class="text-xs text-slate-400 flex justify-between">Mở cánh đáy <span id="botOpenVal">0°</span></label>
-          <input id="botOpen" type="range" min="0" max="90" value="0" class="w-full slider">
-        </div>
-      </div>
-
-      <div class="grid grid-cols-2 gap-2 mb-4">
-        <button id="presetOpen" class="py-2 text-xs bg-sky-600 hover:bg-sky-500 rounded-lg">Mở tự nhiên</button>
-        <button id="presetClose" class="py-2 text-xs bg-slate-700 hover:bg-slate-600 rounded-lg">Đóng kín</button>
-      </div>
-
-      <button id="rebuildBtn" class="w-full py-2.5 bg-gradient-to-r from-sky-500 to-blue-600 rounded-lg font-semibold text-sm mb-2">Dựng lại 3D</button>
-      
-      <div class="grid grid-cols-2 gap-2">
-        <button id="exportPng" class="py-2 text-xs bg-emerald-600 hover:bg-emerald-500 rounded-lg">Xuất PNG 4K</button>
-        <button id="exportGlb" class="py-2 text-xs bg-violet-600 hover:bg-violet-500 rounded-lg">Xuất GLB</button>
-      </div>
-
-      <div class="mt-6 text-xs text-slate-500">
-        <p>• Soft Shadows + Studio Lighting</p>
-        <p>• PBR Kraft + Corrugation Normal</p>
-        <p>• Responsive & Performance Optimized</p>
-      </div>
-    </aside>
-
-    <!-- 3D Stage -->
-    <main class="flex-1 relative">
-      <div id="canvasContainer" class="w-full h-full"></div>
-      <div class="absolute bottom-4 left-4 right-4 flex justify-between text-xs opacity-70 pointer-events-none">
-        <span>Kéo chuột để xoay • Scroll để zoom • Chuột phải để pan</span>
-        <span id="fps">60 FPS</span>
-      </div>
-    </main>
   </div>
+  <div class="flex gap-2">
+    <button id="mode2D" class="mode-btn active px-4 py-1.5 rounded text-sm">2D Bản trải</button>
+    <button id="mode3D" class="mode-btn px-4 py-1.5 rounded text-sm bg-slate-700">3D Mockup</button>
+    <button id="themeBtn" class="px-3 py-1.5 rounded text-sm bg-white/10">Dark/Light</button>
+  </div>
+</header>
+
+<div class="flex-1 flex overflow-hidden">
+  <!-- Left controls -->
+  <aside class="w-80 glass border-r border-white/10 p-3 overflow-y-auto shrink-0 text-sm">
+    <h3 class="text-xs font-bold text-sky-300 uppercase mb-2">Kích thước (mm)</h3>
+    <div class="grid grid-cols-2 gap-2 mb-3">
+      <div><label class="text-xs text-slate-400">Dài L</label><input id="L" type="number" value="400" class="w-full bg-slate-800 rounded px-2 py-1"></div>
+      <div><label class="text-xs text-slate-400">Rộng W</label><input id="W" type="number" value="250" class="w-full bg-slate-800 rounded px-2 py-1"></div>
+      <div><label class="text-xs text-slate-400">Cao H</label><input id="H" type="number" value="200" class="w-full bg-slate-800 rounded px-2 py-1"></div>
+      <div><label class="text-xs text-slate-400">Độ dày</label><input id="thick" type="number" value="4" step="0.5" class="w-full bg-slate-800 rounded px-2 py-1"></div>
+    </div>
+    <div class="mb-3">
+      <label class="text-xs text-slate-400">Kiểu thùng</label>
+      <select id="boxType" class="w-full bg-slate-800 rounded px-2 py-1 mt-1">
+        <option value="rsc">RSC - Carton thường</option>
+        <option value="mailer">Mailer Box (nắp gập)</option>
+        <option value="lidbase">Lid & Base (âm dương)</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label class="text-xs text-slate-400">Màu kraft</label>
+      <input id="paperColor" type="color" value="#c9a36a" class="w-full h-8 mt-1 rounded">
+    </div>
+
+    <h3 class="text-xs font-bold text-sky-300 uppercase mb-2 mt-4">Nội dung 2D</h3>
+    <div class="mb-2">
+      <label class="text-xs text-slate-400">Upload Artwork</label>
+      <input id="artFile" type="file" accept="image/*" class="w-full text-xs mt-1">
+    </div>
+    <div class="flex gap-2 mb-3">
+      <button id="textBtn" class="flex-1 py-1.5 bg-slate-700 rounded text-xs">Thêm Text</button>
+      <button id="eraserBtn" class="flex-1 py-1.5 bg-slate-700 rounded text-xs">Tẩy</button>
+    </div>
+    <div class="flex gap-2 mb-4">
+      <button id="undoBtn" class="flex-1 py-1 bg-slate-700 rounded text-xs">Undo</button>
+      <button id="redoBtn" class="flex-1 py-1 bg-slate-700 rounded text-xs">Redo</button>
+    </div>
+
+    <h3 class="text-xs font-bold text-sky-300 uppercase mb-2">Điều khiển 3D</h3>
+    <div class="mb-2">
+      <label class="text-xs">Mở nắp trên <span id="topVal">0°</span></label>
+      <input id="topOpen" type="range" min="0" max="110" value="0" class="w-full">
+    </div>
+    <div class="mb-3">
+      <label class="text-xs">Mở cánh đáy <span id="botVal">0°</span></label>
+      <input id="botOpen" type="range" min="0" max="90" value="0" class="w-full">
+    </div>
+    <div class="grid grid-cols-2 gap-2 mb-3">
+      <button id="presetOpen" class="py-1.5 bg-sky-600 rounded text-xs">Mở tự nhiên</button>
+      <button id="presetClose" class="py-1.5 bg-slate-600 rounded text-xs">Đóng kín</button>
+    </div>
+
+    <div class="grid grid-cols-2 gap-2">
+      <button id="exportPng" class="py-2 bg-emerald-600 rounded text-xs font-medium">PNG 4K</button>
+      <button id="exportGlb" class="py-2 bg-violet-600 rounded text-xs font-medium">Xuất GLB</button>
+    </div>
+    <p class="text-xs text-slate-500 mt-3">Quy trình: chỉnh 2D → bấm "3D Mockup" để dựng thùng carton từ nội dung.</p>
+  </aside>
+
+  <!-- Stage -->
+  <main class="flex-1 relative bg-slate-900">
+    <canvas id="canvas2D" class="absolute inset-0"></canvas>
+    <div id="threeWrap" class="absolute inset-0 hidden">
+      <canvas id="threeCanvas"></canvas>
+    </div>
+    <div class="absolute bottom-3 left-3 text-xs opacity-60 pointer-events-none">Chuột giữa pan • Scroll zoom • 2D: kéo artwork/text</div>
+  </main>
 </div>
 
 <script type="module">
@@ -111,317 +105,290 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js';
 
-// ========== CORE ==========
+// ===== STATE =====
+let currentMode = '2d';
 let scene, camera, renderer, controls, cartonGroup;
 let topFlaps = [], botFlaps = [];
-let currentType = 'rsc';
+let loadedArt = null;
+let textLayers = [];
+let history = [], histIndex = -1;
+let zoom2D = 1, pan2D = {x:0,y:0};
+let canvas2D, ctx2D;
 
-function init() {
-  const container = document.getElementById('canvasContainer');
+// ===== 2D =====
+function init2D() {
+  canvas2D = document.getElementById('canvas2D');
+  ctx2D = canvas2D.getContext('2d');
+  resize2D();
+  window.addEventListener('resize', resize2D);
+  canvas2D.addEventListener('wheel', e => {
+    e.preventDefault();
+    zoom2D = Math.max(0.3, Math.min(3, zoom2D + (e.deltaY > 0 ? -0.1 : 0.1)));
+    draw2D();
+  });
+  draw2D();
+}
+
+function resize2D() {
+  const r = canvas2D.parentElement.getBoundingClientRect();
+  canvas2D.width = r.width;
+  canvas2D.height = r.height;
+  draw2D();
+}
+
+function getDims() {
+  return {
+    L: +document.getElementById('L').value,
+    W: +document.getElementById('W').value,
+    H: +document.getElementById('H').value,
+    T: +document.getElementById('thick').value
+  };
+}
+
+function draw2D() {
+  if (currentMode !== '2d') return;
+  const d = getDims();
+  const w = canvas2D.width, h = canvas2D.height;
+  ctx2D.clearRect(0,0,w,h);
+  ctx2D.save();
+  ctx2D.translate(w/2 + pan2D.x, h/2 + pan2D.y);
+  ctx2D.scale(zoom2D, zoom2D);
+
+  const scale = Math.min(w*0.7 / (d.L*2 + d.W*2 + 40), h*0.7 / (d.H + d.W));
+  const totalW = (d.L + d.W) * 2 + 40;
+  const totalH = d.H + d.W;
+  const sx = -totalW * scale / 2;
+  const sy = -totalH * scale / 2;
+
+  // Simple RSC net
+  ctx2D.fillStyle = document.getElementById('paperColor').value;
+  ctx2D.fillRect(sx, sy, totalW*scale, totalH*scale);
+
+  // Draw panels outline
+  ctx2D.strokeStyle = '#334155';
+  ctx2D.lineWidth = 1.5 / zoom2D;
+  ctx2D.strokeRect(sx, sy, totalW*scale, totalH*scale);
+
+  // Artwork
+  if (loadedArt) {
+    ctx2D.drawImage(loadedArt, sx + 20*scale, sy + 20*scale, (totalW-40)*scale, (totalH-40)*scale);
+  }
+
+  // Text layers
+  textLayers.forEach(t => {
+    ctx2D.fillStyle = t.color || '#111';
+    ctx2D.font = `bold ${t.size||24}px sans-serif`;
+    ctx2D.fillText(t.text, sx + t.x*scale, sy + t.y*scale);
+  });
+
+  ctx2D.restore();
+}
+
+// ===== 3D =====
+function init3D() {
+  const wrap = document.getElementById('threeWrap');
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0x0f172a);
-  scene.fog = new THREE.Fog(0x0f172a, 8, 25);
+  scene.fog = new THREE.Fog(0x0f172a, 6, 20);
 
-  camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
-  camera.position.set(3.5, 2.2, 4.5);
+  camera = new THREE.PerspectiveCamera(42, wrap.clientWidth/wrap.clientHeight, 0.1, 50);
+  camera.position.set(2.8, 1.8, 3.6);
 
-  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, preserveDrawingBuffer: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.setSize(container.clientWidth, container.clientHeight);
+  renderer = new THREE.WebGLRenderer({canvas: document.getElementById('threeCanvas'), antialias:true, preserveDrawingBuffer:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setSize(wrap.clientWidth, wrap.clientHeight);
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.1;
-  container.appendChild(renderer.domElement);
 
   controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
-  controls.dampingFactor = 0.05;
-  controls.minDistance = 1.5;
-  controls.maxDistance = 12;
 
-  // Studio Lighting
-  const ambient = new THREE.AmbientLight(0xffffff, 0.4);
-  scene.add(ambient);
-
-  const key = new THREE.DirectionalLight(0xffffff, 1.2);
-  key.position.set(4, 6, 3);
+  // Studio lights
+  scene.add(new THREE.AmbientLight(0xffffff, 0.45));
+  const key = new THREE.DirectionalLight(0xffffff, 1.15);
+  key.position.set(4, 5, 3);
   key.castShadow = true;
-  key.shadow.mapSize.set(2048, 2048);
-  key.shadow.camera.near = 0.5;
-  key.shadow.camera.far = 20;
-  key.shadow.camera.left = -6;
-  key.shadow.camera.right = 6;
-  key.shadow.camera.top = 6;
-  key.shadow.camera.bottom = -6;
-  key.shadow.bias = -0.0005;
+  key.shadow.mapSize.set(2048,2048);
   scene.add(key);
+  scene.add(new THREE.DirectionalLight(0xaaccff, 0.4).position.set(-3,2,-1));
 
-  const fill = new THREE.DirectionalLight(0x88aaff, 0.5);
-  fill.position.set(-3, 2, -2);
-  scene.add(fill);
-
-  const rim = new THREE.DirectionalLight(0xffddaa, 0.3);
-  rim.position.set(0, 1, -4);
-  scene.add(rim);
-
-  // Ground
-  const ground = new THREE.Mesh(
-    new THREE.PlaneGeometry(20, 20),
-    new THREE.ShadowMaterial({ opacity: 0.25 })
-  );
-  ground.rotation.x = -Math.PI / 2;
-  ground.position.y = -1.2;
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(12,12), new THREE.ShadowMaterial({opacity:0.3}));
+  ground.rotation.x = -Math.PI/2;
+  ground.position.y = -0.9;
   ground.receiveShadow = true;
   scene.add(ground);
 
-  window.addEventListener('resize', onResize);
-  animate();
-  rebuild();
-}
-
-function onResize() {
-  const c = document.getElementById('canvasContainer');
-  camera.aspect = c.clientWidth / c.clientHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(c.clientWidth, c.clientHeight);
-}
-
-function createKraftMaterial(color) {
-  const canvas = document.createElement('canvas');
-  canvas.width = canvas.height = 512;
-  const ctx = canvas.getContext('2d');
-  ctx.fillStyle = color;
-  ctx.fillRect(0, 0, 512, 512);
-  // Subtle noise for paper texture
-  for (let i = 0; i < 8000; i++) {
-    ctx.fillStyle = `rgba(0,0,0,${Math.random()*0.08})`;
-    ctx.fillRect(Math.random()*512, Math.random()*512, 1, 1);
-  }
-  const map = new THREE.CanvasTexture(canvas);
-  map.colorSpace = THREE.SRGBColorSpace;
-
-  // Simple normal for corrugation feel
-  const normalCanvas = document.createElement('canvas');
-  normalCanvas.width = normalCanvas.height = 256;
-  const nctx = normalCanvas.getContext('2d');
-  nctx.fillStyle = '#8080ff';
-  nctx.fillRect(0, 0, 256, 256);
-  for (let y = 0; y < 256; y += 4) {
-    nctx.strokeStyle = y % 8 === 0 ? '#9090ff' : '#7070ff';
-    nctx.beginPath(); nctx.moveTo(0, y); nctx.lineTo(256, y); nctx.stroke();
-  }
-  const normalMap = new THREE.CanvasTexture(normalCanvas);
-
-  return new THREE.MeshStandardMaterial({
-    map,
-    normalMap,
-    normalScale: new THREE.Vector2(0.3, 0.3),
-    roughness: 0.82,
-    metalness: 0.02,
-    side: THREE.DoubleSide
+  window.addEventListener('resize', () => {
+    const w = wrap.clientWidth, h = wrap.clientHeight;
+    camera.aspect = w/h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w,h);
   });
 }
 
-function disposeGroup(group) {
-  if (!group) return;
-  group.traverse(obj => {
-    if (obj.geometry) obj.geometry.dispose();
-    if (obj.material) {
-      const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
-      mats.forEach(m => {
-        if (m.map) m.map.dispose();
-        if (m.normalMap) m.normalMap.dispose();
-        m.dispose();
-      });
+function createKraftMat(hex) {
+  const c = document.createElement('canvas');
+  c.width = c.height = 512;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = hex;
+  ctx.fillRect(0,0,512,512);
+  for(let i=0;i<6000;i++){
+    ctx.fillStyle = `rgba(0,0,0,${Math.random()*0.07})`;
+    ctx.fillRect(Math.random()*512, Math.random()*512, 1,1);
+  }
+  const map = new THREE.CanvasTexture(c);
+  map.colorSpace = THREE.SRGBColorSpace;
+  return new THREE.MeshStandardMaterial({
+    map, roughness:0.85, metalness:0.01, side:THREE.DoubleSide
+  });
+}
+
+function disposeCarton() {
+  if (!cartonGroup) return;
+  cartonGroup.traverse(o => {
+    if (o.geometry) o.geometry.dispose();
+    if (o.material) {
+      if (o.material.map) o.material.map.dispose();
+      o.material.dispose();
     }
   });
-  scene.remove(group);
+  scene.remove(cartonGroup);
 }
 
-function rebuild() {
-  disposeGroup(cartonGroup);
+function build3D() {
+  disposeCarton();
   cartonGroup = new THREE.Group();
   scene.add(cartonGroup);
   topFlaps = []; botFlaps = [];
 
-  const L = +document.getElementById('L').value / 1000;
-  const W = +document.getElementById('W').value / 1000;
-  const H = +document.getElementById('H').value / 1000;
-  const T = +document.getElementById('thick').value / 1000;
-  const color = document.getElementById('paperColor').value;
-  currentType = document.getElementById('boxType').value;
+  const d = getDims();
+  const L = d.L/1000, W = d.W/1000, H = d.H/1000;
+  const mat = createKraftMat(document.getElementById('paperColor').value);
+  const type = document.getElementById('boxType').value;
 
-  const mat = createKraftMaterial(color);
-
-  if (currentType === 'rsc') {
-    buildRSC(L, W, H, T, mat);
-  } else if (currentType === 'mailer') {
-    buildMailer(L, W, H, T, mat);
-  } else {
-    buildLidBase(L, W, H, T, mat);
-  }
-
-  updateFlaps();
-}
-
-function buildRSC(L, W, H, T, mat) {
-  // Body walls
+  // Body
   const body = new THREE.Mesh(new THREE.BoxGeometry(L, H, W), mat);
   body.castShadow = body.receiveShadow = true;
   cartonGroup.add(body);
 
-  // Top main flaps (along L)
-  const flapH = W * 0.48;
-  [-1, 1].forEach(side => {
-    const flap = new THREE.Mesh(new THREE.BoxGeometry(L * 0.98, T * 0.8, flapH), mat);
-    flap.position.set(0, H/2 + T*0.4, side * (W/2 + flapH/2));
-    flap.castShadow = true;
-    flap.userData = { type: 'top', axis: 'x', side };
-    cartonGroup.add(flap);
-    topFlaps.push(flap);
+  // Simple top flaps for RSC-style
+  const flapDepth = W * 0.45;
+  [-1,1].forEach(s => {
+    const f = new THREE.Mesh(new THREE.BoxGeometry(L*0.96, 0.004, flapDepth), mat);
+    f.position.set(0, H/2 + 0.002, s*(W/2 + flapDepth/2));
+    f.castShadow = true;
+    f.userData.side = s;
+    cartonGroup.add(f);
+    topFlaps.push(f);
   });
 
-  // Top side flaps (along W) - smaller
-  const sideFlapH = L * 0.48;
-  [-1, 1].forEach(side => {
-    const flap = new THREE.Mesh(new THREE.BoxGeometry(sideFlapH, T * 0.8, W * 0.96), mat);
-    flap.position.set(side * (L/2 + sideFlapH/2), H/2 + T*0.4, 0);
-    flap.castShadow = true;
-    flap.userData = { type: 'topSide', axis: 'z', side };
-    cartonGroup.add(flap);
-    topFlaps.push(flap);
-  });
-
-  // Bottom flaps similar (simplified)
-  [-1, 1].forEach(side => {
-    const flap = new THREE.Mesh(new THREE.BoxGeometry(L * 0.98, T * 0.8, flapH), mat);
-    flap.position.set(0, -H/2 - T*0.4, side * (W/2 + flapH/2));
-    flap.rotation.x = Math.PI;
-    flap.castShadow = true;
-    flap.userData = { type: 'bot', axis: 'x', side };
-    cartonGroup.add(flap);
-    botFlaps.push(flap);
-  });
-}
-
-function buildMailer(L, W, H, T, mat) {
-  // Mailer box: body + large top flap that folds over
-  const body = new THREE.Mesh(new THREE.BoxGeometry(L, H * 0.85, W), mat);
-  body.position.y = -H * 0.05;
-  body.castShadow = body.receiveShadow = true;
-  cartonGroup.add(body);
-
-  // Big top flap
-  const flap = new THREE.Mesh(new THREE.BoxGeometry(L * 0.98, T, W * 0.95), mat);
-  flap.position.set(0, H/2, 0);
-  flap.userData = { type: 'mailerTop' };
-  cartonGroup.add(flap);
-  topFlaps.push(flap);
-}
-
-function buildLidBase(L, W, H, T, mat) {
-  // Base
-  const base = new THREE.Mesh(new THREE.BoxGeometry(L, H * 0.55, W), mat);
-  base.position.y = -H * 0.2;
-  base.castShadow = base.receiveShadow = true;
-  cartonGroup.add(base);
-
-  // Lid
-  const lid = new THREE.Mesh(new THREE.BoxGeometry(L * 1.02, H * 0.5, W * 1.02), mat);
-  lid.position.y = H * 0.25;
-  lid.userData = { type: 'lid' };
-  cartonGroup.add(lid);
-  topFlaps.push(lid);
+  updateFlaps();
 }
 
 function updateFlaps() {
-  const topDeg = +document.getElementById('topOpen').value;
-  const botDeg = +document.getElementById('botOpen').value;
-  document.getElementById('topOpenVal').textContent = topDeg + '°';
-  document.getElementById('botOpenVal').textContent = botDeg + '°';
-
-  const topRad = THREE.MathUtils.degToRad(topDeg);
-  const botRad = THREE.MathUtils.degToRad(botDeg);
-
-  topFlaps.forEach(flap => {
-    const ud = flap.userData;
-    if (ud.type === 'top') {
-      flap.rotation.x = ud.side > 0 ? -topRad : topRad;
-    } else if (ud.type === 'topSide') {
-      flap.rotation.z = ud.side > 0 ? topRad * 0.7 : -topRad * 0.7;
-    } else if (ud.type === 'mailerTop') {
-      flap.rotation.x = -topRad * 1.2;
-    } else if (ud.type === 'lid') {
-      flap.position.y = H/2 * 0.4 + topRad * 0.3;
-    }
-  });
-
-  botFlaps.forEach(flap => {
-    const ud = flap.userData;
-    if (ud.type === 'bot') {
-      flap.rotation.x = ud.side > 0 ? botRad : -botRad;
-    }
+  const t = +document.getElementById('topOpen').value;
+  const b = +document.getElementById('botOpen').value;
+  document.getElementById('topVal').textContent = t+'°';
+  document.getElementById('botVal').textContent = b+'°';
+  const tr = THREE.MathUtils.degToRad(t);
+  topFlaps.forEach(f => {
+    f.rotation.x = f.userData.side > 0 ? -tr : tr;
   });
 }
 
 function animate() {
   requestAnimationFrame(animate);
-  controls.update();
-  renderer.render(scene, camera);
+  if (currentMode === '3d' && controls) {
+    controls.update();
+    renderer.render(scene, camera);
+  }
 }
 
-// ========== UI ==========
-document.getElementById('rebuildBtn').onclick = rebuild;
-document.getElementById('boxType').onchange = rebuild;
-['L','W','H','thick','paperColor'].forEach(id => {
-  document.getElementById(id).addEventListener('input', rebuild);
+// ===== MODE SWITCH =====
+function setMode(m) {
+  currentMode = m;
+  document.getElementById('canvas2D').style.display = m==='2d' ? 'block' : 'none';
+  document.getElementById('threeWrap').style.display = m==='3d' ? 'block' : 'none';
+  document.getElementById('mode2D').classList.toggle('active', m==='2d');
+  document.getElementById('mode3D').classList.toggle('active', m==='3d');
+  if (m === '3d') {
+    if (!renderer) init3D();
+    build3D();
+    renderer.setSize(document.getElementById('threeWrap').clientWidth, document.getElementById('threeWrap').clientHeight);
+  } else {
+    draw2D();
+  }
+}
+
+// ===== EVENTS =====
+document.getElementById('mode2D').onclick = () => setMode('2d');
+document.getElementById('mode3D').onclick = () => setMode('3d');
+
+['L','W','H','thick','paperColor','boxType'].forEach(id => {
+  document.getElementById(id).addEventListener('input', () => {
+    if (currentMode==='2d') draw2D();
+    else build3D();
+  });
 });
+
+document.getElementById('artFile').onchange = e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  const img = new Image();
+  img.onload = () => { loadedArt = img; draw2D(); };
+  img.src = URL.createObjectURL(f);
+};
+
+document.getElementById('textBtn').onclick = () => {
+  const txt = prompt('Nhập text:', 'THƯƠNG HIỆU');
+  if (txt) {
+    textLayers.push({text:txt, x:100, y:80, size:28, color:'#111'});
+    draw2D();
+  }
+};
+
 document.getElementById('topOpen').oninput = updateFlaps;
 document.getElementById('botOpen').oninput = updateFlaps;
-
 document.getElementById('presetOpen').onclick = () => {
-  document.getElementById('topOpen').value = 85;
-  document.getElementById('botOpen').value = 40;
+  document.getElementById('topOpen').value = 75;
   updateFlaps();
 };
 document.getElementById('presetClose').onclick = () => {
   document.getElementById('topOpen').value = 0;
-  document.getElementById('botOpen').value = 0;
   updateFlaps();
 };
 
-document.getElementById('themeToggle').onclick = () => {
-  document.documentElement.classList.toggle('dark');
-  scene.background.set(document.documentElement.classList.contains('dark') ? 0x020617 : 0x0f172a);
-};
-
-// Export PNG 4K
 document.getElementById('exportPng').onclick = () => {
-  const original = { w: renderer.domElement.width, h: renderer.domElement.height };
-  const scale = 2; // ~4K depending on viewport
-  renderer.setSize(original.w * scale, original.h * scale, false);
-  renderer.render(scene, camera);
-  const link = document.createElement('a');
-  link.download = `mockup-${currentType}-4k.png`;
-  link.href = renderer.domElement.toDataURL('image/png');
-  link.click();
-  renderer.setSize(original.w, original.h, false);
-};
-
-// Export GLB
-document.getElementById('exportGlb').onclick = () => {
-  const exporter = new GLTFExporter();
-  exporter.parse(cartonGroup, (gltf) => {
-    const blob = new Blob([gltf], { type: 'model/gltf-binary' });
+  if (currentMode !== '3d') setMode('3d');
+  setTimeout(() => {
     const link = document.createElement('a');
-    link.download = `carton-${currentType}.glb`;
-    link.href = URL.createObjectURL(blob);
+    link.download = 'carton-mockup-4k.png';
+    link.href = renderer.domElement.toDataURL('image/png');
     link.click();
-  }, { binary: true });
+  }, 100);
 };
 
-init();
+document.getElementById('exportGlb').onclick = () => {
+  if (!cartonGroup) return;
+  const exp = new GLTFExporter();
+  exp.parse(cartonGroup, gltf => {
+    const blob = new Blob([gltf], {type:'model/gltf-binary'});
+    const a = document.createElement('a');
+    a.download = 'carton.glb';
+    a.href = URL.createObjectURL(blob);
+    a.click();
+  }, {binary:true});
+};
+
+document.getElementById('themeBtn').onclick = () => {
+  document.body.classList.toggle('bg-slate-100');
+  document.body.classList.toggle('text-slate-900');
+};
+
+// Init
+init2D();
+animate();
 </script>
 </body>
 </html>
