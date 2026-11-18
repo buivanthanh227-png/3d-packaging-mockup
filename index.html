@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-.title>AUTO MOCKUP 3D STUDIO - V1.9 PRO</title>
+<title>AUTO MOCKUP 3D STUDIO - V1.9 PRO (Optimized)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700;800;900&family=Montserrat:wght@600;700;800;900&family=Roboto+Mono:wght@600;700&display=swap" rel="stylesheet">
@@ -200,6 +200,41 @@ button.flip-glue:hover{background:#1e293b}
 button.flip-glue.right{
   background:linear-gradient(135deg,#7c3aed,#6d28d9);border-color:#c4b5fd;
 }
+
+/* ===== MOBILE OPTIMIZATIONS (added in deep fix) ===== */
+@media (max-width: 768px) {
+  body { font-size: 12px; }
+  header { padding: 6px 10px; flex-wrap: wrap; gap: 8px; }
+  .header-clock { min-width: 120px; padding: 2px 6px; }
+  .clock-time { font-size: 14px; }
+  .clock-date { font-size: 10px; }
+  .brand-title { font-size: 14px; }
+  .brand-sub, .author-credit { display: none; }
+  .brand-center { gap: 8px; padding: 0 4px; }
+  .main-layout { flex-direction: column; }
+  .sidebar {
+    width: 100% !important;
+    max-width: 100%;
+    max-height: 42vh;
+    overflow-y: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+  }
+  .viewport-area { flex: 1; min-height: 50vh; }
+  .toolbar-3d { flex-wrap: wrap; gap: 4px; }
+  .toolbar-3d button { font-size: 11px; padding: 4px 8px; }
+  .control-panel-3d { max-width: 95%; font-size: 12px; }
+  input[type="number"], select { font-size: 14px; min-height: 32px; }
+  .btn-primary, .btn-accent, .btn-success, .btn-dark {
+    min-height: 40px; font-size: 13px;
+  }
+}
+@media (max-width: 480px) {
+  .sidebar { max-height: 38vh; }
+  .brand-logo { width: 28px; height: 28px; }
+  .ver-pill { font-size: 9px; padding: 1px 6px; }
+}
+
 </style>
 </head>
 <body>
@@ -458,6 +493,27 @@ button.flip-glue.right{
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
+// ===== DEEP OPT: Texture Cache to avoid recreating CanvasTextures =====
+const textureCache = new Map();
+function getCachedTexture(key, factory) {
+  if (textureCache.has(key)) return textureCache.get(key);
+  const tex = factory();
+  textureCache.set(key, tex);
+  // Limit cache size
+  if (textureCache.size > 24) {
+    const firstKey = textureCache.keys().next().value;
+    const old = textureCache.get(firstKey);
+    if (old && old.dispose) old.dispose();
+    textureCache.delete(firstKey);
+  }
+  return tex;
+}
+function clearTextureCache() {
+  textureCache.forEach(t => { if (t && t.dispose) t.dispose(); });
+  textureCache.clear();
+}
+
+
 // --- ĐỒNG HỒ THỜI GIAN THỰC ---
 function updateLiveClock() {
   const now = new Date();
@@ -478,6 +534,18 @@ updateLiveClock();
 setInterval(updateLiveClock, 1000);
 
 let currentMode = '2d';
+let animFrameId = null;
+function startAnimationLoop() {
+  if (animFrameId === null && currentMode === '3d') {
+    animFrameId = requestAnimationFrame(animate);
+  }
+}
+function stopAnimationLoop() {
+  if (animFrameId !== null) {
+    cancelAnimationFrame(animFrameId);
+    animFrameId = null;
+  }
+}
 let glueOnRight = false;
 let loadedArtImg = null;
 let show2DLabels = true;
@@ -740,8 +808,20 @@ function getDims() {
   const H = clampNum(getRawNum('H', 410), 30, 4000);
   const T = clampNum(getRawNum('thick', 5), 1, Math.min(20, L * 0.22, W * 0.22, H * 0.3));
   const TS = clampNum(getRawNum('glueTS', 35), 0, Math.min(90, Math.min(L, W) * 0.45));
-  const topFlapH = clampNum(getRawNum('topFlapH', W / 2), 0, Math.min(2500, Math.max(L, W)));
-  const botFlapH = clampNum(getRawNum('botFlapH', W / 2), 0, Math.min(2500, Math.max(L, W)));
+  // DEEP FIX: hard clamp flaps to avoid overlap when closed (max ~W/2)
+  let topFlapH = clampNum(getRawNum('topFlapH', W / 2), 0, Math.min(2500, Math.max(L, W)));
+  let botFlapH = clampNum(getRawNum('botFlapH', W / 2), 0, Math.min(2500, Math.max(L, W)));
+  const maxFlap = Math.max(10, W / 2);
+  if (topFlapH > maxFlap) {
+    topFlapH = maxFlap;
+    const el = document.getElementById('topFlapH');
+    if (el && parseFloat(el.value) > maxFlap) el.value = maxFlap.toFixed(1);
+  }
+  if (botFlapH > maxFlap) {
+    botFlapH = maxFlap;
+    const el = document.getElementById('botFlapH');
+    if (el && parseFloat(el.value) > maxFlap) el.value = maxFlap.toFixed(1);
+  }
   const slotGap = clampNum(getRawNum('slotGap', 6), 0, 15);
   return {
     L, W, H, T, TS, topFlapH, botFlapH, slotGap,
@@ -1425,6 +1505,12 @@ shadowFloor.receiveShadow = true;
 scene.add(shadowFloor);
 
 function createPaperTexture(hexColor) {
+  const cacheKey = 'paper_' + hexColor;
+  return getCachedTexture(cacheKey, () => {
+    return _createPaperTextureImpl(hexColor);
+  });
+}
+function _createPaperTextureImpl(hexColor) {
   const c = document.createElement('canvas'); c.width = 512; c.height = 512;
   const ctx = c.getContext('2d');
   ctx.fillStyle = hexColor; ctx.fillRect(0, 0, 512, 512);
@@ -1449,6 +1535,12 @@ function shadeColor(hex, percent) {
 }
 
 function createCorrugatedEdgeTexture(hexColor, layers = 5) {
+  const cacheKey = 'corrugated_' + hexColor + '_' + layers;
+  return getCachedTexture(cacheKey, () => {
+    return _createCorrugatedEdgeTextureImpl(hexColor, layers);
+  });
+}
+function _createCorrugatedEdgeTextureImpl(hexColor, layers = 5) {
   const W = 1024, H = 256;
   const c = document.createElement('canvas');
   c.width = W; c.height = H;
@@ -1631,11 +1723,28 @@ function createPanelMaterial3D(panelIdx, regionType, d) {
 }
 
 function buildCarton3D() {
+  // DEEP FIX: full dispose of geometries + materials + all maps (prevent memory leak)
   cartonRoot.traverse(obj => {
-    if (obj.geometry) obj.geometry.dispose();
+    if (obj.geometry) {
+      obj.geometry.dispose();
+      obj.geometry = null;
+    }
     if (obj.material) {
       const arr = Array.isArray(obj.material) ? obj.material : [obj.material];
-      arr.forEach(m => m.dispose());
+      arr.forEach(m => {
+        if (!m) return;
+        ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'aoMap', 'emissiveMap', 'bumpMap', 'displacementMap'].forEach(key => {
+          if (m[key]) {
+            // Only dispose if not from the shared cache
+            if (!textureCache.has(m[key].uuid) && !Array.from(textureCache.values()).includes(m[key])) {
+              try { m[key].dispose(); } catch(e) {}
+            }
+            m[key] = null;
+          }
+        });
+        try { m.dispose(); } catch(e) {}
+      });
+      obj.material = null;
     }
   });
   scene.remove(cartonRoot);
@@ -1988,7 +2097,7 @@ document.getElementById('build3DBtn').onclick = () => {
   sanitizeDims(true);
   setEraserMode(false);
   setTextToolMode(false);
-  currentMode = '3d';
+  currentMode = '3d'; startAnimationLoop();
   canvas2D.style.display = 'none';
   threeContainer.style.display = 'block';
   document.getElementById('toolbar2D').style.display = 'none';
@@ -2004,7 +2113,7 @@ document.getElementById('build3DBtn').onclick = () => {
 };
 
 const switchTo2D = () => {
-  currentMode = '2d';
+  currentMode = '2d'; stopAnimationLoop();
   canvas2D.style.display = 'block';
   threeContainer.style.display = 'none';
   document.getElementById('toolbar2D').style.display = 'flex';
@@ -2296,13 +2405,16 @@ new ResizeObserver(() => {
   }
 }).observe(viewArea);
 
+// Animation loop (uses early-declared start/stop helpers)
 function animate(timestamp) {
-  requestAnimationFrame(animate);
-  if (currentMode === '3d') {
-    updateAnimation(timestamp);
-    controls.update();
-    renderer.render(scene, camera);
+  if (currentMode !== '3d') {
+    animFrameId = null;
+    return;
   }
+  animFrameId = requestAnimationFrame(animate);
+  updateAnimation(timestamp);
+  controls.update();
+  renderer.render(scene, camera);
 }
 
 window.addEventListener('load', () => {
@@ -2311,7 +2423,7 @@ window.addEventListener('load', () => {
 });
 pushHistory();
 resizeCanvas2D();
-animate();
+if (currentMode === '3d') startAnimationLoop();
 </script>
 </body>
 </html>
