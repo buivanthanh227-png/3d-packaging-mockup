@@ -1783,7 +1783,9 @@ function buildCarton3D() {
     bodyBox.castShadow = true; bodyBox.receiveShadow = true;
     wallGroup.add(bodyBox);
 
-    const kz = cfg.isLong ? -(T / 2 + STACK_GAP) : (T / 2);
+    // kz: vị trí hinge theo chiều dày tường
+    // Cánh phụ (short) hinge gần mặt trong hơn, cánh chính (long) hơi lệch ra để khi đóng nằm trên.
+    const kz = cfg.isLong ? -(T / 2 + STACK_GAP * 0.5) : (T / 2 + STACK_GAP * 0.25);
 
     // ---- CÁNH TRÊN ----
     if (topFlapH > 0) {
@@ -1791,10 +1793,9 @@ function buildCarton3D() {
       const flapMat = createPanelMaterial3D(cfg.panelIdx, 'top', d);
       const flapW = Math.max(4, cfg.w - slotGap);
       const flapBox = new THREE.Mesh(new THREE.BoxGeometry(flapW, topFlapH, T), [edgeMat, edgeMat, edgeMat, edgeMat, flapMat, innerMat]);
-      // DEEP FIX stacking: cánh phụ (short) nằm dưới, cánh chính (long) nằm trên khi đóng.
-      // Áp dụng cho CẢ HAI cánh dài (panel 0 và 2), không chỉ panel 0.
-      let stackOffsetTop = 0;
-      if (cfg.isLong) stackOffsetTop = T + STACK_GAP;   // major flaps sit on top of minor
+      // Stacking gọn: cánh phụ (minor) lớp dưới, cánh chính (major) chỉ nhích nhẹ ~0.6*T
+      // để khi đóng không bị đội cao và không xuyên hình.
+      let stackOffsetTop = cfg.isLong ? (T * 0.65) : 0;
       flapBox.position.set(0, topFlapH / 2, -kz + stackOffsetTop);
       flapBox.castShadow = true; flapBox.receiveShadow = true;
       hinge.add(flapBox);
@@ -1807,10 +1808,8 @@ function buildCarton3D() {
       const flapMat = createPanelMaterial3D(cfg.panelIdx, 'bottom', d);
       const flapW = Math.max(4, cfg.w - slotGap);
       const flapBox = new THREE.Mesh(new THREE.BoxGeometry(flapW, botFlapH, T), [edgeMat, edgeMat, edgeMat, edgeMat, flapMat, innerMat]);
-      // DEEP FIX bottom stacking: vì hinge ở đáy + chiều quay ngược,
-      // offset phải đảo dấu so với phía trên để cánh chính vẫn nằm NGOÀI / TRÊN cánh phụ khi đóng.
-      let stackOffsetBot = 0;
-      if (cfg.isLong) stackOffsetBot = -(T + STACK_GAP);  // inverted for bottom
+      // Đáy: đảo chiều offset vì hinge + chiều quay ngược → cánh chính vẫn nằm ngoài khi đóng.
+      let stackOffsetBot = cfg.isLong ? -(T * 0.65) : 0;
       flapBox.position.set(0, -botFlapH / 2, -kz + stackOffsetBot);
       flapBox.castShadow = true; flapBox.receiveShadow = true;
       hinge.add(flapBox);
@@ -1935,13 +1934,25 @@ function buildCarton3D() {
   applyFlapAngles();
 }
 
+// Internal values for bottom minor/major (used by packing animation)
+let _botSideDeg = null;   // null = use UI slider
+let _botMainDeg = null;
+
 function applyFlapAngles() {
   const topMainDeg = +document.getElementById('topMainOpen').value;
   const topSideDeg = +document.getElementById('topSideOpen').value;
-  const botDeg = +document.getElementById('bottomOpen').value;
+  const botUI = +document.getElementById('bottomOpen').value;
+  // Nếu đang chạy clip ráp thùng thì dùng giá trị tách riêng, không thì dùng chung slider đáy
+  const botSideDeg = (_botSideDeg !== null) ? _botSideDeg : botUI;
+  const botMainDeg = (_botMainDeg !== null) ? _botMainDeg : botUI;
 
   flapControllers.forEach(fc => {
-    let openDeg = fc.isTop ? (fc.isLong ? topMainDeg : topSideDeg) : botDeg;
+    let openDeg;
+    if (fc.isTop) {
+      openDeg = fc.isLong ? topMainDeg : topSideDeg;
+    } else {
+      openDeg = fc.isLong ? botMainDeg : botSideDeg;
+    }
     const sign = fc.isTop ? -1 : 1;
     fc.hinge.rotation.x = sign * (Math.PI / 2) - sign * THREE.MathUtils.degToRad(openDeg);
   });
@@ -1950,8 +1961,10 @@ function applyFlapAngles() {
   const isClear = mode === 'clear';
   const tapeColor = document.getElementById('tapeColorPicker').value || '#facc15';
 
-  if (topTapeGroup) topTapeGroup.visible = (mode !== 'none' && topMainDeg === 0 && topSideDeg === 0);
-  if (botTapeGroup) botTapeGroup.visible = (mode !== 'none' && botDeg === 0);
+  const topClosed = topMainDeg < 2 && topSideDeg < 2;
+  const botClosed = botSideDeg < 2 && botMainDeg < 2;
+  if (topTapeGroup) topTapeGroup.visible = (mode !== 'none' && topClosed);
+  if (botTapeGroup) botTapeGroup.visible = (mode !== 'none' && botClosed);
 
   [topTapeGroup, botTapeGroup].forEach(group => {
     if (!group) return;
@@ -1985,23 +1998,37 @@ function setAnimationProgress(prog) {
   animSeekSlider.value = animProgress * 1000;
   animTimeStatus.textContent = (animProgress * animDuration).toFixed(1) + 's';
 
-  // Sequence (realistic carton closing):
-  // 0.00-0.30 : đóng cánh đáy (cả minor + major đáy cùng lúc vì chỉ có 1 slider)
-  // 0.30-0.60 : đóng cánh phụ phía trên (topSide / W)
-  // 0.60-1.00 : đóng cánh chính phía trên (topMain / L) nằm đè lên cánh phụ
-  const p1 = Math.min(1, Math.max(0, animProgress / 0.30));
-  const p2 = Math.min(1, Math.max(0, (animProgress - 0.30) / 0.30));
-  const p3 = Math.min(1, Math.max(0, (animProgress - 0.60) / 0.40));
+  // Sequence ráp thùng chuẩn:
+  // 0.00-0.25 : đóng 2 cánh phụ đáy (bottom side / W)
+  // 0.25-0.50 : đóng 2 cánh chính đáy (bottom main / L) đè lên cánh phụ
+  // 0.50-0.75 : đóng 2 cánh phụ trên (top side / W)
+  // 0.75-1.00 : đóng 2 cánh chính trên (top main / L) đè lên cánh phụ
+  const pBotSide = Math.min(1, Math.max(0, animProgress / 0.25));
+  const pBotMain = Math.min(1, Math.max(0, (animProgress - 0.25) / 0.25));
+  const pTopSide = Math.min(1, Math.max(0, (animProgress - 0.50) / 0.25));
+  const pTopMain = Math.min(1, Math.max(0, (animProgress - 0.75) / 0.25));
 
-  const botVal = (1 - p1) * 90;
-  const topSideVal = (1 - p2) * 90;
-  const topMainVal = (1 - p3) * 90;
+  const botSideVal = (1 - pBotSide) * 90;
+  const botMainVal = (1 - pBotMain) * 90;
+  const topSideVal = (1 - pTopSide) * 90;
+  const topMainVal = (1 - pTopMain) * 90;
 
-  document.getElementById('bottomOpen').value = botVal;
+  // Cập nhật UI slider (dùng giá trị trung bình đáy để slider vẫn phản ánh)
+  document.getElementById('bottomOpen').value = (botSideVal + botMainVal) / 2;
   document.getElementById('topSideOpen').value = topSideVal;
   document.getElementById('topMainOpen').value = topMainVal;
 
+  // Điều khiển tách biệt góc đáy
+  _botSideDeg = botSideVal;
+  _botMainDeg = botMainVal;
+
   applyFlapAngles();
+
+  // Khi hết clip thì trả về chế độ dùng chung slider
+  if (animProgress >= 0.999) {
+    _botSideDeg = null;
+    _botMainDeg = null;
+  }
 }
 
 document.getElementById('playAnimBtn').onclick = () => {
@@ -2182,7 +2209,14 @@ document.getElementById('paperPreset').onchange = e => {
 };
 
 ['topMainOpen', 'topSideOpen', 'bottomOpen'].forEach(id => {
-  document.getElementById(id).oninput = applyFlapAngles;
+  document.getElementById(id).oninput = () => {
+    // Người dùng kéo tay → hủy chế độ tách góc đáy của clip ráp thùng
+    if (id === 'bottomOpen') {
+      _botSideDeg = null;
+      _botMainDeg = null;
+    }
+    applyFlapAngles();
+  };
 });
 
 document.getElementById('tapeMode').onchange = e => {
@@ -2192,12 +2226,14 @@ document.getElementById('tapeMode').onchange = e => {
 document.getElementById('tapeColorPicker').oninput = applyFlapAngles;
 
 document.getElementById('presetStudio').onclick = () => {
+  _botSideDeg = null; _botMainDeg = null;
   document.getElementById('topMainOpen').value = 32;
   document.getElementById('topSideOpen').value = 12;
   document.getElementById('bottomOpen').value = 0;
   applyFlapAngles();
 };
 document.getElementById('presetClosed').onclick = () => {
+  _botSideDeg = null; _botMainDeg = null;
   document.getElementById('topMainOpen').value = 0;
   document.getElementById('topSideOpen').value = 0;
   document.getElementById('bottomOpen').value = 0;
