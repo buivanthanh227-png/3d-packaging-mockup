@@ -1791,10 +1791,10 @@ function buildCarton3D() {
       const flapMat = createPanelMaterial3D(cfg.panelIdx, 'top', d);
       const flapW = Math.max(4, cfg.w - slotGap);
       const flapBox = new THREE.Mesh(new THREE.BoxGeometry(flapW, topFlapH, T), [edgeMat, edgeMat, edgeMat, edgeMat, flapMat, innerMat]);
-      // Cánh CHÍNH phía trước (panelIdx 0) được nâng lên T để nằm TRÊN cánh mặt phụ khi đóng,
-      // tránh xuyên hình và tạo 2 lớp cánh chồng khít khi ráp thùng.
+      // DEEP FIX stacking: cánh phụ (short) nằm dưới, cánh chính (long) nằm trên khi đóng.
+      // Áp dụng cho CẢ HAI cánh dài (panel 0 và 2), không chỉ panel 0.
       let stackOffsetTop = 0;
-      if (cfg.isLong && cfg.panelIdx === 0) stackOffsetTop = T;
+      if (cfg.isLong) stackOffsetTop = T + STACK_GAP;   // major flaps sit on top of minor
       flapBox.position.set(0, topFlapH / 2, -kz + stackOffsetTop);
       flapBox.castShadow = true; flapBox.receiveShadow = true;
       hinge.add(flapBox);
@@ -1807,8 +1807,10 @@ function buildCarton3D() {
       const flapMat = createPanelMaterial3D(cfg.panelIdx, 'bottom', d);
       const flapW = Math.max(4, cfg.w - slotGap);
       const flapBox = new THREE.Mesh(new THREE.BoxGeometry(flapW, botFlapH, T), [edgeMat, edgeMat, edgeMat, edgeMat, flapMat, innerMat]);
+      // DEEP FIX bottom stacking: vì hinge ở đáy + chiều quay ngược,
+      // offset phải đảo dấu so với phía trên để cánh chính vẫn nằm NGOÀI / TRÊN cánh phụ khi đóng.
       let stackOffsetBot = 0;
-      if (cfg.isLong && cfg.panelIdx === 0) stackOffsetBot = T;
+      if (cfg.isLong) stackOffsetBot = -(T + STACK_GAP);  // inverted for bottom
       flapBox.position.set(0, -botFlapH / 2, -kz + stackOffsetBot);
       flapBox.castShadow = true; flapBox.receiveShadow = true;
       hinge.add(flapBox);
@@ -1983,9 +1985,13 @@ function setAnimationProgress(prog) {
   animSeekSlider.value = animProgress * 1000;
   animTimeStatus.textContent = (animProgress * animDuration).toFixed(1) + 's';
 
-  const p1 = Math.min(1, Math.max(0, animProgress / 0.35));
-  const p2 = Math.min(1, Math.max(0, (animProgress - 0.35) / 0.35));
-  const p3 = Math.min(1, Math.max(0, (animProgress - 0.70) / 0.30));
+  // Sequence (realistic carton closing):
+  // 0.00-0.30 : đóng cánh đáy (cả minor + major đáy cùng lúc vì chỉ có 1 slider)
+  // 0.30-0.60 : đóng cánh phụ phía trên (topSide / W)
+  // 0.60-1.00 : đóng cánh chính phía trên (topMain / L) nằm đè lên cánh phụ
+  const p1 = Math.min(1, Math.max(0, animProgress / 0.30));
+  const p2 = Math.min(1, Math.max(0, (animProgress - 0.30) / 0.30));
+  const p3 = Math.min(1, Math.max(0, (animProgress - 0.60) / 0.40));
 
   const botVal = (1 - p1) * 90;
   const topSideVal = (1 - p2) * 90;
