@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AUTO MOCKUP 3D STUDIO - V1.9 PRO (Optimized)</title>
+<title>AUTO MOCKUP 3D STUDIO - V1.9 PRO (Fixed Animation & Flap Stack)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@500;600;700;800;900&family=Montserrat:wght@600;700;800;900&family=Roboto+Mono:wght@600;700&display=swap" rel="stylesheet">
@@ -19,7 +19,6 @@ body{
   font:13px/1.4 'Be Vietnam Pro',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
   height:100vh;display:flex;flex-direction:column;overflow:hidden;
 }
-
 header{
   background:linear-gradient(125deg, #090d16 0%, #172554 55%, #0c4a6e 100%);
   color:#fff;padding:8px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;
@@ -68,7 +67,6 @@ header{
   background:rgba(255,255,255,0.07);padding:6px 11px;border-radius:8px;
   border:1px solid rgba(255,255,255,0.14);white-space:nowrap;
 }
-
 main{
   flex:1;min-height:0;width:100%;max-width:1920px;margin:auto;padding:8px 10px;
   display:grid;grid-template-columns:375px minmax(0,1fr);gap:10px;
@@ -81,7 +79,6 @@ main{
 }
 .section{padding-bottom:10px;margin-bottom:0;border-bottom:1px solid var(--line)}
 .section:last-child{border-bottom:0;padding-bottom:0}
-
 .field{display:grid;grid-template-columns:1fr 115px;align-items:center;gap:6px;margin:5px 0}
 .field label{color:#334155;font-size:12px;font-weight:600}
 .field input[type=number],.field select{
@@ -89,7 +86,6 @@ main{
   color:var(--ink);font-size:12px;font-weight:600;font-family:inherit;transition:.15s;
 }
 .field input[type=number]:focus,.field select:focus{outline:none;border-color:var(--primary);background:#fff;box-shadow:0 0 0 2px rgba(2,132,199,0.15)}
-
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .mini-field{display:flex;flex-direction:column;gap:2px}
 .mini-field label{font-size:11px;color:var(--muted);font-weight:600}
@@ -98,14 +94,12 @@ main{
   font-size:12px;font-weight:600;font-family:inherit;transition:.15s;
 }
 .mini-field input:focus{outline:none;border-color:var(--primary);background:#fff;box-shadow:0 0 0 2px rgba(2,132,199,0.15)}
-
 .file-row{display:flex;gap:6px;align-items:center}
 input[type=file]{
   flex:1;font-size:11.5px;padding:5px 7px;border:1.5px dashed #0284c7;border-radius:7px;
   background:#f0f9ff;cursor:pointer;color:#0369a1;font-weight:600;font-family:inherit;transition:.15s;
 }
 input[type=file]:hover{background:#e0f2fe}
-
 button{
   border:0;border-radius:7px;background:var(--primary);color:#fff;padding:7px 12px;
   font-family:'Be Vietnam Pro',sans-serif;font-weight:700;font-size:12px;cursor:pointer;transition:all .15s ease;
@@ -114,46 +108,35 @@ button{
 button:hover{background:var(--primary-hover);transform:translateY(-1px);box-shadow:0 4px 9px rgba(2,132,199,0.35)}
 button:active{transform:scale(0.97) translateY(0)}
 button:disabled{opacity:.42;cursor:not-allowed;transform:none;box-shadow:none}
-
 button.secondary{background:#e2e8f0;color:#1e293b;box-shadow:none}
 button.secondary:hover{background:#cbd5e1;transform:translateY(-1px)}
 button.secondary:active{transform:scale(0.97)}
-
 button.danger{background:var(--danger);color:#fff;box-shadow:0 2px 5px rgba(239,68,68,0.25);padding:6px 10px}
 button.danger:hover{background:var(--danger-hover)}
-
 button.eraser-btn{background:#fce7f3;color:#be185d;border:1.5px solid #f472b6;box-shadow:none;}
 button.eraser-btn:hover{background:#fbcfe8;border-color:#ec4899;}
 button.eraser-btn.active{background:linear-gradient(135deg, #ec4899 0%, #db2777 100%);color:#ffffff;border-color:#f9a8d4;box-shadow:0 3px 10px rgba(219,39,119,0.4);}
 .eraser-controls{display:none;align-items:center;gap:6px;background:#fdf2f8;border:1px solid #f9a8d4;border-radius:7px;padding:3px 9px;font-size:11.5px;font-weight:700;color:#9d174d;}
 .eraser-controls.visible{display:inline-flex}
 .eraser-controls input[type=range]{width:80px;accent-color:#db2777;cursor:pointer}
-
 button.text-tool-btn{background:#eff6ff;color:#1d4ed8;border:1.5px solid #93c5fd;box-shadow:none;}
 button.text-tool-btn:hover{background:#dbeafe;border-color:#3b82f6;}
 button.text-tool-btn.active{background:linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);color:#ffffff;border-color:#60a5fa;box-shadow:0 3px 10px rgba(59,130,246,0.4);}
-
 button.toggle-info-btn{width:100%;background:linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);color:#fff;padding:7px 12px;font-size:12px;font-weight:700;letter-spacing:.2px;box-shadow:0 3px 10px rgba(79,70,229,0.3);border:1px solid #818cf8;}
 button.toggle-info-btn:hover{background:linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);}
 button.toggle-info-btn.hidden-state{background:linear-gradient(135deg, #f59e0b 0%, #d97706 100%);border-color:#fbbf24;box-shadow:0 3px 10px rgba(217,119,6,0.32);}
-
 button.cta-3d{width:100%;background:linear-gradient(135deg, #f97316 0%, #ea580c 100%);color:#fff;padding:10px 14px;font-size:14px;font-weight:800;letter-spacing:.3px;box-shadow:0 4px 12px rgba(234,88,12,0.38);border:1px solid #fb923c;}
 button.cta-3d:hover{background:linear-gradient(135deg, #ea580c 0%, #c2410c 100%)}
-
 button.cta-2d{width:100%;background:linear-gradient(135deg, #0d9488 0%, #0f766e 100%);color:#fff;padding:9px 14px;font-size:13.5px;font-weight:800;letter-spacing:.3px;box-shadow:0 4px 12px rgba(13,148,136,0.35);border:1px solid #2dd4bf;}
 button.cta-2d:hover{background:linear-gradient(135deg, #0f766e 0%, #115e59 100%)}
-
 button.sm{padding:5px 9px;font-size:11.5px}
 .actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
-
 .stage{height:100%;min-height:0;overflow:hidden;display:flex;flex-direction:column;position:relative}
 .toolbar{padding:7px 12px;border-bottom:1px solid var(--line);display:flex;gap:7px;align-items:center;flex-wrap:wrap;background:#f8fafc;z-index:2;flex-shrink:0;min-height:40px}
 .toolbar-group{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
-
 #viewArea{flex:1;min-height:0;position:relative;background:#0f172a;overflow:hidden;display:flex;align-items:center;justify-content:center}
 #dieline2DCanvas{background:#1e293b;cursor:crosshair;box-shadow:0 10px 28px rgba(0,0,0,0.65)}
 #threeCanvas{display:none;width:100%;height:100%}
-
 .float-panel{
   position:absolute;top:12px;left:12px;background:rgba(255,255,255,0.96);backdrop-filter:blur(10px);
   border:1px solid var(--line);border-radius:9px;padding:10px 12px;width:300px;z-index:10;
@@ -161,7 +144,6 @@ button.sm{padding:5px 9px;font-size:11.5px}
 }
 .float-panel h4{margin:0 0 7px 0;font-size:12.5px;color:var(--primary);display:flex;justify-content:space-between;align-items:center;border-bottom:1.5px solid #e0f2fe;padding-bottom:4px;font-weight:800}
 .float-panel .field{grid-template-columns:1fr 95px;margin:4px 0}
-
 .anim-bar{
   position:absolute;bottom:16px;left:50%;transform:translateX(-50%);
   background:rgba(15,23,42,0.92);backdrop-filter:blur(12px);
@@ -174,7 +156,6 @@ button.sm{padding:5px 9px;font-size:11.5px}
 .anim-bar button:hover{background:#0369a1}
 .anim-bar input[type=range]{flex:1;accent-color:#38bdf8;cursor:pointer}
 .anim-status{font-family:'Roboto Mono',monospace;font-size:11px;color:#38bdf8;min-width:42px;text-align:right}
-
 @media(max-width:1180px){
   header{flex-wrap:wrap;justify-content:center}
   .brand-center{flex:initial;flex-wrap:wrap;justify-content:center}
@@ -200,8 +181,6 @@ button.flip-glue:hover{background:#1e293b}
 button.flip-glue.right{
   background:linear-gradient(135deg,#7c3aed,#6d28d9);border-color:#c4b5fd;
 }
-
-/* ===== MOBILE OPTIMIZATIONS (added in deep fix) ===== */
 @media (max-width: 768px) {
   body { font-size: 12px; }
   header { padding: 6px 10px; flex-wrap: wrap; gap: 8px; }
@@ -211,30 +190,14 @@ button.flip-glue.right{
   .brand-title { font-size: 14px; }
   .brand-sub, .author-credit { display: none; }
   .brand-center { gap: 8px; padding: 0 4px; }
-  .main-layout { flex-direction: column; }
-  .sidebar {
-    width: 100% !important;
-    max-width: 100%;
-    max-height: 42vh;
-    overflow-y: auto;
-    border-right: none;
-    border-bottom: 1px solid var(--line);
-  }
-  .viewport-area { flex: 1; min-height: 50vh; }
-  .toolbar-3d { flex-wrap: wrap; gap: 4px; }
-  .toolbar-3d button { font-size: 11px; padding: 4px 8px; }
-  .control-panel-3d { max-width: 95%; font-size: 12px; }
-  input[type="number"], select { font-size: 14px; min-height: 32px; }
-  .btn-primary, .btn-accent, .btn-success, .btn-dark {
-    min-height: 40px; font-size: 13px;
-  }
+  main { grid-template-columns: 1fr; }
+  .panel { max-height: 42vh; }
+  .stage { height: 560px; }
 }
 @media (max-width: 480px) {
-  .sidebar { max-height: 38vh; }
   .brand-logo { width: 28px; height: 28px; }
   .ver-pill { font-size: 9px; padding: 1px 6px; }
 }
-
 </style>
 </head>
 <body>
@@ -244,7 +207,6 @@ button.flip-glue.right{
     <div id="liveClockTime" class="clock-time">00:00:00</div>
     <div id="liveClockDate" class="clock-date">Đang tải ngày...</div>
   </div>
-
   <div class="brand-center">
     <div class="brand-logo-wrap">
       <div class="brand-logo" aria-hidden="true">
@@ -254,14 +216,11 @@ button.flip-glue.right{
           <line x1="12" y1="22.08" x2="12" y2="12"></line>
         </svg>
       </div>
-      <h1 class="brand-title">AUTO MOCKUP 3D STUDIO <span class="ver-pill">V1.9 PRO</span></h1>
+      <h1 class="brand-title">AUTO MOCKUP 3D STUDIO <span class="ver-pill">V1.9 PRO Fixed</span></h1>
     </div>
-
     <div class="brand-divider" aria-hidden="true"></div>
-
     <span class="brand-sub">Công cụ dựng hình 2D/3D THÙNG CARTON</span>
   </div>
-
   <div class="author-credit">CÔNG CỤ ĐƯỢC PHÁT TRIỂN TỪ Ý TƯỞNG CỦA BÙI VĂN THANH</div>
 </header>
 
@@ -283,7 +242,6 @@ button.flip-glue.right{
       <div class="mini-field"><label>Mối nối TS (mm)</label><input id="glueTS" type="number" min="0" value="35"></div>
       <div class="mini-field"><label>Khe xẻ rãnh (mm)</label><input id="slotGap" type="number" min="0" max="15" value="6"></div>
     </div>
-
     <div class="field" style="margin-top:5px">
       <label>Cấu trúc sóng giấy</label>
       <select id="fluteLayers">
@@ -292,7 +250,6 @@ button.flip-glue.right{
         <option value="7">Carton 7 lớp (3 sóng)</option>
       </select>
     </div>
-
     <div class="field" style="margin-top:5px">
       <label>Màu giấy carton</label>
       <div style="display:flex;gap:5px;align-items:center">
@@ -305,7 +262,6 @@ button.flip-glue.right{
         </select>
       </div>
     </div>
-
     <div class="actions" style="margin-top:7px;flex-direction:column;gap:6px">
       <button id="updateDielineBtn" style="width:100%;font-weight:800;letter-spacing:.2px">DỰNG BẢN TRẢI PHẲNG 2D NGAY!</button>
       <button type="button" id="toggle2DLabelsBtn" class="toggle-info-btn" title="Bật/tắt chữ thông số trên bản trải phẳng 2D">
@@ -316,14 +272,11 @@ button.flip-glue.right{
         </svg>
         <span id="toggle2DLabelsText">Ẩn thông số trên bản 2D</span>
       </button>
-      <button type="button" id="flipGlueBtn" class="flip-glue" title="Đảo toàn bộ bản trải để mối nối TS sang bên phải hoặc trái">
-        Đảo mối nối sang PHẢI
-      </button>
+      <button type="button" id="flipGlueBtn" class="flip-glue" title="Đảo toàn bộ bản trải để mối nối TS sang bên phải hoặc trái">Đảo mối nối sang PHẢI</button>
       <p id="glueSideHint" class="glue-hint">Mối nối TS đang ở bên TRÁI bản trải 2D.</p>
       <div id="dimWarn" class="dim-warn"></div>
     </div>
   </div>
-
   <div class="section">
     <h2>2. Băng keo niêm phong</h2>
     <div class="grid-2">
@@ -333,14 +286,12 @@ button.flip-glue.right{
     <div class="field" style="margin-top:5px"><label>Loại & Màu keo</label><select id="tapeMode"><option value="none">Không dán</option><option value="clear">Băng keo trong</option><option value="color">Băng keo màu tùy chỉnh</option></select></div>
     <div id="tapeColorRow" class="field" style="display:none"><label>Chọn màu keo</label><input type="color" id="tapeColorPicker" value="#facc15" style="width:100%;height:24px;border:0;cursor:pointer;padding:0"></div>
   </div>
-
   <div class="section">
     <h2>3. File thiết kế & Chèn chữ</h2>
     <div class="file-row">
       <input id="artInput" type="file" accept="image/png,image/jpeg,image/webp,application/pdf">
       <button type="button" class="danger sm" id="clearArtBtn" title="Xóa tệp thiết kế hiện tại">✕ Xóa</button>
     </div>
-    
     <div class="actions" style="margin-top:8px; display:flex; flex-direction:column; gap:6px;">
       <button id="build3DBtn" class="cta-3d">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
@@ -362,7 +313,6 @@ button.flip-glue.right{
       </button>
     </div>
   </div>
-
   <div class="section">
     <h2>4. Xuất bản vẽ 2D</h2>
     <div class="actions" style="flex-direction:column;gap:6px">
@@ -405,7 +355,6 @@ button.flip-glue.right{
         </svg>
         <span>Redo (Ctrl+Shift+Z)</span>
       </button>
-
       <button type="button" class="eraser-btn sm" id="eraserToggleBtn" title="Gôm tẩy xóa chi tiết (Phím tắt: E)">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
           <path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"></path>
@@ -419,8 +368,7 @@ button.flip-glue.right{
         <input type="range" id="eraserSizeInput" min="5" max="150" value="35">
         <span id="eraserSizeLabel">35mm</span>
       </div>
-
-      <button type="button" class="text-tool-btn sm" id="textToolToggleBtn" title="Bấm để bật, rồi bấm lên bản vẽ để đặt chữ. Sau đó có thể kéo để di chuyển, kéo tay cầm góc để co giãn, đổi màu/nội dung ở thanh bên cạnh, hoặc bấm Delete để xóa.">
+      <button type="button" class="text-tool-btn sm" id="textToolToggleBtn" title="Bấm để bật, rồi bấm lên bản vẽ để đặt chữ.">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="4 7 4 4 20 4 20 7"></polyline>
           <line x1="9" y1="20" x2="15" y2="20"></line>
@@ -438,10 +386,9 @@ button.flip-glue.right{
           <option value="48">48px</option>
           <option value="64">64px</option>
         </select>
-        <button type="button" id="addTextBtn" class="sm" style="padding:3px 8px;background:#2563eb" title="Thêm vào giữa bản vẽ, sau đó kéo tới vị trí mong muốn">+ Thêm chữ</button>
+        <button type="button" id="addTextBtn" class="sm" style="padding:3px 8px;background:#2563eb">+ Thêm chữ</button>
       </div>
     </div>
-
     <div id="camToolbar" class="toolbar-group" style="display:none">
       <button class="secondary sm" id="camIso">Góc 3/4</button>
       <button class="secondary sm" id="camFront">Mặt chính</button>
@@ -451,11 +398,9 @@ button.flip-glue.right{
       <button class="sm" id="saveBtn">Xuất ảnh PNG</button>
     </div>
   </div>
-
   <div id="viewArea">
     <canvas id="dieline2DCanvas"></canvas>
     <div id="threeCanvas"></div>
-
     <div class="float-panel" id="controls3DPanel" style="display:none">
       <h4><span>Điều khiển 3D & Nắp</span> <button class="secondary sm" id="toggleOverlay" style="padding:2px 6px;font-size:10.5px">Thu gọn</button></h4>
       <div id="overlayContent">
@@ -468,7 +413,6 @@ button.flip-glue.right{
         </div>
       </div>
     </div>
-
     <div class="anim-bar" id="animBar">
       <button id="animPlayPauseBtn" title="Phát / Tạm dừng">⏸ Tạm dừng</button>
       <button id="animResetBtn" title="Về đầu">⏮ Đầu</button>
@@ -493,13 +437,11 @@ button.flip-glue.right{
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-// ===== DEEP OPT: Texture Cache to avoid recreating CanvasTextures =====
 const textureCache = new Map();
 function getCachedTexture(key, factory) {
   if (textureCache.has(key)) return textureCache.get(key);
   const tex = factory();
   textureCache.set(key, tex);
-  // Limit cache size
   if (textureCache.size > 24) {
     const firstKey = textureCache.keys().next().value;
     const old = textureCache.get(firstKey);
@@ -513,8 +455,6 @@ function clearTextureCache() {
   textureCache.clear();
 }
 
-
-// --- ĐỒNG HỒ THỜI GIAN THỰC ---
 function updateLiveClock() {
   const now = new Date();
   const hh = String(now.getHours()).padStart(2, '0');
@@ -549,24 +489,20 @@ function stopAnimationLoop() {
 let glueOnRight = false;
 let loadedArtImg = null;
 let show2DLabels = true;
-
 let zoom2D = 1.0;
 let pan2D = { x: 0, y: 0 };
 let artRect = { x: 0, y: 0, w: 300, h: 200 };
 let activeHandle = null;
 let dragStart2D = { x: 0, y: 0 };
-
 let eraserMode = false;
 let eraserSizeMm = 35;
 let isErasing = false;
 let lastErasePos = null;
 let mouseWorldPos2D = null;
-
 let textToolMode = false;
 let textLayers = [];
 let selectedTextId = null;
 let nextTextId = 1;
-
 let historyStack = [];
 let historyIndex = -1;
 const MAX_HISTORY = 40;
@@ -577,13 +513,11 @@ function updateUndoRedoButtons() {
   if (undoBtn) undoBtn.disabled = historyIndex <= 0;
   if (redoBtn) redoBtn.disabled = historyIndex >= historyStack.length - 1;
 }
-
 function getArtDataURL() {
   if (!loadedArtImg) return null;
   if (loadedArtImg instanceof HTMLCanvasElement) return loadedArtImg.toDataURL('image/png');
   return loadedArtImg.src || null;
 }
-
 function pushHistory() {
   const snapshot = {
     artRect: { ...artRect },
@@ -609,14 +543,14 @@ function pushHistory() {
   historyIndex = historyStack.length - 1;
   updateUndoRedoButtons();
 }
-
 function applyHistorySnapshot(snap) {
   artRect = { ...snap.artRect };
   textLayers = (snap.textLayers || []).map(t => ({ ...t }));
   selectedTextId = null;
   if (!snap.hasImg || !snap.imgData) {
     loadedArtImg = null;
-    document.getElementById('artInput').value = '';
+    const artInput = document.getElementById('artInput');
+    if (artInput) artInput.value = '';
     if (currentMode === '2d') render2DDieline();
     else buildCarton3D();
   } else {
@@ -633,7 +567,6 @@ function applyHistorySnapshot(snap) {
   }
   updateUndoRedoButtons();
 }
-
 function undoAction() {
   if (historyIndex > 0) {
     historyIndex--;
@@ -646,7 +579,6 @@ function redoAction() {
     applyHistorySnapshot(historyStack[historyIndex]);
   }
 }
-
 document.getElementById('undoBtn').onclick = undoAction;
 document.getElementById('redoBtn').onclick = redoAction;
 
@@ -655,7 +587,6 @@ const eraserToggleText = document.getElementById('eraserToggleText');
 const eraserControls = document.getElementById('eraserControls');
 const eraserSizeInput = document.getElementById('eraserSizeInput');
 const eraserSizeLabel = document.getElementById('eraserSizeLabel');
-
 const textToolToggleBtn = document.getElementById('textToolToggleBtn');
 const textToolToggleText = document.getElementById('textToolToggleText');
 const textControls = document.getElementById('textControls');
@@ -678,7 +609,6 @@ function setEraserMode(state) {
   }
   render2DDieline();
 }
-
 function setTextToolMode(state) {
   textToolMode = state;
   if (textToolMode) {
@@ -695,16 +625,13 @@ function setTextToolMode(state) {
   }
   render2DDieline();
 }
-
 eraserToggleBtn.onclick = () => setEraserMode(!eraserMode);
 textToolToggleBtn.onclick = () => setTextToolMode(!textToolMode);
-
 eraserSizeInput.oninput = e => {
   eraserSizeMm = parseInt(e.target.value, 10) || 35;
   eraserSizeLabel.textContent = `${eraserSizeMm}mm`;
   render2DDieline();
 };
-
 function createTextLayer(xMm, yMm) {
   const textVal = (document.getElementById('customTextInput').value || '').trim() || 'FRAGILE - HÀNG DỄ VỠ';
   const color = document.getElementById('textColorPicker').value;
@@ -716,7 +643,6 @@ function createTextLayer(xMm, yMm) {
   render2DDieline();
   return layer;
 }
-
 function selectTextLayer(id) {
   selectedTextId = id;
   const layer = textLayers.find(t => t.id === id);
@@ -725,7 +651,6 @@ function selectTextLayer(id) {
     document.getElementById('textColorPicker').value = layer.color;
   }
 }
-
 function deleteSelectedText() {
   if (!selectedTextId) return;
   textLayers = textLayers.filter(t => t.id !== selectedTextId);
@@ -733,7 +658,6 @@ function deleteSelectedText() {
   pushHistory();
   render2DDieline();
 }
-
 function getTextBoxPx(layer) {
   const scale = getLayoutMetrics(getDims()).scale;
   const fontPx = Math.max(1, layer.fontSize * scale);
@@ -745,13 +669,11 @@ function getTextBoxPx(layer) {
   const cx = layer.x * scale, cy = layer.y * scale;
   return { x: cx - w / 2, y: cy - h / 2, w, h, scale, fontPx, handle: { x: cx + w / 2, y: cy + h / 2 } };
 }
-
 document.getElementById('addTextBtn').onclick = () => {
   const geom = getDielineGeometry(getDims());
   createTextLayer(geom.totalW / 2, geom.totalH / 2);
   setTextToolMode(false);
 };
-
 document.getElementById('textColorPicker').addEventListener('input', e => {
   if (!selectedTextId) return;
   const layer = textLayers.find(t => t.id === selectedTextId);
@@ -773,7 +695,6 @@ document.getElementById('customTextInput').addEventListener('input', e => {
 document.getElementById('customTextInput').addEventListener('change', () => {
   if (selectedTextId) pushHistory();
 });
-
 window.addEventListener('keydown', e => {
   if (['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement?.tagName)) return;
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
@@ -793,22 +714,21 @@ const canvas2D = document.getElementById('dieline2DCanvas');
 const ctx2D = canvas2D.getContext('2d');
 
 function getRawNum(id, fallback) {
-  const val = document.getElementById(id).value;
+  const el = document.getElementById(id);
+  if (!el) return fallback;
+  const val = el.value;
   if (val === '' || val === null || isNaN(+val)) return fallback;
   return +val;
 }
-
 function clampNum(v, min, max) {
   return Math.min(max, Math.max(min, v));
 }
-
 function getDims() {
   const L = clampNum(getRawNum('L', 545), 30, 4000);
   const W = clampNum(getRawNum('W', 305), 30, 4000);
   const H = clampNum(getRawNum('H', 410), 30, 4000);
   const T = clampNum(getRawNum('thick', 5), 1, Math.min(20, L * 0.22, W * 0.22, H * 0.3));
   const TS = clampNum(getRawNum('glueTS', 35), 0, Math.min(90, Math.min(L, W) * 0.45));
-  // DEEP FIX: hard clamp flaps to avoid overlap when closed (max ~W/2)
   let topFlapH = clampNum(getRawNum('topFlapH', W / 2), 0, Math.min(2500, Math.max(L, W)));
   let botFlapH = clampNum(getRawNum('botFlapH', W / 2), 0, Math.min(2500, Math.max(L, W)));
   const maxFlap = Math.max(10, W / 2);
@@ -825,22 +745,20 @@ function getDims() {
   const slotGap = clampNum(getRawNum('slotGap', 6), 0, 15);
   return {
     L, W, H, T, TS, topFlapH, botFlapH, slotGap,
-    fluteLayers: parseInt(document.getElementById('fluteLayers').value || 5, 10),
+    fluteLayers: parseInt(document.getElementById('fluteLayers')?.value || 5, 10),
     tapeWidthMm: clampNum(getRawNum('tapeWidthMm', 60), 20, 100),
     tapeOverlapMm: clampNum(getRawNum('tapeOverlapMm', 60), 0, 150)
   };
 }
-
 function formatDim(n) {
   return Math.abs(n - Math.round(n)) < 0.05 ? String(Math.round(n)) : String(Math.round(n * 10) / 10);
 }
-
 function writeDim(id, value) {
   const el = document.getElementById(id);
+  if (!el) return;
   const next = formatDim(value);
   if (el.value !== next) el.value = next;
 }
-
 function sanitizeDims(showMsg) {
   const d = getDims();
   writeDim('L', d.L);
@@ -853,7 +771,6 @@ function sanitizeDims(showMsg) {
   writeDim('slotGap', d.slotGap);
   writeDim('tapeWidthMm', d.tapeWidthMm);
   writeDim('tapeOverlapMm', d.tapeOverlapMm);
-
   const notes = [];
   if (d.topFlapH > d.W / 2 + 1 || d.botFlapH > d.W / 2 + 1) {
     notes.push('Cánh dài hơn nửa mặt Rộng (W/2) — khi đóng kín sẽ chồng lên nhau.');
@@ -873,20 +790,17 @@ function sanitizeDims(showMsg) {
   }
   return d;
 }
-
 function panelXmm(d, panelIdx) {
   const widths = [d.L, d.W, d.L, d.W];
   let x = glueOnRight ? 0 : d.TS;
   for (let i = 0; i < panelIdx; i++) x += widths[i];
   return x;
 }
-
 function blankEdges(d) {
   const bodyLeft = glueOnRight ? 0 : d.TS;
   const bodyRight = bodyLeft + d.L + d.W + d.L + d.W;
   return { bodyLeft, bodyRight, tsLeft: glueOnRight ? bodyRight : 0 };
 }
-
 function updateGlueUi() {
   const btn = document.getElementById('flipGlueBtn');
   const hint = document.getElementById('glueSideHint');
@@ -901,13 +815,11 @@ function updateGlueUi() {
     hint.textContent = 'Mối nối TS đang ở bên TRÁI bản trải 2D.';
   }
 }
-
 function getDielineGeometry(d) {
   const totalW = d.TS + d.L + d.W + d.L + d.W;
   const totalH = d.topFlapH + d.H + d.botFlapH;
   return { totalW, totalH };
 }
-
 function getLayoutMetrics(d) {
   const cw = canvas2D.width, ch = canvas2D.height;
   const geom = getDielineGeometry(d);
@@ -917,33 +829,27 @@ function getLayoutMetrics(d) {
   const startY = (ch - geom.totalH * scale) / 2;
   return { scale, startX, startY };
 }
-
 function getArtRectPx() {
   const scale = getLayoutMetrics(getDims()).scale;
   return { x: artRect.x * scale, y: artRect.y * scale, w: artRect.w * scale, h: artRect.h * scale, scale };
 }
-
 function resizeCanvas2D() {
   if (!viewArea) return;
   canvas2D.width = viewArea.clientWidth || 900;
   canvas2D.height = viewArea.clientHeight || 600;
   render2DDieline();
 }
-
 function eraseAtWorldPos(worldPos, prevWorldPos) {
   if (!loadedArtImg) return;
   const scale = getLayoutMetrics(getDims()).scale;
   const mmX = worldPos.x / scale;
   const mmY = worldPos.y / scale;
-
   const imgW = loadedArtImg.width;
   const imgH = loadedArtImg.height;
   const imgX = ((mmX - artRect.x) / artRect.w) * imgW;
   const imgY = ((mmY - artRect.y) / artRect.h) * imgH;
-
   const radiusX = ((eraserSizeMm / 2) / artRect.w) * imgW;
   const radiusY = ((eraserSizeMm / 2) / artRect.h) * imgH;
-
   const artCtx = loadedArtImg.getContext('2d');
   artCtx.save();
   artCtx.globalCompositeOperation = 'destination-out';
@@ -951,13 +857,11 @@ function eraseAtWorldPos(worldPos, prevWorldPos) {
   artCtx.strokeStyle = 'rgba(0,0,0,1)';
   artCtx.lineCap = 'round';
   artCtx.lineJoin = 'round';
-
   if (prevWorldPos) {
     const prevMmX = prevWorldPos.x / scale;
     const prevMmY = prevWorldPos.y / scale;
     const prevImgX = ((prevMmX - artRect.x) / artRect.w) * imgW;
     const prevImgY = ((prevMmY - artRect.y) / artRect.h) * imgH;
-
     const steps = Math.max(1, Math.ceil(Math.hypot(imgX - prevImgX, imgY - prevImgY) / Math.max(1, Math.min(radiusX, radiusY) * 0.25)));
     for (let i = 0; i <= steps; i++) {
       const t = i / steps;
@@ -974,41 +878,32 @@ function eraseAtWorldPos(worldPos, prevWorldPos) {
   }
   artCtx.restore();
 }
-
 function render2DDieline() {
   if (currentMode !== '2d') return;
   const d = getDims();
   const cw = canvas2D.width, ch = canvas2D.height;
-
   ctx2D.clearRect(0, 0, cw, ch);
-
   const geom = getDielineGeometry(d);
   const metrics = getLayoutMetrics(d);
   const { scale, startX, startY } = metrics;
-  const paperColor = document.getElementById('paperColorPicker').value;
-
+  const paperColor = document.getElementById('paperColorPicker')?.value || '#c6a276';
   const ts_px = d.TS * scale;
   const topH_px = d.topFlapH * scale;
   const h_px = d.H * scale;
   const botH_px = d.botFlapH * scale;
   const totalH_px = topH_px + h_px + botH_px;
   const totalW_px = geom.totalW * scale;
-
   const tsBevelPx = ts_px > 0 ? Math.min(ts_px * 0.5, h_px * 0.15, 20 * scale) : 0;
-
   ctx2D.save();
   ctx2D.translate(cw / 2 + pan2D.x, ch / 2 + pan2D.y);
   ctx2D.scale(zoom2D, zoom2D);
   ctx2D.translate(-cw / 2, -ch / 2);
-
   ctx2D.save();
   ctx2D.translate(startX, startY);
-
   const buildDielineClipPath = () => {
     const edges = blankEdges(d);
     const bodyLeft = edges.bodyLeft * scale;
     const bodyRight = edges.bodyRight * scale;
-    const tsLeft = edges.tsLeft * scale;
     ctx2D.beginPath();
     if (d.TS <= 0) {
       ctx2D.rect(0, 0, totalW_px, totalH_px);
@@ -1053,24 +948,19 @@ function render2DDieline() {
       ctx2D.lineTo(bodyLeft, topH_px + h_px);
     }
     ctx2D.closePath();
-    void tsLeft;
   };
-
   ctx2D.save();
   buildDielineClipPath();
   ctx2D.fillStyle = paperColor;
   ctx2D.fill();
   ctx2D.restore();
-
   if (loadedArtImg) {
     const rpx = getArtRectPx();
     ctx2D.drawImage(loadedArtImg, rpx.x, rpx.y, rpx.w, rpx.h);
-
     if (!eraserMode && !textToolMode) {
       ctx2D.strokeStyle = '#10b981';
       ctx2D.lineWidth = 1.5;
       ctx2D.strokeRect(rpx.x, rpx.y, rpx.w, rpx.h);
-
       const handles = getHandles();
       ctx2D.fillStyle = '#10b981';
       Object.values(handles).forEach(h => {
@@ -1084,15 +974,12 @@ function render2DDieline() {
       ctx2D.setLineDash([]);
     }
   }
-
   const edgesPx = blankEdges(d);
   const bodyLeftPx = edgesPx.bodyLeft * scale;
   const bodyRightPx = edgesPx.bodyRight * scale;
   const tsCenterPx = (edgesPx.tsLeft + d.TS / 2) * scale;
-
   ctx2D.strokeStyle = '#ec4899';
   ctx2D.lineWidth = 1.5;
-
   ctx2D.beginPath();
   if (d.topFlapH > 0) {
     ctx2D.moveTo(bodyLeftPx, topH_px);
@@ -1107,7 +994,6 @@ function render2DDieline() {
     ctx2D.lineTo(glueOnRight ? bodyRightPx : bodyLeftPx, topH_px + h_px);
   }
   ctx2D.stroke();
-
   if (d.TS > 0 && show2DLabels) {
     ctx2D.save();
     ctx2D.translate(tsCenterPx, topH_px + h_px / 2);
@@ -1119,10 +1005,8 @@ function render2DDieline() {
     ctx2D.fillText(`TS Vát (${d.TS}mm)`, 0, 0);
     ctx2D.restore();
   }
-
   let curX = bodyLeftPx;
   const panelWidths = [d.L, d.W, d.L, d.W];
-
   panelWidths.forEach((pw, idx) => {
     const nextX = curX + pw * scale;
     if (idx > 0) {
@@ -1132,7 +1016,6 @@ function render2DDieline() {
       ctx2D.moveTo(curX, topH_px);
       ctx2D.lineTo(curX, topH_px + h_px);
       ctx2D.stroke();
-
       const gapPx = Math.max(1.5, d.slotGap * scale);
       ctx2D.fillStyle = '#1e293b';
       if (d.topFlapH > 0) {
@@ -1148,28 +1031,23 @@ function render2DDieline() {
         ctx2D.strokeRect(curX - gapPx / 2, topH_px + h_px, gapPx, botH_px);
       }
     }
-
     if (show2DLabels) {
       ctx2D.fillStyle = 'rgba(15, 23, 42, 0.85)';
       ctx2D.font = 'bold 12px "Be Vietnam Pro", sans-serif';
       const panelName = idx % 2 === 0 ? `L${idx/2+1} (${pw}mm)` : `W${(idx+1)/2} (${pw}mm)`;
       ctx2D.fillText(panelName, curX + 10, topH_px + 22);
-
       ctx2D.font = '10px "Be Vietnam Pro", sans-serif';
       ctx2D.fillStyle = '#b45309';
       if (d.topFlapH > 0) ctx2D.fillText(`Cánh trên: ${d.topFlapH}mm`, curX + 10, topH_px - 8);
       ctx2D.fillText(`Cao H: ${d.H}mm`, curX + 10, topH_px + h_px / 2);
       if (d.botFlapH > 0) ctx2D.fillText(`Cánh đáy: ${d.botFlapH}mm`, curX + 10, topH_px + h_px + 16);
     }
-
     curX = nextX;
   });
-
   ctx2D.strokeStyle = '#0f172a';
   ctx2D.lineWidth = 2;
   buildDielineClipPath();
   ctx2D.stroke();
-
   if (eraserMode && mouseWorldPos2D) {
     const rPx = (eraserSizeMm / 2) * scale;
     ctx2D.save();
@@ -1185,7 +1063,6 @@ function render2DDieline() {
     ctx2D.stroke();
     ctx2D.restore();
   }
-
   textLayers.forEach(layer => {
     const fontPx = Math.max(1, layer.fontSize * scale);
     const px = layer.x * scale, py = layer.y * scale;
@@ -1196,7 +1073,6 @@ function render2DDieline() {
     ctx2D.textBaseline = 'middle';
     ctx2D.fillText(layer.text, px, py);
     ctx2D.restore();
-
     if (layer.id === selectedTextId && !eraserMode && !textToolMode) {
       const box = getTextBoxPx(layer);
       ctx2D.save();
@@ -1211,11 +1087,9 @@ function render2DDieline() {
       ctx2D.restore();
     }
   });
-
   ctx2D.restore();
   ctx2D.restore();
 }
-
 function getHandles() {
   const r = getArtRectPx();
   return {
@@ -1229,42 +1103,34 @@ function getHandles() {
     r: { x: r.x + r.w, y: r.y + r.h / 2 }
   };
 }
-
 function getCanvasWorldPos(e) {
   const rect = canvas2D.getBoundingClientRect();
   const cw = canvas2D.width, ch = canvas2D.height;
   const metrics = getLayoutMetrics(getDims());
-
   const clientX = e.clientX - rect.left;
   const clientY = e.clientY - rect.top;
-
   const xAfterPan = clientX - (cw / 2 + pan2D.x);
   const yAfterPan = clientY - (ch / 2 + pan2D.y);
   const xUnscaled = xAfterPan / zoom2D;
   const yUnscaled = yAfterPan / zoom2D;
   const xFinal = xUnscaled + cw / 2 - metrics.startX;
   const yFinal = yUnscaled + ch / 2 - metrics.startY;
-
   return { x: xFinal, y: yFinal };
 }
-
 canvas2D.addEventListener('pointerleave', () => {
   mouseWorldPos2D = null;
   if (eraserMode) render2DDieline();
 });
-
 canvas2D.addEventListener('pointerdown', e => {
   if (currentMode !== '2d') return;
   const m = getCanvasWorldPos(e);
   mouseWorldPos2D = m;
-
   if (e.button === 1) {
     activeHandle = 'pan';
     dragStart2D = { x: e.clientX, y: e.clientY, panX: pan2D.x, panY: pan2D.y };
     canvas2D.setPointerCapture(e.pointerId);
     return;
   }
-
   if (eraserMode) {
     if (loadedArtImg) {
       isErasing = true;
@@ -1275,14 +1141,12 @@ canvas2D.addEventListener('pointerdown', e => {
     }
     return;
   }
-
   if (textToolMode) {
     const scale = getLayoutMetrics(getDims()).scale;
     createTextLayer(m.x / scale, m.y / scale);
     setTextToolMode(false);
     return;
   }
-
   if (selectedTextId) {
     const layer = textLayers.find(t => t.id === selectedTextId);
     if (layer) {
@@ -1295,7 +1159,6 @@ canvas2D.addEventListener('pointerdown', e => {
       }
     }
   }
-
   for (let i = textLayers.length - 1; i >= 0; i--) {
     const layer = textLayers[i];
     const box = getTextBoxPx(layer);
@@ -1308,9 +1171,7 @@ canvas2D.addEventListener('pointerdown', e => {
       return;
     }
   }
-
   if (selectedTextId) { selectedTextId = null; render2DDieline(); }
-
   if (loadedArtImg) {
     const handles = getHandles();
     for (let [key, pos] of Object.entries(handles)) {
@@ -1321,7 +1182,6 @@ canvas2D.addEventListener('pointerdown', e => {
         return;
       }
     }
-
     const rpx = getArtRectPx();
     if (m.x >= rpx.x && m.x <= rpx.x + rpx.w && m.y >= rpx.y && m.y <= rpx.y + rpx.h) {
       activeHandle = 'move';
@@ -1330,17 +1190,14 @@ canvas2D.addEventListener('pointerdown', e => {
       return;
     }
   }
-
   activeHandle = 'pan';
   dragStart2D = { x: e.clientX, y: e.clientY, panX: pan2D.x, panY: pan2D.y };
   canvas2D.setPointerCapture(e.pointerId);
 });
-
 canvas2D.addEventListener('pointermove', e => {
   if (currentMode !== '2d') return;
   const m = getCanvasWorldPos(e);
   mouseWorldPos2D = m;
-
   if (eraserMode) {
     if (isErasing && loadedArtImg) {
       eraseAtWorldPos(m, lastErasePos);
@@ -1349,16 +1206,13 @@ canvas2D.addEventListener('pointermove', e => {
     render2DDieline();
     return;
   }
-
   if (!activeHandle) return;
-
   if (activeHandle === 'pan') {
     pan2D.x = dragStart2D.panX + (e.clientX - dragStart2D.x);
     pan2D.y = dragStart2D.panY + (e.clientY - dragStart2D.y);
     render2DDieline();
     return;
   }
-
   if (activeHandle === 'text-move' || activeHandle === 'text-resize') {
     const layer = textLayers.find(t => t.id === selectedTextId);
     if (!layer) { activeHandle = null; return; }
@@ -1379,13 +1233,11 @@ canvas2D.addEventListener('pointermove', e => {
     render2DDieline();
     return;
   }
-
   if (!loadedArtImg) return;
   const dx = (m.x - dragStart2D.x) / dragStart2D.scale;
   const dy = (m.y - dragStart2D.y) / dragStart2D.scale;
   const r = dragStart2D.rect;
   const aspect = r.w / r.h;
-
   if (activeHandle === 'move') {
     artRect.x = r.x + dx; artRect.y = r.y + dy;
   } else if (e.shiftKey && ['tl', 'tr', 'bl', 'br'].includes(activeHandle)) {
@@ -1433,7 +1285,6 @@ canvas2D.addEventListener('pointermove', e => {
   artRect.h = Math.max(5, artRect.h);
   render2DDieline();
 });
-
 canvas2D.addEventListener('pointerup', () => {
   if (isErasing) {
     isErasing = false;
@@ -1443,32 +1294,25 @@ canvas2D.addEventListener('pointerup', () => {
   if (activeHandle && activeHandle !== 'pan') pushHistory();
   activeHandle = null;
 });
-
 canvas2D.addEventListener('wheel', e => {
   if (currentMode !== '2d') return;
   e.preventDefault();
   const rect = canvas2D.getBoundingClientRect();
   const mouseX = e.clientX - rect.left;
   const mouseY = e.clientY - rect.top;
-
   const factor = e.deltaY < 0 ? 1.15 : 0.85;
   const newZoom = Math.max(0.2, Math.min(10, zoom2D * factor));
-
   const cw = canvas2D.width, ch = canvas2D.height;
   const worldX = (mouseX - (cw / 2 + pan2D.x)) / zoom2D;
   const worldY = (mouseY - (ch / 2 + pan2D.y)) / zoom2D;
-
   zoom2D = newZoom;
   pan2D.x = mouseX - (cw / 2 + worldX * zoom2D);
   pan2D.y = mouseY - (ch / 2 + worldY * zoom2D);
-
   render2DDieline();
 }, { passive: false });
 
-// --- THREE.JS 3D STUDIO ---
 const threeContainer = document.getElementById('threeCanvas');
 const scene = new THREE.Scene();
-
 const camera = new THREE.PerspectiveCamera(35, viewArea.clientWidth / viewArea.clientHeight, 1, 10000);
 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
@@ -1479,22 +1323,18 @@ renderer.toneMappingExposure = 1.08;
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 threeContainer.appendChild(renderer.domElement);
-
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.06;
 controls.maxPolarAngle = Math.PI * 0.95;
-
 scene.add(new THREE.HemisphereLight(0xffffff, 0xd8dee9, 1.35));
 const keyLight = new THREE.DirectionalLight(0xfffaf2, 1.85);
 keyLight.position.set(550, 950, 650);
 keyLight.castShadow = true;
 scene.add(keyLight);
-
 const fillLight = new THREE.DirectionalLight(0xeef4ff, 0.75);
 fillLight.position.set(-600, 400, -450);
 scene.add(fillLight);
-
 const shadowFloor = new THREE.Mesh(
   new THREE.PlaneGeometry(5000, 5000),
   new THREE.ShadowMaterial({ opacity: 0.16 })
@@ -1507,24 +1347,19 @@ scene.add(shadowFloor);
 function createPaperTexture(hexColor) {
   const cacheKey = 'paper_' + hexColor;
   return getCachedTexture(cacheKey, () => {
-    return _createPaperTextureImpl(hexColor);
+    const c = document.createElement('canvas'); c.width = 512; c.height = 512;
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = hexColor; ctx.fillRect(0, 0, 512, 512);
+    for (let i = 0; i < 9000; i++) {
+      ctx.fillStyle = Math.random() > 0.5 ? 'rgba(70,40,15,0.14)' : 'rgba(255,245,220,0.18)';
+      ctx.fillRect(Math.random() * 512, Math.random() * 512, 2, 1);
+    }
+    const tex = new THREE.CanvasTexture(c);
+    tex.wrapS = tex.wrapT = THREE.RepeatWrapping; tex.repeat.set(2, 2);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    return tex;
   });
 }
-function _createPaperTextureImpl(hexColor) {
-  const c = document.createElement('canvas'); c.width = 512; c.height = 512;
-  const ctx = c.getContext('2d');
-  ctx.fillStyle = hexColor; ctx.fillRect(0, 0, 512, 512);
-  for (let i = 0; i < 9000; i++) {
-    ctx.fillStyle = Math.random() > 0.5 ? 'rgba(70,40,15,0.14)' : 'rgba(255,245,220,0.18)';
-    ctx.fillRect(Math.random() * 512, Math.random() * 512, 2, 1);
-  }
-  const tex = new THREE.CanvasTexture(c);
-  tex.wrapS = tex.wrapT = THREE.RepeatWrapping; tex.repeat.set(2, 2);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  return tex;
-}
-
-// --- VẼ LỚP SÓNG CARTON CHÂN THỰC ---
 function shadeColor(hex, percent) {
   const n = parseInt(hex.replace('#', ''), 16);
   const amt = Math.round(2.55 * percent);
@@ -1533,139 +1368,118 @@ function shadeColor(hex, percent) {
   const B = Math.max(0, Math.min(255, (n & 0xff) + amt));
   return `rgb(${R},${G},${B})`;
 }
-
 function createCorrugatedEdgeTexture(hexColor, layers = 5) {
   const cacheKey = 'corrugated_' + hexColor + '_' + layers;
   return getCachedTexture(cacheKey, () => {
-    return _createCorrugatedEdgeTextureImpl(hexColor, layers);
-  });
-}
-function _createCorrugatedEdgeTextureImpl(hexColor, layers = 5) {
-  const W = 1024, H = 256;
-  const c = document.createElement('canvas');
-  c.width = W; c.height = H;
-  const ctx = c.getContext('2d');
-
-  ctx.fillStyle = hexColor;
-  ctx.fillRect(0, 0, W, H);
-
-  const numLiners = Math.ceil(layers / 2);
-  const numFlutes = Math.floor(layers / 2);
-  const linerWeight = 1.2;
-  const fluteWeight = 4.5;
-  const totalWeight = numLiners * linerWeight + numFlutes * fluteWeight;
-  const linerH = (linerWeight / totalWeight) * H;
-  const fluteH = (fluteWeight / totalWeight) * H;
-
-  const linerEdgeDark = shadeColor(hexColor, -35);
-  const linerEdgeLight = shadeColor(hexColor, 8);
-  const fluteDark = shadeColor(hexColor, -28);
-  const fluteStroke = shadeColor(hexColor, -50);
-  const fluteHighlight = shadeColor(hexColor, 25);
-
-  const numWaves = 10;
-  const period = W / numWaves;
-
-  let cumY = 0;
-  for (let i = 0; i < layers; i++) {
-    const isLiner = (i % 2 === 0);
-    const h = isLiner ? linerH : fluteH;
-    const y0 = cumY;
-    cumY += h;
-    const y1 = (i === layers - 1) ? H : cumY;
-
-    if (isLiner) {
-      const grad = ctx.createLinearGradient(0, y0, 0, y1);
-      grad.addColorStop(0, shadeColor(hexColor, -12));
-      grad.addColorStop(0.5, hexColor);
-      grad.addColorStop(1, shadeColor(hexColor, -12));
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, y0, W, y1 - y0);
-
-      ctx.strokeStyle = shadeColor(hexColor, -22);
-      ctx.globalAlpha = 0.18;
-      ctx.lineWidth = 0.6;
-      for (let gy = y0 + 1; gy < y1; gy += 1.5) {
+    const W = 1024, H = 256;
+    const c = document.createElement('canvas');
+    c.width = W; c.height = H;
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = hexColor;
+    ctx.fillRect(0, 0, W, H);
+    const numLiners = Math.ceil(layers / 2);
+    const numFlutes = Math.floor(layers / 2);
+    const linerWeight = 1.2;
+    const fluteWeight = 4.5;
+    const totalWeight = numLiners * linerWeight + numFlutes * fluteWeight;
+    const linerH = (linerWeight / totalWeight) * H;
+    const fluteH = (fluteWeight / totalWeight) * H;
+    const linerEdgeDark = shadeColor(hexColor, -35);
+    const linerEdgeLight = shadeColor(hexColor, 8);
+    const fluteDark = shadeColor(hexColor, -28);
+    const fluteStroke = shadeColor(hexColor, -50);
+    const fluteHighlight = shadeColor(hexColor, 25);
+    const numWaves = 10;
+    const period = W / numWaves;
+    let cumY = 0;
+    for (let i = 0; i < layers; i++) {
+      const isLiner = (i % 2 === 0);
+      const h = isLiner ? linerH : fluteH;
+      const y0 = cumY;
+      cumY += h;
+      const y1 = (i === layers - 1) ? H : cumY;
+      if (isLiner) {
+        const grad = ctx.createLinearGradient(0, y0, 0, y1);
+        grad.addColorStop(0, shadeColor(hexColor, -12));
+        grad.addColorStop(0.5, hexColor);
+        grad.addColorStop(1, shadeColor(hexColor, -12));
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, y0, W, y1 - y0);
+        ctx.strokeStyle = shadeColor(hexColor, -22);
+        ctx.globalAlpha = 0.18;
+        ctx.lineWidth = 0.6;
+        for (let gy = y0 + 1; gy < y1; gy += 1.5) {
+          ctx.beginPath();
+          ctx.moveTo(0, gy);
+          ctx.lineTo(W, gy);
+          ctx.stroke();
+        }
+        ctx.globalAlpha = 1;
+        ctx.strokeStyle = linerEdgeDark;
+        ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.moveTo(0, gy);
-        ctx.lineTo(W, gy);
+        ctx.moveTo(0, y0);
+        ctx.lineTo(W, y0);
         ctx.stroke();
+        ctx.strokeStyle = linerEdgeLight;
+        ctx.globalAlpha = 0.35;
+        ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        ctx.moveTo(0, y1 - 0.5);
+        ctx.lineTo(W, y1 - 0.5);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      } else {
+        ctx.fillStyle = fluteDark;
+        ctx.fillRect(0, y0, W, y1 - y0);
+        const centerY = (y0 + y1) / 2;
+        const amplitude = (y1 - y0) * 0.42;
+        const medThick = Math.max(2, (y1 - y0) * 0.16);
+        const waveY = (x) => centerY + Math.sin((x / period) * Math.PI * 2 - Math.PI / 2) * amplitude;
+        ctx.beginPath();
+        for (let x = 0; x <= W; x += 2) {
+          const wy = waveY(x) - medThick / 2;
+          if (x === 0) ctx.moveTo(x, wy); else ctx.lineTo(x, wy);
+        }
+        for (let x = W; x >= 0; x -= 2) {
+          const wy = waveY(x) + medThick / 2;
+          ctx.lineTo(x, wy);
+        }
+        ctx.closePath();
+        const fGrad = ctx.createLinearGradient(0, y0, 0, y1);
+        fGrad.addColorStop(0, shadeColor(hexColor, -6));
+        fGrad.addColorStop(0.5, shadeColor(hexColor, 6));
+        fGrad.addColorStop(1, shadeColor(hexColor, -6));
+        ctx.fillStyle = fGrad;
+        ctx.fill();
+        ctx.strokeStyle = fluteStroke;
+        ctx.lineWidth = 1.6;
+        ctx.stroke();
+        ctx.strokeStyle = fluteHighlight;
+        ctx.globalAlpha = 0.55;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        for (let x = 0; x <= W; x += 2) {
+          const wy = waveY(x) - medThick / 2 + 0.6;
+          if (x === 0) ctx.moveTo(x, wy); else ctx.lineTo(x, wy);
+        }
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+        const shadowGrad = ctx.createLinearGradient(0, y0, 0, y1);
+        shadowGrad.addColorStop(0, 'rgba(0,0,0,0)');
+        shadowGrad.addColorStop(0.5, 'rgba(0,0,0,0.08)');
+        shadowGrad.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = shadowGrad;
+        ctx.fillRect(0, y0, W, y1 - y0);
       }
-      ctx.globalAlpha = 1;
-
-      ctx.strokeStyle = linerEdgeDark;
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(0, y0);
-      ctx.lineTo(W, y0);
-      ctx.stroke();
-
-      ctx.strokeStyle = linerEdgeLight;
-      ctx.globalAlpha = 0.35;
-      ctx.lineWidth = 0.8;
-      ctx.beginPath();
-      ctx.moveTo(0, y1 - 0.5);
-      ctx.lineTo(W, y1 - 0.5);
-      ctx.stroke();
-      ctx.globalAlpha = 1;
-    } else {
-      ctx.fillStyle = fluteDark;
-      ctx.fillRect(0, y0, W, y1 - y0);
-
-      const centerY = (y0 + y1) / 2;
-      const amplitude = (y1 - y0) * 0.42;
-      const medThick = Math.max(2, (y1 - y0) * 0.16);
-
-      const waveY = (x) => centerY + Math.sin((x / period) * Math.PI * 2 - Math.PI / 2) * amplitude;
-
-      ctx.beginPath();
-      for (let x = 0; x <= W; x += 2) {
-        const wy = waveY(x) - medThick / 2;
-        if (x === 0) ctx.moveTo(x, wy); else ctx.lineTo(x, wy);
-      }
-      for (let x = W; x >= 0; x -= 2) {
-        const wy = waveY(x) + medThick / 2;
-        ctx.lineTo(x, wy);
-      }
-      ctx.closePath();
-
-      const fGrad = ctx.createLinearGradient(0, y0, 0, y1);
-      fGrad.addColorStop(0, shadeColor(hexColor, -6));
-      fGrad.addColorStop(0.5, shadeColor(hexColor, 6));
-      fGrad.addColorStop(1, shadeColor(hexColor, -6));
-      ctx.fillStyle = fGrad;
-      ctx.fill();
-
-      ctx.strokeStyle = fluteStroke;
-      ctx.lineWidth = 1.6;
-      ctx.stroke();
-
-      ctx.strokeStyle = fluteHighlight;
-      ctx.globalAlpha = 0.55;
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      for (let x = 0; x <= W; x += 2) {
-        const wy = waveY(x) - medThick / 2 + 0.6;
-        if (x === 0) ctx.moveTo(x, wy); else ctx.lineTo(x, wy);
-      }
-      ctx.stroke();
-      ctx.globalAlpha = 1;
-
-      const shadowGrad = ctx.createLinearGradient(0, y0, 0, y1);
-      shadowGrad.addColorStop(0, 'rgba(0,0,0,0)');
-      shadowGrad.addColorStop(0.5, 'rgba(0,0,0,0.08)');
-      shadowGrad.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.fillStyle = shadowGrad;
-      ctx.fillRect(0, y0, W, y1 - y0);
     }
-  }
-
-  const tex = new THREE.CanvasTexture(c);
-  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-  tex.repeat.set(5, 1);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = 8;
-  return tex;
+    const tex = new THREE.CanvasTexture(c);
+    tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+    tex.repeat.set(5, 1);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.anisotropy = 8;
+    return tex;
+  });
 }
 
 let cartonRoot = new THREE.Group();
@@ -1678,18 +1492,14 @@ function createPanelMaterial3D(panelIdx, regionType, d) {
   const texCanvas = document.createElement('canvas');
   texCanvas.width = 1024; texCanvas.height = 1024;
   const ctx = texCanvas.getContext('2d');
-
-  const paperColor = document.getElementById('paperColorPicker').value;
+  const paperColor = document.getElementById('paperColorPicker')?.value || '#c6a276';
   ctx.fillStyle = paperColor;
   ctx.fillRect(0, 0, 1024, 1024);
-
   const panelX = panelXmm(d, panelIdx);
   const pw = (panelIdx % 2 === 0) ? d.L : d.W;
-
   let regionY = d.topFlapH, rh = d.H;
   if (regionType === 'top') { regionY = 0; rh = d.topFlapH; }
   else if (regionType === 'bottom') { regionY = d.topFlapH + d.H; rh = d.botFlapH; }
-
   if (loadedArtImg) {
     ctx.save();
     ctx.globalCompositeOperation = 'multiply';
@@ -1704,7 +1514,6 @@ function createPanelMaterial3D(panelIdx, regionType, d) {
     );
     ctx.restore();
   }
-
   textLayers.forEach(layer => {
     ctx.save();
     ctx.scale(1024 / pw, 1024 / rh);
@@ -1716,14 +1525,12 @@ function createPanelMaterial3D(panelIdx, regionType, d) {
     ctx.fillText(layer.text, layer.x, layer.y);
     ctx.restore();
   });
-
   const tex = new THREE.CanvasTexture(texCanvas);
   tex.colorSpace = THREE.SRGBColorSpace;
   return new THREE.MeshStandardMaterial({ map: tex, roughness: 0.86 });
 }
 
 function buildCarton3D() {
-  // DEEP FIX: full dispose of geometries + materials + all maps (prevent memory leak)
   cartonRoot.traverse(obj => {
     if (obj.geometry) {
       obj.geometry.dispose();
@@ -1735,7 +1542,6 @@ function buildCarton3D() {
         if (!m) return;
         ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'aoMap', 'emissiveMap', 'bumpMap', 'displacementMap'].forEach(key => {
           if (m[key]) {
-            // Only dispose if not from the shared cache
             if (!textureCache.has(m[key].uuid) && !Array.from(textureCache.values()).includes(m[key])) {
               try { m[key].dispose(); } catch(e) {}
             }
@@ -1758,8 +1564,8 @@ function buildCarton3D() {
 
   const d = getDims();
   const { L, W, H, T, TS, topFlapH, botFlapH, slotGap, fluteLayers, tapeWidthMm, tapeOverlapMm } = d;
-  const paperColor = document.getElementById('paperColorPicker').value;
-  const STACK_GAP = 0.15;
+  const paperColor = document.getElementById('paperColorPicker')?.value || '#c6a276';
+  const STACK_GAP = 0.08; // Giảm để khi đóng kín không cộm
 
   const innerMat = new THREE.MeshStandardMaterial({ map: createPaperTexture(paperColor), roughness: 0.92 });
   const edgeMat = new THREE.MeshStandardMaterial({ map: createCorrugatedEdgeTexture(paperColor, fluteLayers), roughness: 0.95 });
@@ -1783,33 +1589,28 @@ function buildCarton3D() {
     bodyBox.castShadow = true; bodyBox.receiveShadow = true;
     wallGroup.add(bodyBox);
 
-    // kz: vị trí hinge theo chiều dày tường
-    // Cánh phụ (short) hinge gần mặt trong hơn, cánh chính (long) hơi lệch ra để khi đóng nằm trên.
-    const kz = cfg.isLong ? -(T / 2 + STACK_GAP * 0.5) : (T / 2 + STACK_GAP * 0.25);
+    // Hinge gần mặt trong hơn một chút để khi đóng cánh nằm phẳng hơn
+    const kz = cfg.isLong ? -(T / 2 + STACK_GAP * 0.3) : (T / 2 + STACK_GAP * 0.15);
 
-    // ---- CÁNH TRÊN ----
     if (topFlapH > 0) {
       const hinge = new THREE.Group(); hinge.position.set(0, H / 2, kz); wallGroup.add(hinge);
       const flapMat = createPanelMaterial3D(cfg.panelIdx, 'top', d);
       const flapW = Math.max(4, cfg.w - slotGap);
       const flapBox = new THREE.Mesh(new THREE.BoxGeometry(flapW, topFlapH, T), [edgeMat, edgeMat, edgeMat, edgeMat, flapMat, innerMat]);
-      // Stacking gọn: cánh phụ (minor) lớp dưới, cánh chính (major) chỉ nhích nhẹ ~0.6*T
-      // để khi đóng không bị đội cao và không xuyên hình.
-      let stackOffsetTop = cfg.isLong ? (T * 0.65) : 0;
+      // Giảm offset stacking để cánh chính không đội lên khi đóng kín
+      let stackOffsetTop = cfg.isLong ? (T * 0.25) : 0;
       flapBox.position.set(0, topFlapH / 2, -kz + stackOffsetTop);
       flapBox.castShadow = true; flapBox.receiveShadow = true;
       hinge.add(flapBox);
       flapControllers.push({ hinge, isTop: true, isLong: cfg.isLong, type: 'top' });
     }
 
-    // ---- CÁNH ĐÁY ----
     if (botFlapH > 0) {
       const hinge = new THREE.Group(); hinge.position.set(0, -H / 2, kz); wallGroup.add(hinge);
       const flapMat = createPanelMaterial3D(cfg.panelIdx, 'bottom', d);
       const flapW = Math.max(4, cfg.w - slotGap);
       const flapBox = new THREE.Mesh(new THREE.BoxGeometry(flapW, botFlapH, T), [edgeMat, edgeMat, edgeMat, edgeMat, flapMat, innerMat]);
-      // Đáy: đảo chiều offset vì hinge + chiều quay ngược → cánh chính vẫn nằm ngoài khi đóng.
-      let stackOffsetBot = cfg.isLong ? -(T * 0.65) : 0;
+      let stackOffsetBot = cfg.isLong ? -(T * 0.25) : 0;
       flapBox.position.set(0, -botFlapH / 2, -kz + stackOffsetBot);
       flapBox.castShadow = true; flapBox.receiveShadow = true;
       hinge.add(flapBox);
@@ -1817,18 +1618,11 @@ function buildCarton3D() {
     }
   });
 
-  // ============================================================================
-  // TÍNH TOÁN VỊ TRÍ ĐƯỜNG TIẾP XÚC (SEAM) VÀ BĂNG KEO
-  // ============================================================================
-  // Vị trí mép của cánh trên (Panel 0) khi đóng kín
   const seamZ = (W / 2 - T - STACK_GAP) - topFlapH;
   const seamZ_bot = (W / 2 - T - STACK_GAP) - botFlapH;
-  // Nếu seamZ < 0: 2 cánh đè lên nhau, mép cánh trên ở seamZ -> Băng keo căn giữa theo seamZ
-  // Nếu seamZ >= 0: 2 cánh có khe hở, khe hở đối xứng qua 0 -> Băng keo căn giữa theo 0
   const tapeTopZ = seamZ < 0 ? seamZ : 0;
   const tapeBotZ = seamZ_bot < 0 ? seamZ_bot : 0;
 
-  // MỐI NỐI TS (Glue Tab)
   if (TS > 2 && H > 6) {
     const tabDepth = Math.min(T * 0.85, T);
     const tabGroup = new THREE.Group();
@@ -1836,17 +1630,14 @@ function buildCarton3D() {
     const zFront = (W / 2 - T) - TS / 2;
     tabGroup.position.set(glueOnRight ? -xLeft : xLeft, H / 2, glueOnRight ? -zFront : zFront);
     tabGroup.rotation.y = glueOnRight ? -Math.PI / 2 : Math.PI / 2;
-
     const tw = TS, th = H - 2;
     const bevel = Math.min(tw * 0.5, th * 0.10, 20);
-
     const shape = new THREE.Shape();
     shape.moveTo(0, -th / 2);
     shape.lineTo(tw, -th / 2 + bevel);
     shape.lineTo(tw, th / 2 - bevel);
     shape.lineTo(0, th / 2);
     shape.closePath();
-
     const extrudeSettings = { depth: tabDepth, bevelEnabled: true, bevelSegments: 2, steps: 1, bevelSize: 0.4, bevelThickness: 0.4 };
     const tabGeo = new THREE.ExtrudeGeometry(shape, extrudeSettings);
     tabGeo.center();
@@ -1858,37 +1649,31 @@ function buildCarton3D() {
 
   const createFoldedTapeGroup = (isTop, tapeZ) => {
     const group = new THREE.Group();
-    const isClear = document.getElementById('tapeMode').value === 'clear';
-    const tapeColor = document.getElementById('tapeColorPicker').value || '#facc15';
+    const isClear = document.getElementById('tapeMode')?.value === 'clear';
+    const tapeColor = document.getElementById('tapeColorPicker')?.value || '#facc15';
     const tapeMat = new THREE.MeshPhysicalMaterial({
       color: isClear ? 0xfff8e7 : tapeColor,
       transparent: true, opacity: isClear ? 0.35 : 0.92, roughness: 0.18, side: THREE.DoubleSide
     });
-
     const eps = 0.3;
     const outerSurfaceY = isTop ? (H + 2 * T + STACK_GAP + eps) : -(2 * T + STACK_GAP + eps);
-
     const mainGeo = new THREE.PlaneGeometry(L + eps * 2, tapeWidthMm);
     const mainMesh = new THREE.Mesh(mainGeo, tapeMat);
     mainMesh.rotation.x = isTop ? -Math.PI / 2 : Math.PI / 2;
     mainMesh.position.set(0, outerSurfaceY, tapeZ);
     group.add(mainMesh);
-
     if (tapeOverlapMm > 0) {
       const wrapY = isTop ? (outerSurfaceY - tapeOverlapMm / 2) : (outerSurfaceY + tapeOverlapMm / 2);
       const sideGeo = new THREE.PlaneGeometry(tapeWidthMm, tapeOverlapMm);
-
       const leftMesh = new THREE.Mesh(sideGeo, tapeMat);
       leftMesh.rotation.y = Math.PI / 2;
       leftMesh.position.set(-(L / 2 + eps), wrapY, tapeZ);
       group.add(leftMesh);
-
       const rightMesh = new THREE.Mesh(sideGeo, tapeMat);
       rightMesh.rotation.y = Math.PI / 2;
       rightMesh.position.set(L / 2 + eps, wrapY, tapeZ);
       group.add(rightMesh);
     }
-
     cartonRoot.add(group);
     return group;
   };
@@ -1896,12 +1681,11 @@ function buildCarton3D() {
   if (topFlapH > 0) topTapeGroup = createFoldedTapeGroup(true, tapeTopZ);
   if (botFlapH > 0) botTapeGroup = createFoldedTapeGroup(false, tapeBotZ);
 
-  // ---- ĐƯỜNG TIẾP XÚC GIỮA 2 CÁNH MẶT CHÍNH (Seam line) ----
   const seamWidthZ = 1.6;
   const seamInset = Math.max(2, T * 2);
   const seamLen = Math.max(10, L - slotGap - seamInset);
-  const seamY_top = H + 2 * T + STACK_GAP + 0.16;
-  const seamY_bot = -(2 * T + STACK_GAP + 0.16);
+  const seamY_top = H + 2 * T + STACK_GAP + 0.12;
+  const seamY_bot = -(2 * T + STACK_GAP + 0.12);
 
   if (topFlapH > 0) {
     const seamMat = new THREE.MeshBasicMaterial({
@@ -1910,7 +1694,7 @@ function buildCarton3D() {
     const seamGeo = new THREE.PlaneGeometry(seamLen, seamWidthZ);
     topSeamMesh = new THREE.Mesh(seamGeo, seamMat);
     topSeamMesh.rotation.x = -Math.PI / 2;
-    topSeamMesh.position.set(0, seamY_top, seamZ); // Đặt đúng mép cánh
+    topSeamMesh.position.set(0, seamY_top, seamZ);
     topSeamMesh.visible = false;
     topSeamMesh.renderOrder = 2;
     topSeamMesh.userData.isOverlap = seamZ < 0;
@@ -1934,15 +1718,18 @@ function buildCarton3D() {
   applyFlapAngles();
 }
 
-// Internal values for bottom minor/major (used by packing animation)
-let _botSideDeg = null;   // null = use UI slider
+let _botSideDeg = null;
 let _botMainDeg = null;
 
 function applyFlapAngles() {
-  const topMainDeg = +document.getElementById('topMainOpen').value;
-  const topSideDeg = +document.getElementById('topSideOpen').value;
-  const botUI = +document.getElementById('bottomOpen').value;
-  // Nếu đang chạy clip ráp thùng thì dùng giá trị tách riêng, không thì dùng chung slider đáy
+  const topMainEl = document.getElementById('topMainOpen');
+  const topSideEl = document.getElementById('topSideOpen');
+  const botEl = document.getElementById('bottomOpen');
+  if (!topMainEl || !topSideEl || !botEl) return;
+
+  const topMainDeg = +topMainEl.value || 0;
+  const topSideDeg = +topSideEl.value || 0;
+  const botUI = +botEl.value || 0;
   const botSideDeg = (_botSideDeg !== null) ? _botSideDeg : botUI;
   const botMainDeg = (_botMainDeg !== null) ? _botMainDeg : botUI;
 
@@ -1957,9 +1744,10 @@ function applyFlapAngles() {
     fc.hinge.rotation.x = sign * (Math.PI / 2) - sign * THREE.MathUtils.degToRad(openDeg);
   });
 
-  const mode = document.getElementById('tapeMode').value;
+  const tapeModeEl = document.getElementById('tapeMode');
+  const mode = tapeModeEl ? tapeModeEl.value : 'none';
   const isClear = mode === 'clear';
-  const tapeColor = document.getElementById('tapeColorPicker').value || '#facc15';
+  const tapeColor = document.getElementById('tapeColorPicker')?.value || '#facc15';
 
   const topClosed = topMainDeg < 2 && topSideDeg < 2;
   const botClosed = botSideDeg < 2 && botMainDeg < 2;
@@ -1969,24 +1757,24 @@ function applyFlapAngles() {
   [topTapeGroup, botTapeGroup].forEach(group => {
     if (!group) return;
     group.children.forEach(mesh => {
-      mesh.material.color.set(isClear ? 0xfff8e7 : tapeColor);
-      mesh.material.opacity = isClear ? 0.35 : 0.92;
+      if (mesh.material) {
+        mesh.material.color.set(isClear ? 0xfff8e7 : tapeColor);
+        mesh.material.opacity = isClear ? 0.35 : 0.92;
+      }
     });
   });
 
-  // Chỉ hiện seam line khi 2 cánh THỰC SỰ ĐÈ LÊN NHAU (isOverlap) và đang khép
+  // FIX: dùng botSideDeg / botMainDeg thay vì botDeg không tồn tại
   const showTopSeam = (mode !== 'color') && topMainDeg < 5;
-  const showBotSeam = (mode !== 'color') && botDeg < 5;
+  const showBotSeam = (mode !== 'color') && botMainDeg < 5;
   if (topSeamMesh) topSeamMesh.visible = showTopSeam && topSeamMesh.userData.isOverlap;
   if (botSeamMesh) botSeamMesh.visible = showBotSeam && botSeamMesh.userData.isOverlap;
 }
 
-// --- HIỆU ỨNG CLIP NGẮN ---
 let isAnimating = false;
 let animProgress = 0;
 let animDuration = 6.0;
 let animLastTime = null;
-
 const animBar = document.getElementById('animBar');
 const animPlayPauseBtn = document.getElementById('animPlayPauseBtn');
 const animResetBtn = document.getElementById('animResetBtn');
@@ -1995,14 +1783,9 @@ const animTimeStatus = document.getElementById('animTimeStatus');
 
 function setAnimationProgress(prog) {
   animProgress = Math.max(0, Math.min(1, prog));
-  animSeekSlider.value = animProgress * 1000;
-  animTimeStatus.textContent = (animProgress * animDuration).toFixed(1) + 's';
+  if (animSeekSlider) animSeekSlider.value = animProgress * 1000;
+  if (animTimeStatus) animTimeStatus.textContent = (animProgress * animDuration).toFixed(1) + 's';
 
-  // Sequence ráp thùng chuẩn:
-  // 0.00-0.25 : đóng 2 cánh phụ đáy (bottom side / W)
-  // 0.25-0.50 : đóng 2 cánh chính đáy (bottom main / L) đè lên cánh phụ
-  // 0.50-0.75 : đóng 2 cánh phụ trên (top side / W)
-  // 0.75-1.00 : đóng 2 cánh chính trên (top main / L) đè lên cánh phụ
   const pBotSide = Math.min(1, Math.max(0, animProgress / 0.25));
   const pBotMain = Math.min(1, Math.max(0, (animProgress - 0.25) / 0.25));
   const pTopSide = Math.min(1, Math.max(0, (animProgress - 0.50) / 0.25));
@@ -2013,18 +1796,18 @@ function setAnimationProgress(prog) {
   const topSideVal = (1 - pTopSide) * 90;
   const topMainVal = (1 - pTopMain) * 90;
 
-  // Cập nhật UI slider (dùng giá trị trung bình đáy để slider vẫn phản ánh)
-  document.getElementById('bottomOpen').value = (botSideVal + botMainVal) / 2;
-  document.getElementById('topSideOpen').value = topSideVal;
-  document.getElementById('topMainOpen').value = topMainVal;
+  const bottomOpenEl = document.getElementById('bottomOpen');
+  const topSideOpenEl = document.getElementById('topSideOpen');
+  const topMainOpenEl = document.getElementById('topMainOpen');
+  if (bottomOpenEl) bottomOpenEl.value = (botSideVal + botMainVal) / 2;
+  if (topSideOpenEl) topSideOpenEl.value = topSideVal;
+  if (topMainOpenEl) topMainOpenEl.value = topMainVal;
 
-  // Điều khiển tách biệt góc đáy
   _botSideDeg = botSideVal;
   _botMainDeg = botMainVal;
 
   applyFlapAngles();
 
-  // Khi hết clip thì trả về chế độ dùng chung slider
   if (animProgress >= 0.999) {
     _botSideDeg = null;
     _botMainDeg = null;
@@ -2033,33 +1816,29 @@ function setAnimationProgress(prog) {
 
 document.getElementById('playAnimBtn').onclick = () => {
   if (currentMode !== '3d') {
-    document.getElementById('build3DBtn').click();
+    document.getElementById('build3DBtn')?.click();
   }
   animBar.classList.add('visible');
   isAnimating = true;
   animPlayPauseBtn.textContent = '⏸ Tạm dừng';
   animLastTime = performance.now();
 };
-
 animPlayPauseBtn.onclick = () => {
   isAnimating = !isAnimating;
   animPlayPauseBtn.textContent = isAnimating ? '⏸ Tạm dừng' : '▶ Tiếp tục';
   if (isAnimating) animLastTime = performance.now();
 };
-
 animResetBtn.onclick = () => {
   setAnimationProgress(0);
   isAnimating = true;
   animPlayPauseBtn.textContent = '⏸ Tạm dừng';
   animLastTime = performance.now();
 };
-
 animSeekSlider.oninput = e => {
   isAnimating = false;
   animPlayPauseBtn.textContent = '▶ Tiếp tục';
   setAnimationProgress(e.target.value / 1000);
 };
-
 document.getElementById('animCloseBtn').onclick = () => {
   isAnimating = false;
   animBar.classList.remove('visible');
@@ -2070,7 +1849,6 @@ function updateAnimation(timestamp) {
     if (!animLastTime) animLastTime = timestamp;
     const dt = (timestamp - animLastTime) / 1000;
     animLastTime = timestamp;
-
     animProgress += dt / animDuration;
     if (animProgress >= 1.0) {
       animProgress = 1.0;
@@ -2095,7 +1873,6 @@ function focusCamera(preset = 'iso') {
 const toggleLabelsBtn = document.getElementById('toggle2DLabelsBtn');
 const toggleLabelsText = document.getElementById('toggle2DLabelsText');
 const eyeIcon = document.getElementById('eyeIcon');
-
 toggleLabelsBtn.onclick = () => {
   show2DLabels = !show2DLabels;
   if (show2DLabels) {
@@ -2112,13 +1889,13 @@ toggleLabelsBtn.onclick = () => {
 
 function clearUploadedArtwork(recordHistory = true) {
   loadedArtImg = null;
-  document.getElementById('artInput').value = '';
+  const artInput = document.getElementById('artInput');
+  if (artInput) artInput.value = '';
   textLayers = [];
   selectedTextId = null;
   if (recordHistory) pushHistory();
   if (currentMode === '2d') resizeCanvas2D(); else buildCarton3D();
 }
-
 document.getElementById('clearArtBtn').onclick = () => clearUploadedArtwork(true);
 
 document.getElementById('updateDielineBtn').onclick = () => {
@@ -2136,11 +1913,9 @@ document.getElementById('build3DBtn').onclick = () => {
   document.getElementById('toolbar2D').style.display = 'none';
   document.getElementById('camToolbar').style.display = 'flex';
   document.getElementById('controls3DPanel').style.display = 'block';
-
   const w = viewArea.clientWidth, h = viewArea.clientHeight;
   camera.aspect = w / h; camera.updateProjectionMatrix();
   renderer.setSize(w, h);
-
   buildCarton3D();
   focusCamera('iso');
 };
@@ -2179,7 +1954,6 @@ document.getElementById('artInput').addEventListener('change', e => {
     offscreen.width = img.width; offscreen.height = img.height;
     offscreen.getContext('2d').drawImage(img, 0, 0);
     loadedArtImg = offscreen;
-
     const geom = getDielineGeometry(getDims());
     artRect = { x: 0, y: 0, w: geom.totalW, h: geom.totalH };
     zoom2D = 1.0; pan2D = { x: 0, y: 0 };
@@ -2192,6 +1966,7 @@ document.getElementById('artInput').addEventListener('change', e => {
 
 ['L', 'W', 'H', 'thick', 'glueTS', 'topFlapH', 'botFlapH', 'slotGap', 'paperColorPicker', 'fluteLayers', 'tapeWidthMm', 'tapeOverlapMm'].forEach(id => {
   const el = document.getElementById(id);
+  if (!el) return;
   el.addEventListener('input', () => {
     const raw = parseFloat(el.value);
     if (el.type === 'number' && !isFinite(raw)) return;
@@ -2209,8 +1984,9 @@ document.getElementById('paperPreset').onchange = e => {
 };
 
 ['topMainOpen', 'topSideOpen', 'bottomOpen'].forEach(id => {
-  document.getElementById(id).oninput = () => {
-    // Người dùng kéo tay → hủy chế độ tách góc đáy của clip ráp thùng
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.oninput = () => {
     if (id === 'bottomOpen') {
       _botSideDeg = null;
       _botMainDeg = null;
@@ -2220,7 +1996,8 @@ document.getElementById('paperPreset').onchange = e => {
 });
 
 document.getElementById('tapeMode').onchange = e => {
-  document.getElementById('tapeColorRow').style.display = e.target.value === 'color' ? 'grid' : 'none';
+  const row = document.getElementById('tapeColorRow');
+  if (row) row.style.display = e.target.value === 'color' ? 'grid' : 'none';
   applyFlapAngles();
 };
 document.getElementById('tapeColorPicker').oninput = applyFlapAngles;
@@ -2260,9 +2037,6 @@ document.getElementById('toggleOverlay').onclick = () => {
   b.textContent = c.style.display === 'none' ? 'Mở rộng' : 'Thu gọn';
 };
 
-// ============================================================================
-// XUẤT BẢN 2D (PNG độ phân giải cao + SVG vector cho Illustrator/Corel)
-// ============================================================================
 function export2DAsHighResPNG() {
   if (currentMode !== '2d') {
     switchTo2D();
@@ -2272,7 +2046,6 @@ function export2DAsHighResPNG() {
   const oldZoom = zoom2D;
   const oldPanX = pan2D.x;
   const oldPanY = pan2D.y;
-
   const scaleFactor = 4;
   canvas2D.width = oldW * scaleFactor;
   canvas2D.height = oldH * scaleFactor;
@@ -2280,19 +2053,16 @@ function export2DAsHighResPNG() {
   pan2D.x = 0;
   pan2D.y = 0;
   render2DDieline();
-
   const tempCanvas = document.createElement('canvas');
   tempCanvas.width = canvas2D.width;
   tempCanvas.height = canvas2D.height;
   tempCanvas.getContext('2d').drawImage(canvas2D, 0, 0);
-
   canvas2D.width = oldW;
   canvas2D.height = oldH;
   zoom2D = oldZoom;
   pan2D.x = oldPanX;
   pan2D.y = oldPanY;
   render2DDieline();
-
   tempCanvas.toBlob(blob => {
     const url = URL.createObjectURL(blob);
     const d = getDims();
@@ -2307,15 +2077,13 @@ function export2DAsHighResPNG() {
 function export2DAsSVG() {
   const d = getDims();
   const geom = getDielineGeometry(d);
-  const paperColor = document.getElementById('paperColorPicker').value;
+  const paperColor = document.getElementById('paperColorPicker')?.value || '#c6a276';
   const mmW = geom.totalW;
   const mmH = geom.totalH;
   const tsBevel = d.TS > 0 ? Math.min(d.TS * 0.5, d.H * 0.15, 20) : 0;
-
   const parts = [];
   parts.push(`<?xml version="1.0" encoding="UTF-8"?>`);
   parts.push(`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${mmW}mm" height="${mmH}mm" viewBox="0 0 ${mmW} ${mmH}">`);
-
   const edges = blankEdges(d);
   const x0 = 0, xEnd = mmW;
   const y0 = 0, y1 = d.topFlapH, y2 = d.topFlapH + d.H, yEnd = mmH;
@@ -2358,22 +2126,18 @@ function export2DAsSVG() {
   } else {
     outline = `M 0 0 L ${mmW} 0 L ${mmW} ${mmH} L 0 ${mmH} Z`;
   }
-
   parts.push(`<defs><clipPath id="dielineClip"><path d="${outline}"/></clipPath></defs>`);
   parts.push(`<path d="${outline}" fill="${paperColor}" stroke="#0f172a" stroke-width="0.5"/>`);
-
   if (loadedArtImg) {
     const dataURL = loadedArtImg.toDataURL('image/png');
     parts.push(`<g clip-path="url(#dielineClip)">`);
     parts.push(`<image x="${artRect.x}" y="${artRect.y}" width="${artRect.w}" height="${artRect.h}" xlink:href="${dataURL}" preserveAspectRatio="none"/>`);
     parts.push(`</g>`);
   }
-
   let creaseD = '';
   if (d.topFlapH > 0) creaseD += `M ${bodyLeft} ${d.topFlapH} L ${bodyRight} ${d.topFlapH} `;
   if (d.botFlapH > 0) creaseD += `M ${bodyLeft} ${y2} L ${bodyRight} ${y2} `;
   if (d.TS > 0) creaseD += `M ${glueOnRight ? bodyRight : bodyLeft} ${d.topFlapH} L ${glueOnRight ? bodyRight : bodyLeft} ${y2} `;
-
   const pw = [d.L, d.W, d.L, d.W];
   let curX = bodyLeft;
   pw.forEach((w, idx) => {
@@ -2381,7 +2145,6 @@ function export2DAsSVG() {
     curX += w;
   });
   parts.push(`<path d="${creaseD}" fill="none" stroke="#ec4899" stroke-width="0.35" stroke-dasharray="2,1.5"/>`);
-
   let slotD = '';
   curX = bodyLeft;
   pw.forEach((w, idx) => {
@@ -2399,13 +2162,11 @@ function export2DAsSVG() {
   if (slotD) {
     parts.push(`<path d="${slotD}" fill="#ffffff" stroke="#0f172a" stroke-width="0.25"/>`);
   }
-
   textLayers.forEach(layer => {
     const escaped = (layer.text || '')
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     parts.push(`<text x="${layer.x}" y="${layer.y}" font-family="'Be Vietnam Pro', Arial, sans-serif" font-weight="bold" font-size="${layer.fontSize}" fill="${layer.color}" text-anchor="middle" dominant-baseline="central">${escaped}</text>`);
   });
-
   if (show2DLabels) {
     curX = bodyLeft;
     pw.forEach((w, idx) => {
@@ -2421,9 +2182,7 @@ function export2DAsSVG() {
       curX += w;
     });
   }
-
   parts.push(`</svg>`);
-
   const svgStr = parts.join('\n');
   const blob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
   const url = URL.createObjectURL(blob);
@@ -2447,7 +2206,6 @@ new ResizeObserver(() => {
   }
 }).observe(viewArea);
 
-// Animation loop (uses early-declared start/stop helpers)
 function animate(timestamp) {
   if (currentMode !== '3d') {
     animFrameId = null;
