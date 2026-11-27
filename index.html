@@ -309,7 +309,7 @@ button.flip-glue.right{
         <div class="mini-field"><label>Cánh đáy L2 (mặt dài sau), mm</label><input id="botFlapH2" type="number" min="0" step="0.5" value="152.5"></div>
         <div class="mini-field"><label>Cánh đáy W2 (hông trái), mm</label><input id="botFlapH3" type="number" min="0" step="0.5" value="152.5"></div>
       </div>
-      <div style="margin-top:5px;font-size:10px;color:var(--muted)">Tùy chỉnh riêng áp dụng cho mô hình 3D; bản trải 2D vẫn dùng chiều cao chung. Hai cánh chính L1/L2 được so tổng chiều cao với W để xác định chồng mí.</div>
+      <div style="margin-top:5px;font-size:10px;color:var(--muted)">Chiều cao từng cánh được thể hiện riêng trên cả bản trải 2D và mô hình 3D. Hai cánh chính L1/L2 được so tổng chiều cao với W để xác định chồng mí.</div>
     </div>
     <div class="grid-2" style="margin-top:5px">
       <div class="mini-field"><label>Mối nối TS (mm)</label><input id="glueTS" type="number" min="0" value="35"></div>
@@ -970,15 +970,52 @@ function updateGlueUi() {
 
 function getDielineGeometry(d) {
   const totalW = d.TS + d.L + d.W + d.L + d.W;
-  const totalH = d.topFlapH + d.H + d.botFlapH;
-  return { totalW, totalH };
+  const topExtent = Math.max(0, ...d.topFlapHeights);
+  const botExtent = Math.max(0, ...d.botFlapHeights);
+  const totalH = topExtent + d.H + botExtent;
+  return { totalW, totalH, topExtent, botExtent };
+}
+
+function getDielineOutlinePoints(d) {
+  const geom = getDielineGeometry(d);
+  const edges = blankEdges(d);
+  const panelWidths = [d.L, d.W, d.L, d.W];
+  const topFold = geom.topExtent;
+  const bottomFold = topFold + d.H;
+  const bevel = d.TS > 0 ? Math.min(d.TS * 0.5, d.H * 0.15, 20) : 0;
+  const points = [];
+  let x = edges.bodyLeft;
+  const topY = i => topFold - d.topFlapHeights[i];
+  const bottomY = i => bottomFold + d.botFlapHeights[i];
+
+  if (!glueOnRight) points.push([0, topFold + bevel], [edges.bodyLeft, topFold], [edges.bodyLeft, topY(0)]);
+  else points.push([edges.bodyLeft, topY(0)]);
+
+  for (let i = 0; i < panelWidths.length; i++) {
+    x += panelWidths[i];
+    points.push([x, topY(i)]);
+    if (i < panelWidths.length - 1) points.push([x, topY(i + 1)]);
+  }
+
+  points.push([edges.bodyRight, topFold]);
+  if (glueOnRight && d.TS > 0) points.push([geom.totalW, topFold + bevel]);
+  points.push([geom.totalW, bottomFold - bevel], [edges.bodyRight, bottomFold], [edges.bodyRight, bottomY(3)]);
+  x = edges.bodyRight;
+  for (let i = panelWidths.length - 1; i >= 0; i--) {
+    x -= panelWidths[i];
+    points.push([x, bottomY(i)]);
+    if (i > 0) points.push([x, bottomY(i - 1)]);
+  }
+  points.push([edges.bodyLeft, bottomFold]);
+  if (!glueOnRight && d.TS > 0) points.push([0, bottomFold - bevel]);
+  return points;
 }
 
 function getLayoutMetrics(d) {
   const cw = canvas2D.width, ch = canvas2D.height;
   const geom = getDielineGeometry(d);
   const padding = 45;
-  const scale = Math.min((cw - padding * 2) / geom.totalW, (ch - padding * 2) / geom.totalH);
+  const scale = Math.max(0.0001, Math.min(Math.max(1, cw - padding * 2) / geom.totalW, Math.max(1, ch - padding * 2) / geom.totalH));
   const startX = (cw - geom.totalW * scale) / 2;
   const startY = (ch - geom.totalH * scale) / 2;
   return { scale, startX, startY };
@@ -991,8 +1028,8 @@ function getArtRectPx() {
 
 function resizeCanvas2D() {
   if (!viewArea) return;
-  canvas2D.width = viewArea.clientWidth || 900;
-  canvas2D.height = viewArea.clientHeight || 600;
+  canvas2D.width = Math.max(1, viewArea.clientWidth || 900);
+  canvas2D.height = Math.max(1, viewArea.clientHeight || 600);
   render2DDieline();
 }
 
@@ -1053,14 +1090,13 @@ function render2DDieline() {
   const { scale, startX, startY } = metrics;
   const paperColor = document.getElementById('paperColorPicker').value;
 
-  const ts_px = d.TS * scale;
-  const topH_px = d.topFlapH * scale;
+  const topH_px = geom.topExtent * scale;
   const h_px = d.H * scale;
-  const botH_px = d.botFlapH * scale;
-  const totalH_px = topH_px + h_px + botH_px;
+  const botH_px = geom.botExtent * scale;
+  const totalH_px = geom.totalH * scale;
   const totalW_px = geom.totalW * scale;
-
-  const tsBevelPx = ts_px > 0 ? Math.min(ts_px * 0.5, h_px * 0.15, 20 * scale) : 0;
+  const topFlapPx = d.topFlapHeights.map(height => height * scale);
+  const botFlapPx = d.botFlapHeights.map(height => height * scale);
 
   ctx2D.save();
   ctx2D.translate(cw / 2 + pan2D.x, ch / 2 + pan2D.y);
@@ -1071,55 +1107,13 @@ function render2DDieline() {
   ctx2D.translate(startX, startY);
 
   const buildDielineClipPath = () => {
-    const edges = blankEdges(d);
-    const bodyLeft = edges.bodyLeft * scale;
-    const bodyRight = edges.bodyRight * scale;
-    const tsLeft = edges.tsLeft * scale;
+    const points = getDielineOutlinePoints(d);
     ctx2D.beginPath();
-    if (d.TS <= 0) {
-      ctx2D.rect(0, 0, totalW_px, totalH_px);
-      return;
-    }
-    if (!glueOnRight) {
-      ctx2D.moveTo(0, topH_px + tsBevelPx);
-      ctx2D.lineTo(ts_px, topH_px);
-      if (d.topFlapH > 0) {
-        ctx2D.lineTo(ts_px, 0);
-        ctx2D.lineTo(totalW_px, 0);
-      } else {
-        ctx2D.lineTo(totalW_px, topH_px);
-      }
-      if (d.botFlapH > 0) {
-        ctx2D.lineTo(totalW_px, totalH_px);
-        ctx2D.lineTo(ts_px, totalH_px);
-        ctx2D.lineTo(ts_px, topH_px + h_px);
-      } else {
-        ctx2D.lineTo(totalW_px, topH_px + h_px);
-        ctx2D.lineTo(ts_px, topH_px + h_px);
-      }
-      ctx2D.lineTo(0, topH_px + h_px - tsBevelPx);
-      ctx2D.closePath();
-      return;
-    }
-    if (d.topFlapH > 0) {
-      ctx2D.moveTo(bodyLeft, 0);
-      ctx2D.lineTo(bodyRight, 0);
-      ctx2D.lineTo(bodyRight, topH_px);
-    } else {
-      ctx2D.moveTo(bodyLeft, topH_px);
-      ctx2D.lineTo(bodyRight, topH_px);
-    }
-    ctx2D.lineTo(totalW_px, topH_px + tsBevelPx);
-    ctx2D.lineTo(totalW_px, topH_px + h_px - tsBevelPx);
-    ctx2D.lineTo(bodyRight, topH_px + h_px);
-    if (d.botFlapH > 0) {
-      ctx2D.lineTo(bodyRight, totalH_px);
-      ctx2D.lineTo(bodyLeft, totalH_px);
-    } else {
-      ctx2D.lineTo(bodyLeft, topH_px + h_px);
-    }
+    points.forEach(([x, y], index) => {
+      if (index === 0) ctx2D.moveTo(x * scale, y * scale);
+      else ctx2D.lineTo(x * scale, y * scale);
+    });
     ctx2D.closePath();
-    void tsLeft;
   };
 
   ctx2D.save();
@@ -1160,11 +1154,11 @@ function render2DDieline() {
   ctx2D.lineWidth = 1.5;
 
   ctx2D.beginPath();
-  if (d.topFlapH > 0) {
+  if (d.topFlapHeights.some(height => height > 0)) {
     ctx2D.moveTo(bodyLeftPx, topH_px);
     ctx2D.lineTo(bodyRightPx, topH_px);
   }
-  if (d.botFlapH > 0) {
+  if (d.botFlapHeights.some(height => height > 0)) {
     ctx2D.moveTo(bodyLeftPx, topH_px + h_px);
     ctx2D.lineTo(bodyRightPx, topH_px + h_px);
   }
@@ -1201,17 +1195,19 @@ function render2DDieline() {
 
       const gapPx = Math.max(1.5, d.slotGap * scale);
       ctx2D.fillStyle = '#1e293b';
-      if (d.topFlapH > 0) {
-        ctx2D.fillRect(curX - gapPx / 2, -1, gapPx, topH_px + 2);
+      const topSlotPx = Math.max(topFlapPx[idx - 1], topFlapPx[idx]);
+      const botSlotPx = Math.max(botFlapPx[idx - 1], botFlapPx[idx]);
+      if (topSlotPx > 0) {
+        ctx2D.fillRect(curX - gapPx / 2, topH_px - topSlotPx - 1, gapPx, topSlotPx + 2);
         ctx2D.strokeStyle = '#0f172a';
         ctx2D.lineWidth = 1.2;
-        ctx2D.strokeRect(curX - gapPx / 2, 0, gapPx, topH_px);
+        ctx2D.strokeRect(curX - gapPx / 2, topH_px - topSlotPx, gapPx, topSlotPx);
       }
-      if (d.botFlapH > 0) {
-        ctx2D.fillRect(curX - gapPx / 2, topH_px + h_px - 1, gapPx, botH_px + 2);
+      if (botSlotPx > 0) {
+        ctx2D.fillRect(curX - gapPx / 2, topH_px + h_px - 1, gapPx, botSlotPx + 2);
         ctx2D.strokeStyle = '#0f172a';
         ctx2D.lineWidth = 1.2;
-        ctx2D.strokeRect(curX - gapPx / 2, topH_px + h_px, gapPx, botH_px);
+        ctx2D.strokeRect(curX - gapPx / 2, topH_px + h_px, gapPx, botSlotPx);
       }
     }
 
@@ -1223,9 +1219,15 @@ function render2DDieline() {
 
       ctx2D.font = '10px "Be Vietnam Pro", sans-serif';
       ctx2D.fillStyle = '#b45309';
-      if (d.topFlapH > 0) ctx2D.fillText(`Cánh trên: ${d.topFlapH}mm`, curX + 10, topH_px - 8);
+      if (topFlapPx[idx] > 0) {
+        ctx2D.textBaseline = 'middle';
+        ctx2D.fillText(`Cánh trên: ${d.topFlapHeights[idx]}mm`, curX + 10, topH_px - topFlapPx[idx] / 2);
+      }
       ctx2D.fillText(`Cao H: ${d.H}mm`, curX + 10, topH_px + h_px / 2);
-      if (d.botFlapH > 0) ctx2D.fillText(`Cánh đáy: ${d.botFlapH}mm`, curX + 10, topH_px + h_px + 16);
+      if (botFlapPx[idx] > 0) {
+        ctx2D.textBaseline = 'middle';
+        ctx2D.fillText(`Cánh đáy: ${d.botFlapHeights[idx]}mm`, curX + 10, topH_px + h_px + botFlapPx[idx] / 2);
+      }
     }
 
     curX = nextX;
@@ -2433,6 +2435,7 @@ document.getElementById('projectInput').addEventListener('change', async event =
 document.getElementById('updateDielineBtn').onclick = () => {
   sanitizeDims(true);
   switchTo2D();
+  requestAnimationFrame(resizeCanvas2D);
 };
 
 document.getElementById('build3DBtn').onclick = () => {
@@ -2463,6 +2466,7 @@ const switchTo2D = () => {
   document.getElementById('controls3DPanel').style.display = 'none';
   animBar.classList.remove('visible');
   resizeCanvas2D();
+  requestAnimationFrame(resizeCanvas2D);
 };
 document.getElementById('switchMode2D_bottom').onclick = switchTo2D;
 
@@ -2578,11 +2582,11 @@ document.getElementById('W').addEventListener('input', event => {
   });
   ids.forEach(id => {
     document.getElementById(id).addEventListener('input', () => {
-      if (currentMode === '3d') buildCarton3D();
+      if (currentMode === '3d') buildCarton3D(); else render2DDieline();
     });
     document.getElementById(id).addEventListener('change', () => {
       sanitizeDims(true);
-      if (currentMode === '3d') buildCarton3D();
+      if (currentMode === '3d') buildCarton3D(); else render2DDieline();
     });
   });
 });
@@ -2735,54 +2739,18 @@ function export2DAsSVG() {
   const paperColor = document.getElementById('paperColorPicker').value;
   const mmW = geom.totalW;
   const mmH = geom.totalH;
-  const tsBevel = d.TS > 0 ? Math.min(d.TS * 0.5, d.H * 0.15, 20) : 0;
+  const topFold = geom.topExtent;
+  const bottomFold = topFold + d.H;
 
   const parts = [];
   parts.push(`<?xml version="1.0" encoding="UTF-8"?>`);
   parts.push(`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${mmW}mm" height="${mmH}mm" viewBox="0 0 ${mmW} ${mmH}">`);
 
   const edges = blankEdges(d);
-  const x0 = 0, xEnd = mmW;
-  const y0 = 0, y1 = d.topFlapH, y2 = d.topFlapH + d.H, yEnd = mmH;
   const bodyLeft = edges.bodyLeft;
   const bodyRight = edges.bodyRight;
-  let outline = '';
-  if (d.TS > 0 && !glueOnRight) {
-    outline = `M ${x0} ${y1 + tsBevel}`;
-    outline += ` L ${d.TS} ${y1}`;
-    if (d.topFlapH > 0) {
-      outline += ` L ${d.TS} ${y0}`;
-      outline += ` L ${xEnd} ${y0}`;
-    } else {
-      outline += ` L ${xEnd} ${y1}`;
-    }
-    if (d.botFlapH > 0) {
-      outline += ` L ${xEnd} ${yEnd}`;
-      outline += ` L ${d.TS} ${yEnd}`;
-      outline += ` L ${d.TS} ${y2}`;
-    } else {
-      outline += ` L ${xEnd} ${y2}`;
-      outline += ` L ${d.TS} ${y2}`;
-    }
-    outline += ` L ${x0} ${y2 - tsBevel} Z`;
-  } else if (d.TS > 0 && glueOnRight) {
-    if (d.topFlapH > 0) {
-      outline = `M ${bodyLeft} ${y0} L ${bodyRight} ${y0} L ${bodyRight} ${y1}`;
-    } else {
-      outline = `M ${bodyLeft} ${y1} L ${bodyRight} ${y1}`;
-    }
-    outline += ` L ${xEnd} ${y1 + tsBevel}`;
-    outline += ` L ${xEnd} ${y2 - tsBevel}`;
-    outline += ` L ${bodyRight} ${y2}`;
-    if (d.botFlapH > 0) {
-      outline += ` L ${bodyRight} ${yEnd} L ${bodyLeft} ${yEnd}`;
-    } else {
-      outline += ` L ${bodyLeft} ${y2}`;
-    }
-    outline += ` Z`;
-  } else {
-    outline = `M 0 0 L ${mmW} 0 L ${mmW} ${mmH} L 0 ${mmH} Z`;
-  }
+  const points = getDielineOutlinePoints(d);
+  const outline = `M ${points.map(([x, y]) => `${x} ${y}`).join(' L ')} Z`;
 
   parts.push(`<defs><clipPath id="dielineClip"><path d="${outline}"/></clipPath></defs>`);
   parts.push(`<path d="${outline}" fill="${paperColor}" stroke="#0f172a" stroke-width="0.5"/>`);
@@ -2795,14 +2763,14 @@ function export2DAsSVG() {
   }
 
   let creaseD = '';
-  if (d.topFlapH > 0) creaseD += `M ${bodyLeft} ${d.topFlapH} L ${bodyRight} ${d.topFlapH} `;
-  if (d.botFlapH > 0) creaseD += `M ${bodyLeft} ${y2} L ${bodyRight} ${y2} `;
-  if (d.TS > 0) creaseD += `M ${glueOnRight ? bodyRight : bodyLeft} ${d.topFlapH} L ${glueOnRight ? bodyRight : bodyLeft} ${y2} `;
+  if (d.topFlapHeights.some(height => height > 0)) creaseD += `M ${bodyLeft} ${topFold} L ${bodyRight} ${topFold} `;
+  if (d.botFlapHeights.some(height => height > 0)) creaseD += `M ${bodyLeft} ${bottomFold} L ${bodyRight} ${bottomFold} `;
+  if (d.TS > 0) creaseD += `M ${glueOnRight ? bodyRight : bodyLeft} ${topFold} L ${glueOnRight ? bodyRight : bodyLeft} ${bottomFold} `;
 
   const pw = [d.L, d.W, d.L, d.W];
   let curX = bodyLeft;
   pw.forEach((w, idx) => {
-    if (idx > 0) creaseD += `M ${curX} ${d.topFlapH} L ${curX} ${y2} `;
+    if (idx > 0) creaseD += `M ${curX} ${topFold} L ${curX} ${bottomFold} `;
     curX += w;
   });
   parts.push(`<path d="${creaseD}" fill="none" stroke="#ec4899" stroke-width="0.35" stroke-dasharray="2,1.5"/>`);
@@ -2812,11 +2780,13 @@ function export2DAsSVG() {
   pw.forEach((w, idx) => {
     if (idx > 0) {
       const gap = d.slotGap;
-      if (d.topFlapH > 0) {
-        slotD += `M ${curX - gap/2} 0 L ${curX + gap/2} 0 L ${curX + gap/2} ${d.topFlapH} L ${curX - gap/2} ${d.topFlapH} Z `;
+      const topSlot = Math.max(d.topFlapHeights[idx - 1], d.topFlapHeights[idx]);
+      const botSlot = Math.max(d.botFlapHeights[idx - 1], d.botFlapHeights[idx]);
+      if (topSlot > 0) {
+        slotD += `M ${curX - gap/2} ${topFold - topSlot} L ${curX + gap/2} ${topFold - topSlot} L ${curX + gap/2} ${topFold} L ${curX - gap/2} ${topFold} Z `;
       }
-      if (d.botFlapH > 0) {
-        slotD += `M ${curX - gap/2} ${y2} L ${curX + gap/2} ${y2} L ${curX + gap/2} ${yEnd} L ${curX - gap/2} ${yEnd} Z `;
+      if (botSlot > 0) {
+        slotD += `M ${curX - gap/2} ${bottomFold} L ${curX + gap/2} ${bottomFold} L ${curX + gap/2} ${bottomFold + botSlot} L ${curX - gap/2} ${bottomFold + botSlot} Z `;
       }
     }
     curX += w;
@@ -2835,13 +2805,13 @@ function export2DAsSVG() {
     curX = bodyLeft;
     pw.forEach((w, idx) => {
       const panelName = idx % 2 === 0 ? `L${idx/2+1} (${w}mm)` : `W${(idx+1)/2} (${w}mm)`;
-      parts.push(`<text x="${curX + 10}" y="${d.topFlapH + 20}" font-family="'Be Vietnam Pro', Arial, sans-serif" font-weight="bold" font-size="4" fill="#0f172a">${panelName}</text>`);
-      if (d.topFlapH > 0) {
-        parts.push(`<text x="${curX + 10}" y="${d.topFlapH - 5}" font-family="'Be Vietnam Pro', Arial, sans-serif" font-size="3" fill="#b45309">Cánh trên: ${d.topFlapH}mm</text>`);
+      parts.push(`<text x="${curX + 10}" y="${topFold + 20}" font-family="'Be Vietnam Pro', Arial, sans-serif" font-weight="bold" font-size="4" fill="#0f172a">${panelName}</text>`);
+      if (d.topFlapHeights[idx] > 0) {
+        parts.push(`<text x="${curX + 10}" y="${topFold - d.topFlapHeights[idx]/2}" font-family="'Be Vietnam Pro', Arial, sans-serif" font-size="3" fill="#b45309">Cánh trên: ${d.topFlapHeights[idx]}mm</text>`);
       }
-      parts.push(`<text x="${curX + 10}" y="${d.topFlapH + d.H / 2}" font-family="'Be Vietnam Pro', Arial, sans-serif" font-size="3" fill="#b45309">Cao H: ${d.H}mm</text>`);
-      if (d.botFlapH > 0) {
-        parts.push(`<text x="${curX + 10}" y="${d.topFlapH + d.H + 12}" font-family="'Be Vietnam Pro', Arial, sans-serif" font-size="3" fill="#b45309">Cánh đáy: ${d.botFlapH}mm</text>`);
+      parts.push(`<text x="${curX + 10}" y="${topFold + d.H / 2}" font-family="'Be Vietnam Pro', Arial, sans-serif" font-size="3" fill="#b45309">Cao H: ${d.H}mm</text>`);
+      if (d.botFlapHeights[idx] > 0) {
+        parts.push(`<text x="${curX + 10}" y="${bottomFold + d.botFlapHeights[idx]/2}" font-family="'Be Vietnam Pro', Arial, sans-serif" font-size="3" fill="#b45309">Cánh đáy: ${d.botFlapHeights[idx]}mm</text>`);
       }
       curX += w;
     });
