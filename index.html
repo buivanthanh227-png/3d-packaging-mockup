@@ -1875,9 +1875,12 @@ function buildCarton3D() {
       const hinge = new THREE.Group(); hinge.position.set(0, H / 2, kz); wallGroup.add(hinge);
       const flapMat = createPanelMaterial3D(cfg.panelIdx, 'top', d);
       const flapW = Math.max(4, cfg.w - slotGap);
-      // Bù chỉ được áp dụng khi người dùng xác nhận mức bù này đóng khít trong sản xuất.
+      // Hinge is inset by T + half-clearance from each outer wall face.
+      // Subtract the same inset from each main flap so an unmodified W/2 pair
+      // meets at the center instead of physically overlapping in the 3D mesh.
       const panelAllowance = cfg.panelIdx === 2 ? topFitAllowance : 0;
-      const flapDepth = cfg.isLong ? Math.max(1, panelTopFlapH - T * 0.25 - panelAllowance) : panelTopFlapH;
+      const mainFlapInset = T + STACK_GAP / 2;
+      const flapDepth = cfg.isLong ? Math.max(1, panelTopFlapH - mainFlapInset - panelAllowance) : panelTopFlapH;
       const flapBox = new THREE.Mesh(new THREE.BoxGeometry(flapW, flapDepth, T), [edgeMat, edgeMat, edgeMat, edgeMat, flapMat, innerMat]);
       // Stacking gọn: cánh phụ (minor) lớp dưới, cánh chính (major) chỉ nhích nhẹ ~0.6*T
       // để khi đóng không bị đội cao và không xuyên hình.
@@ -1894,7 +1897,8 @@ function buildCarton3D() {
       const flapMat = createPanelMaterial3D(cfg.panelIdx, 'bottom', d);
       const flapW = Math.max(4, cfg.w - slotGap);
       const panelAllowance = cfg.panelIdx === 2 ? botFitAllowance : 0;
-      const flapDepth = cfg.isLong ? Math.max(1, panelBotFlapH - T * 0.75 - panelAllowance) : panelBotFlapH;
+      const mainFlapInset = T + STACK_GAP / 2;
+      const flapDepth = cfg.isLong ? Math.max(1, panelBotFlapH - mainFlapInset - panelAllowance) : panelBotFlapH;
       const flapBox = new THREE.Mesh(new THREE.BoxGeometry(flapW, flapDepth, T), [edgeMat, edgeMat, edgeMat, edgeMat, flapMat, innerMat]);
       // Đáy: đảo chiều offset vì hinge + chiều quay ngược → cánh chính vẫn nằm ngoài khi đóng.
       let stackOffsetBot = cfg.isLong ? -(T * 0.25) + (cfg.panelIdx === 2 ? T + STACK_GAP : 0) : 0;
