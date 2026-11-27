@@ -350,6 +350,12 @@ button.flip-glue.right{
       <input id="artInput" type="file" accept="image/png,image/jpeg,image/webp,application/pdf">
       <button type="button" class="danger sm" id="clearArtBtn" title="Xóa tệp thiết kế hiện tại">✕ Xóa</button>
     </div>
+    <div class="grid-2" style="margin-top:7px">
+      <button type="button" class="secondary sm" id="saveProjectBtn" title="Lưu kích thước, artwork và cấu hình dự án thành JSON">Lưu dự án JSON</button>
+      <button type="button" class="secondary sm" id="loadProjectBtn" title="Mở dự án JSON đã lưu">Mở dự án JSON</button>
+    </div>
+    <input id="projectInput" type="file" accept="application/json,.json" hidden>
+    <div style="font-size:10.5px;color:var(--muted);line-height:1.4;margin-top:4px">Lưu/mở cả kích thước, vật liệu, cài đặt 3D, artwork và chữ.</div>
     
     <div class="actions" style="margin-top:8px; display:flex; flex-direction:column; gap:6px;">
       <button id="build3DBtn" class="cta-3d">
@@ -2127,6 +2133,150 @@ function clearUploadedArtwork(recordHistory = true) {
 }
 
 document.getElementById('clearArtBtn').onclick = () => clearUploadedArtwork(true);
+
+const PROJECT_FORMAT = '3d-packaging-mockup-project';
+const PROJECT_VERSION = 1;
+const PROJECT_INPUT_IDS = [
+  'L', 'W', 'H', 'thick', 'glueTS', 'topFlapH', 'botFlapH', 'slotGap',
+  'fluteLayers', 'tapeWidthMm', 'tapeOverlapMm', 'topMainOpen', 'topSideOpen', 'bottomOpen'
+];
+
+function makeProjectSnapshot() {
+  return {
+    format: PROJECT_FORMAT,
+    version: PROJECT_VERSION,
+    savedAt: new Date().toISOString(),
+    inputs: Object.fromEntries(PROJECT_INPUT_IDS.map(id => [id, document.getElementById(id).value])),
+    paperColor: document.getElementById('paperColorPicker').value,
+    paperPreset: document.getElementById('paperPreset').value,
+    tapeMode: document.getElementById('tapeMode').value,
+    tapeColor: document.getElementById('tapeColorPicker').value,
+    glueOnRight,
+    show2DLabels,
+    artRect: { ...artRect },
+    artworkDataUrl: getArtDataURL(),
+    textLayers: textLayers.map(layer => ({ ...layer })),
+    viewport2D: { zoom: zoom2D, pan: { ...pan2D } }
+  };
+}
+
+document.getElementById('saveProjectBtn').onclick = () => {
+  try {
+    const project = makeProjectSnapshot();
+    const blob = new Blob([JSON.stringify(project, null, 2)], { type: 'application/json;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const { L, W, H } = getDims();
+    a.download = `carton-project-${L}x${W}x${H}.json`;
+    a.href = url;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 3000);
+  } catch (error) {
+    console.error('Project save failed:', error);
+    alert('Không thể lưu dự án. Hãy thử lại hoặc giảm kích thước artwork.');
+  }
+};
+
+document.getElementById('loadProjectBtn').onclick = () => document.getElementById('projectInput').click();
+
+document.getElementById('projectInput').addEventListener('change', async event => {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+  try {
+    if (file.size > 50 * 1024 * 1024) throw new Error('Tệp dự án quá lớn (giới hạn 50 MB).');
+    const project = JSON.parse(await file.text());
+    if (project.format !== PROJECT_FORMAT || project.version !== PROJECT_VERSION) {
+      throw new Error('Tệp không đúng định dạng dự án hoặc phiên bản chưa được hỗ trợ.');
+    }
+    if (!project.inputs || typeof project.inputs !== 'object') throw new Error('Thiếu thông số dự án.');
+
+    for (const id of PROJECT_INPUT_IDS) {
+      const value = Number(project.inputs[id]);
+      if (!Number.isFinite(value)) throw new Error(`Thông số ${id} không hợp lệ.`);
+    }
+    const validColor = value => typeof value === 'string' && /^#[0-9a-f]{6}$/i.test(value);
+    if (!validColor(project.paperColor) || !validColor(project.tapeColor)) throw new Error('Mã màu trong dự án không hợp lệ.');
+    if (!['none', 'clear', 'color'].includes(project.tapeMode)) throw new Error('Loại băng keo trong dự án không hợp lệ.');
+    if (!project.artRect || !['x', 'y', 'w', 'h'].every(k => Number.isFinite(Number(project.artRect[k])))) {
+      throw new Error('Vị trí artwork trong dự án không hợp lệ.');
+    }
+    if (!Array.isArray(project.textLayers) || project.textLayers.length > 200) throw new Error('Danh sách chữ/ghi chú không hợp lệ.');
+
+    let restoredArtwork = null;
+    if (project.artworkDataUrl) {
+      if (typeof project.artworkDataUrl !== 'string' || project.artworkDataUrl.length > 45 * 1024 * 1024 ||
+          !/^data:image\/(png|jpeg|webp);base64,/i.test(project.artworkDataUrl)) {
+        throw new Error('Artwork nhúng không hợp lệ hoặc vượt quá giới hạn.');
+      }
+      restoredArtwork = await new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => {
+          if (!img.naturalWidth || !img.naturalHeight || img.naturalWidth * img.naturalHeight > 100000000) {
+            reject(new Error('Kích thước artwork vượt giới hạn an toàn.'));
+            return;
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = img.naturalWidth; canvas.height = img.naturalHeight;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) { reject(new Error('Trình duyệt không thể khôi phục artwork.')); return; }
+          ctx.drawImage(img, 0, 0);
+          resolve(canvas);
+        };
+        img.onerror = () => reject(new Error('Không đọc được artwork nhúng trong dự án.'));
+        img.src = project.artworkDataUrl;
+      });
+    }
+    const restoredText = project.textLayers.map((layer, index) => {
+      if (!layer || typeof layer.text !== 'string' || layer.text.length > 1000 ||
+          !Number.isFinite(Number(layer.x)) || !Number.isFinite(Number(layer.y)) ||
+          !validColor(layer.color)) throw new Error(`Lớp chữ số ${index + 1} không hợp lệ.`);
+      return {
+        id: Number.isFinite(Number(layer.id)) ? Number(layer.id) : index + 1,
+        text: layer.text, x: Number(layer.x), y: Number(layer.y),
+        fontSize: clampNum(Number(layer.fontSize) || 24, 4, 300), color: layer.color
+      };
+    });
+
+    PROJECT_INPUT_IDS.forEach(id => { document.getElementById(id).value = project.inputs[id]; });
+    document.getElementById('paperColorPicker').value = project.paperColor;
+    document.getElementById('paperPreset').value = project.paperPreset || project.paperColor;
+    document.getElementById('tapeMode').value = project.tapeMode;
+    document.getElementById('tapeColorPicker').value = project.tapeColor;
+    document.getElementById('tapeColorRow').style.display = project.tapeMode === 'color' ? 'grid' : 'none';
+    glueOnRight = !!project.glueOnRight;
+    show2DLabels = project.show2DLabels !== false;
+    artRect = { x: Number(project.artRect.x), y: Number(project.artRect.y), w: Math.max(1, Number(project.artRect.w)), h: Math.max(1, Number(project.artRect.h)) };
+    loadedArtImg = restoredArtwork;
+    textLayers = restoredText;
+    selectedTextId = null;
+    nextTextId = Math.max(0, ...textLayers.map(layer => layer.id)) + 1;
+    zoom2D = clampNum(Number(project.viewport2D?.zoom) || 1, 0.2, 10);
+    const savedPan = project.viewport2D?.pan || {};
+    pan2D = { x: Number(savedPan.x) || 0, y: Number(savedPan.y) || 0 };
+    _botSideDeg = null; _botMainDeg = null; isAnimating = false; animProgress = 0;
+    animBar.classList.remove('visible');
+    sanitizeDims(true);
+    updateGlueUi();
+    if (show2DLabels) {
+      toggleLabelsText.textContent = 'Ẩn thông số trên bản 2D';
+      toggleLabelsBtn.classList.remove('hidden-state');
+      eyeIcon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"></path><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
+    } else {
+      toggleLabelsText.textContent = 'Hiện thông số trên bản 2D';
+      toggleLabelsBtn.classList.add('hidden-state');
+      eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+    }
+    historyStack = []; historyIndex = -1; pushHistory();
+    if (currentMode === '3d') { buildCarton3D(); focusCamera('iso'); }
+    else resizeCanvas2D();
+    alert('Đã mở dự án và khôi phục cấu hình, artwork, chữ/ghi chú.');
+  } catch (error) {
+    console.error('Project load failed:', error);
+    alert(`Không thể mở dự án: ${error.message || 'Tệp không hợp lệ.'}`);
+  } finally {
+    event.target.value = '';
+  }
+});
 
 document.getElementById('updateDielineBtn').onclick = () => {
   sanitizeDims(true);
