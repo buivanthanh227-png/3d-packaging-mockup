@@ -1693,6 +1693,7 @@ scene.add(cartonRoot);
 let flapControllers = [];
 let topTapeGroup = null, botTapeGroup = null;
 let topSeamMesh = null, botSeamMesh = null;
+let topOverlapGroup = null, botOverlapGroup = null;
 
 function createPanelMaterial3D(panelIdx, regionType, d) {
   const texCanvas = document.createElement('canvas');
@@ -1775,6 +1776,8 @@ function buildCarton3D() {
   botTapeGroup = null;
   topSeamMesh = null;
   botSeamMesh = null;
+  topOverlapGroup = null;
+  botOverlapGroup = null;
 
   const d = getDims();
   const { L, W, H, T, TS, topFlapH, botFlapH, mainFlapAllowance, mainFlapFitConfirmed, slotGap, fluteLayers, tapeWidthMm, tapeOverlapMm } = d;
@@ -1927,8 +1930,45 @@ function buildCarton3D() {
   const seamWidthZ = 1.6;
   const seamInset = Math.max(2, T * 2);
   const seamLen = Math.max(10, L - slotGap - seamInset);
-  const seamY_top = H + 2 * T + STACK_GAP + 0.16;
-  const seamY_bot = -(2 * T + STACK_GAP + 0.16);
+  // Overlay the seam markers just above any closed-flap tape so the join remains visible.
+  const seamY_top = H + 2 * T + STACK_GAP + 0.48;
+  const seamY_bot = -(2 * T + STACK_GAP + 0.48);
+  const topOverlap = Math.max(0, topFlapH - W / 2 - topFitAllowance);
+  const botOverlap = Math.max(0, botFlapH - W / 2 - botFitAllowance);
+
+  const makeOverlapMarker = (isTop, overlap, label) => {
+    if (overlap <= 0.25) return null;
+    const group = new THREE.Group();
+    group.name = `${label} overlap indicator`;
+    group.userData.overlapMm = overlap;
+    const halfWidth = Math.min(W / 2, overlap);
+    const markerY = isTop ? seamY_top - 0.04 : seamY_bot + 0.04;
+    const rotationX = isTop ? -Math.PI / 2 : Math.PI / 2;
+    const markerMat = new THREE.MeshBasicMaterial({
+      color: 0xf97316, side: THREE.DoubleSide, transparent: true, opacity: 0.42,
+      depthTest: false, depthWrite: false
+    });
+    const boundaryMat = new THREE.MeshBasicMaterial({
+      color: 0x9a3412, side: THREE.DoubleSide, transparent: true, opacity: 0.98,
+      depthTest: false, depthWrite: false
+    });
+    const band = new THREE.Mesh(new THREE.PlaneGeometry(seamLen, Math.max(1, halfWidth * 2)), markerMat);
+    band.name = `${label} overlap band`;
+    band.rotation.x = rotationX;
+    band.position.set(0, markerY, 0);
+    band.renderOrder = 5;
+    group.add(band);
+    [-halfWidth, halfWidth].forEach((z, index) => {
+      const edge = new THREE.Mesh(new THREE.PlaneGeometry(seamLen, seamWidthZ), boundaryMat.clone());
+      edge.name = `${label} overlap edge ${index + 1}`;
+      edge.rotation.x = rotationX;
+      edge.position.set(0, markerY + (isTop ? 0.025 : -0.025), z);
+      edge.renderOrder = 6;
+      group.add(edge);
+    });
+    cartonRoot.add(group);
+    return group;
+  };
 
   if (topFlapH > 0) {
     const seamMat = new THREE.MeshBasicMaterial({
@@ -1936,12 +1976,15 @@ function buildCarton3D() {
     });
     const seamGeo = new THREE.PlaneGeometry(seamLen, seamWidthZ);
     topSeamMesh = new THREE.Mesh(seamGeo, seamMat);
+    topSeamMesh.name = 'Top flap center seam';
     topSeamMesh.rotation.x = -Math.PI / 2;
-    topSeamMesh.position.set(0, seamY_top, seamZ); // Đặt đúng mép cánh
+    topSeamMesh.position.set(0, seamY_top + 0.05, 0);
     topSeamMesh.visible = false;
-    topSeamMesh.renderOrder = 2;
-    topSeamMesh.userData.isOverlap = seamZ < 0;
+    topSeamMesh.renderOrder = 7;
+    topSeamMesh.userData.isOverlap = topOverlap > 0.25;
+    topSeamMesh.userData.hasContact = topFlapH >= W / 2 - 0.25;
     cartonRoot.add(topSeamMesh);
+    topOverlapGroup = makeOverlapMarker(true, topOverlap, 'Top flap');
   }
 
   if (botFlapH > 0) {
@@ -1950,12 +1993,15 @@ function buildCarton3D() {
     });
     const seamGeoB = new THREE.PlaneGeometry(seamLen, seamWidthZ);
     botSeamMesh = new THREE.Mesh(seamGeoB, seamMatB);
+    botSeamMesh.name = 'Bottom flap center seam';
     botSeamMesh.rotation.x = Math.PI / 2;
-    botSeamMesh.position.set(0, seamY_bot, seamZ_bot);
+    botSeamMesh.position.set(0, seamY_bot - 0.05, 0);
     botSeamMesh.visible = false;
-    botSeamMesh.renderOrder = 2;
-    botSeamMesh.userData.isOverlap = seamZ_bot < 0;
+    botSeamMesh.renderOrder = 7;
+    botSeamMesh.userData.isOverlap = botOverlap > 0.25;
+    botSeamMesh.userData.hasContact = botFlapH >= W / 2 - 0.25;
     cartonRoot.add(botSeamMesh);
+    botOverlapGroup = makeOverlapMarker(false, botOverlap, 'Bottom flap');
   }
 
   applyFlapAngles();
@@ -2001,11 +2047,13 @@ function applyFlapAngles() {
     });
   });
 
-  // Chỉ hiện seam line khi 2 cánh THỰC SỰ ĐÈ LÊN NHAU (isOverlap) và đang khép
-  const showTopSeam = (mode !== 'color') && topMainDeg < 5;
-  const showBotSeam = (mode !== 'color') && botMainDeg < 5;
-  if (topSeamMesh) topSeamMesh.visible = showTopSeam && topSeamMesh.userData.isOverlap;
-  if (botSeamMesh) botSeamMesh.visible = showBotSeam && botSeamMesh.userData.isOverlap;
+  // Always draw the center seam on closed flaps; overlap bands/edges distinguish true overlap.
+  const showTopSeam = topMainDeg < 5;
+  const showBotSeam = botMainDeg < 5;
+  if (topSeamMesh) topSeamMesh.visible = showTopSeam && topSeamMesh.userData.hasContact;
+  if (botSeamMesh) botSeamMesh.visible = showBotSeam && botSeamMesh.userData.hasContact;
+  if (topOverlapGroup) topOverlapGroup.visible = showTopSeam;
+  if (botOverlapGroup) botOverlapGroup.visible = showBotSeam;
 }
 
 // --- HIỆU ỨNG CLIP NGẮN ---
