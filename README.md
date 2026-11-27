@@ -5,7 +5,7 @@
 ## Chức năng chính
 
 - Tạo bản trải 2D theo kích thước dài, rộng, cao, độ dày carton, cánh gập, khe xẻ và mối nối.
-- Chiều cao cánh mặc định tự theo W/2 khi đổi chiều rộng (có thể tắt tự động và nhập tay). Mô hình 3D bù chính xác phần bề dày carton và khe bản lề để hai cánh W/2 chạm nhau, không chồng giả. Chồng mí thật được tính theo tổng L1 + L2 so với W: ví dụ 210 + 210 mm trên W=400 mm cho 20 mm chồng mí. Người dùng có thể nhập mức bù tự do, không bị giới hạn 5 mm; phần bù chỉ điều chỉnh mô hình khi tick xác nhận đóng khít.
+- Chiều cao cánh mặc định tự theo W/2 khi đổi chiều rộng (có thể tắt tự động và nhập tay). Mô hình 3D bù chính xác phần bề dày carton và khe bản lề để hai cánh W/2 chạm nhau, cùng mặt phẳng và không chồng giả. Chỉ khi có chồng mí thật, mô hình mới xếp lệch tầng hai cánh chính để thể hiện phần chồng. Chồng mí thật được tính theo tổng L1 + L2 so với W: ví dụ 210 + 210 mm trên W=400 mm cho 20 mm chồng mí. Người dùng có thể nhập mức bù tự do, không bị giới hạn 5 mm; phần bù chỉ điều chỉnh mô hình khi tick xác nhận đóng khít.
 - Có thể bật riêng chế độ nhập chiều cao cho từng trong bốn cánh trên và từng trong bốn cánh dưới. Bản trải 2D, ảnh/vector xuất 2D và mô hình 3D đều dùng các chiều cao riêng; chiều cao tổng thể bản trải tự căn theo cánh cao nhất ở mỗi đầu.
 - Chèn artwork PNG/JPG/WebP, di chuyển, co giãn, gôm tẩy và thêm ghi chú; hỗ trợ Undo/Redo.
 - Lưu/mở dự án JSON gồm kích thước, vật liệu, tùy chọn 3D, tám chiều cao cánh riêng, artwork, chữ/ghi chú và trạng thái khung nhìn 2D; dự án JSON cũ không có chiều cao riêng vẫn mở được.

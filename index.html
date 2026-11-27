@@ -1882,9 +1882,11 @@ function buildCarton3D() {
       const mainFlapInset = T + STACK_GAP / 2;
       const flapDepth = cfg.isLong ? Math.max(1, panelTopFlapH - mainFlapInset - panelAllowance) : panelTopFlapH;
       const flapBox = new THREE.Mesh(new THREE.BoxGeometry(flapW, flapDepth, T), [edgeMat, edgeMat, edgeMat, edgeMat, flapMat, innerMat]);
-      // Stacking gọn: cánh phụ (minor) lớp dưới, cánh chính (major) chỉ nhích nhẹ ~0.6*T
-      // để khi đóng không bị đội cao và không xuyên hình.
-      let stackOffsetTop = cfg.isLong ? (T * 0.25 + (cfg.panelIdx === 2 ? T + STACK_GAP : 0)) : 0;
+      // Keep both main flaps coplanar when they meet. Raise the opposing main
+      // flap by one board thickness only when there is actual overlap to show.
+      let stackOffsetTop = cfg.isLong
+        ? (T * 0.25 + (cfg.panelIdx === 2 && topOverlap > 0.25 ? T + STACK_GAP : 0))
+        : 0;
       flapBox.position.set(0, flapDepth / 2, -kz + stackOffsetTop);
       flapBox.castShadow = true; flapBox.receiveShadow = true;
       hinge.add(flapBox);
@@ -1900,8 +1902,10 @@ function buildCarton3D() {
       const mainFlapInset = T + STACK_GAP / 2;
       const flapDepth = cfg.isLong ? Math.max(1, panelBotFlapH - mainFlapInset - panelAllowance) : panelBotFlapH;
       const flapBox = new THREE.Mesh(new THREE.BoxGeometry(flapW, flapDepth, T), [edgeMat, edgeMat, edgeMat, edgeMat, flapMat, innerMat]);
-      // Đáy: đảo chiều offset vì hinge + chiều quay ngược → cánh chính vẫn nằm ngoài khi đóng.
-      let stackOffsetBot = cfg.isLong ? -(T * 0.25) + (cfg.panelIdx === 2 ? T + STACK_GAP : 0) : 0;
+      // Keep both main bottom flaps coplanar at a tight seam; layer only a real overlap.
+      let stackOffsetBot = cfg.isLong
+        ? (-T * 0.25 + (cfg.panelIdx === 2 && botOverlap > 0.25 ? T + STACK_GAP : 0))
+        : 0;
       flapBox.position.set(0, -flapDepth / 2, -kz + stackOffsetBot);
       flapBox.castShadow = true; flapBox.receiveShadow = true;
       hinge.add(flapBox);
