@@ -5,7 +5,7 @@
 ## Chức năng chính
 
 - Tạo bản trải 2D theo kích thước dài, rộng, cao, độ dày carton, cánh gập, khe xẻ và mối nối.
-- Chiều cao cánh tự theo W/2 khi đổi chiều rộng (có thể tắt tự động và nhập tay); bù sản xuất 0–5 mm giúp mô phỏng cánh đóng khít, phần vượt W/2 + bù được thể hiện là chồng mí thật trong 3D.
+- Chiều cao cánh mặc định tự theo W/2 khi đổi chiều rộng (có thể tắt tự động và nhập tay); người dùng nhập mức bù theo tính toán sản xuất, không bị giới hạn 5 mm. Chỉ khi tick xác nhận chiều cao đã chọn không chồng mí thì phần bù mới được tính để mô phỏng đóng khít; nếu không xác nhận, phần vượt W/2 được thể hiện là chồng mí thật trong 3D.
 - Chèn artwork PNG/JPG/WebP, di chuyển, co giãn, gôm tẩy và thêm ghi chú; hỗ trợ Undo/Redo.
 - Lưu/mở dự án JSON gồm kích thước, vật liệu, tùy chọn 3D, artwork, chữ/ghi chú và trạng thái khung nhìn 2D.
 - Dựng thùng carton 3D với vật liệu giấy, lớp sóng, màu sắc, băng keo và góc mở cánh.
