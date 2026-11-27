@@ -286,8 +286,12 @@ button.flip-glue.right{
       <div class="mini-field"><label>Độ dày sóng, mm</label><input id="thick" type="number" min="1" max="25" step="0.5" value="5"></div>
     </div>
     <div class="grid-2" style="margin-top:5px">
-      <div class="mini-field"><label>Cao cánh trên (mm)</label><input id="topFlapH" type="number" min="0" value="155.5"></div>
-      <div class="mini-field"><label>Cao cánh đáy (mm)</label><input id="botFlapH" type="number" min="0" value="155.5"></div>
+      <div class="mini-field"><label>Cao cánh trên (mm)</label><input id="topFlapH" type="number" min="0" value="152.5"><label style="font-size:10px"><input id="autoTopFlap" type="checkbox" checked> Tự tính W/2</label></div>
+      <div class="mini-field"><label>Cao cánh đáy (mm)</label><input id="botFlapH" type="number" min="0" value="152.5"><label style="font-size:10px"><input id="autoBotFlap" type="checkbox" checked> Tự tính W/2</label></div>
+    </div>
+    <div class="grid-2" style="margin-top:5px">
+      <div class="mini-field"><label>Bù sản xuất cánh chính (mm)</label><input id="mainFlapAllowance" type="number" min="0" max="5" step="0.5" value="0"></div>
+      <div style="font-size:10px;color:var(--muted);align-self:end;line-height:1.35">0 = không bù; cho phép bù 0–5 mm. Chỉ phần vượt W/2 + bù mới thể hiện chồng mí.</div>
     </div>
     <div class="grid-2" style="margin-top:5px">
       <div class="mini-field"><label>Mối nối TS (mm)</label><input id="glueTS" type="number" min="0" value="35"></div>
@@ -567,6 +571,8 @@ function stopAnimationLoop() {
 let glueOnRight = false;
 let loadedArtImg = null;
 let show2DLabels = true;
+let autoTopFlapHeight = true;
+let autoBotFlapHeight = true;
 
 let zoom2D = 1.0;
 let pan2D = { x: 0, y: 0 };
@@ -826,12 +832,13 @@ function getDims() {
   const H = clampNum(getRawNum('H', 410), 30, 4000);
   const T = clampNum(getRawNum('thick', 5), 1, Math.min(20, L * 0.22, W * 0.22, H * 0.3));
   const TS = clampNum(getRawNum('glueTS', 35), 0, Math.min(90, Math.min(L, W) * 0.45));
-  // Allow free input for flap heights
+  // Flap heights remain user-editable; auto mode updates them from W/2.
   let topFlapH = clampNum(getRawNum('topFlapH', W / 2), 0, 3000);
   let botFlapH = clampNum(getRawNum('botFlapH', W / 2), 0, 3000);
+  const mainFlapAllowance = clampNum(getRawNum('mainFlapAllowance', 0), 0, 5);
   const slotGap = clampNum(getRawNum('slotGap', 6), 0, 15);
   return {
-    L, W, H, T, TS, topFlapH, botFlapH, slotGap,
+    L, W, H, T, TS, topFlapH, botFlapH, mainFlapAllowance, slotGap,
     fluteLayers: parseInt(document.getElementById('fluteLayers').value || 5, 10),
     tapeWidthMm: clampNum(getRawNum('tapeWidthMm', 60), 20, 100),
     tapeOverlapMm: clampNum(getRawNum('tapeOverlapMm', 60), 0, 150)
@@ -857,13 +864,16 @@ function sanitizeDims(showMsg) {
   writeDim('glueTS', d.TS);
   writeDim('topFlapH', d.topFlapH);
   writeDim('botFlapH', d.botFlapH);
+  writeDim('mainFlapAllowance', d.mainFlapAllowance);
   writeDim('slotGap', d.slotGap);
   writeDim('tapeWidthMm', d.tapeWidthMm);
   writeDim('tapeOverlapMm', d.tapeOverlapMm);
 
   const notes = [];
-  if (d.topFlapH > d.W / 2 + 1 || d.botFlapH > d.W / 2 + 1) {
-    notes.push('Cánh dài hơn nửa mặt Rộng (W/2) — khi đóng kín sẽ chồng lên nhau.');
+  if (d.topFlapH > d.W / 2 + d.mainFlapAllowance + 0.05 || d.botFlapH > d.W / 2 + d.mainFlapAllowance + 0.05) {
+    notes.push(`Cánh vượt ngưỡng đóng khít W/2 + bù sản xuất (${formatDim(d.W / 2 + d.mainFlapAllowance)} mm) — phần vượt sẽ chồng mí khi gập.`);
+  } else if (d.mainFlapAllowance > 0 && (d.topFlapH > d.W / 2 + 0.05 || d.botFlapH > d.W / 2 + 0.05)) {
+    notes.push(`Chiều cao cánh đang nằm trong mức bù sản xuất ${formatDim(d.mainFlapAllowance)} mm; mô phỏng 3D sẽ đóng khít.`);
   }
   if (d.T >= Math.min(20, d.W * 0.22, d.L * 0.22) - 0.01) {
     notes.push('Độ dày sóng đã được giới hạn để thành thùng không bị vỡ.');
@@ -1799,11 +1809,13 @@ function buildCarton3D() {
       const hinge = new THREE.Group(); hinge.position.set(0, H / 2, kz); wallGroup.add(hinge);
       const flapMat = createPanelMaterial3D(cfg.panelIdx, 'top', d);
       const flapW = Math.max(4, cfg.w - slotGap);
-      const flapBox = new THREE.Mesh(new THREE.BoxGeometry(flapW, topFlapH, T), [edgeMat, edgeMat, edgeMat, edgeMat, flapMat, innerMat]);
+      // Bù offset bản lề/stack của cánh trên: H = W/2 + allowance vẫn khít khi đóng.
+      const flapDepth = cfg.isLong ? Math.max(1, topFlapH - T * 0.25 - mainFlapAllowance) : topFlapH;
+      const flapBox = new THREE.Mesh(new THREE.BoxGeometry(flapW, flapDepth, T), [edgeMat, edgeMat, edgeMat, edgeMat, flapMat, innerMat]);
       // Stacking gọn: cánh phụ (minor) lớp dưới, cánh chính (major) chỉ nhích nhẹ ~0.6*T
       // để khi đóng không bị đội cao và không xuyên hình.
       let stackOffsetTop = cfg.isLong ? (T * 0.25) : 0;
-      flapBox.position.set(0, topFlapH / 2, -kz + stackOffsetTop);
+      flapBox.position.set(0, flapDepth / 2, -kz + stackOffsetTop);
       flapBox.castShadow = true; flapBox.receiveShadow = true;
       hinge.add(flapBox);
       flapControllers.push({ hinge, isTop: true, isLong: cfg.isLong, type: 'top' });
@@ -1814,10 +1826,11 @@ function buildCarton3D() {
       const hinge = new THREE.Group(); hinge.position.set(0, -H / 2, kz); wallGroup.add(hinge);
       const flapMat = createPanelMaterial3D(cfg.panelIdx, 'bottom', d);
       const flapW = Math.max(4, cfg.w - slotGap);
-      const flapBox = new THREE.Mesh(new THREE.BoxGeometry(flapW, botFlapH, T), [edgeMat, edgeMat, edgeMat, edgeMat, flapMat, innerMat]);
+      const flapDepth = cfg.isLong ? Math.max(1, botFlapH - T * 0.75 - mainFlapAllowance) : botFlapH;
+      const flapBox = new THREE.Mesh(new THREE.BoxGeometry(flapW, flapDepth, T), [edgeMat, edgeMat, edgeMat, edgeMat, flapMat, innerMat]);
       // Đáy: đảo chiều offset vì hinge + chiều quay ngược → cánh chính vẫn nằm ngoài khi đóng.
       let stackOffsetBot = cfg.isLong ? -(T * 0.25) : 0;
-      flapBox.position.set(0, -botFlapH / 2, -kz + stackOffsetBot);
+      flapBox.position.set(0, -flapDepth / 2, -kz + stackOffsetBot);
       flapBox.castShadow = true; flapBox.receiveShadow = true;
       hinge.add(flapBox);
       flapControllers.push({ hinge, isTop: false, isLong: cfg.isLong, type: 'bottom' });
@@ -1828,8 +1841,10 @@ function buildCarton3D() {
   // TÍNH TOÁN VỊ TRÍ ĐƯỜNG TIẾP XÚC (SEAM) VÀ BĂNG KEO
   // ============================================================================
   // Vị trí mép của cánh trên (Panel 0) khi đóng kín
-  const seamZ = (W / 2 - T - STACK_GAP) - topFlapH;
-  const seamZ_bot = (W / 2 - T - STACK_GAP) - botFlapH;
+  // Effective seam: W/2 is the nominal close-fit baseline; only the excess beyond
+  // the user-selected manufacturing allowance is represented as real overlap.
+  const seamZ = W / 2 - topFlapH + mainFlapAllowance;
+  const seamZ_bot = W / 2 - botFlapH + mainFlapAllowance;
   // Nếu seamZ < 0: 2 cánh đè lên nhau, mép cánh trên ở seamZ -> Băng keo căn giữa theo seamZ
   // Nếu seamZ >= 0: 2 cánh có khe hở, khe hở đối xứng qua 0 -> Băng keo căn giữa theo 0
   const tapeTopZ = seamZ < 0 ? seamZ : 0;
@@ -2137,7 +2152,7 @@ document.getElementById('clearArtBtn').onclick = () => clearUploadedArtwork(true
 const PROJECT_FORMAT = '3d-packaging-mockup-project';
 const PROJECT_VERSION = 1;
 const PROJECT_INPUT_IDS = [
-  'L', 'W', 'H', 'thick', 'glueTS', 'topFlapH', 'botFlapH', 'slotGap',
+  'L', 'W', 'H', 'thick', 'glueTS', 'topFlapH', 'botFlapH', 'mainFlapAllowance', 'slotGap',
   'fluteLayers', 'tapeWidthMm', 'tapeOverlapMm', 'topMainOpen', 'topSideOpen', 'bottomOpen'
 ];
 
@@ -2153,6 +2168,8 @@ function makeProjectSnapshot() {
     tapeColor: document.getElementById('tapeColorPicker').value,
     glueOnRight,
     show2DLabels,
+    autoTopFlapHeight,
+    autoBotFlapHeight,
     artRect: { ...artRect },
     artworkDataUrl: getArtDataURL(),
     textLayers: textLayers.map(layer => ({ ...layer })),
@@ -2197,6 +2214,8 @@ document.getElementById('projectInput').addEventListener('change', async event =
       throw new Error('Tệp không đúng định dạng dự án hoặc phiên bản chưa được hỗ trợ.');
     }
     if (!project.inputs || typeof project.inputs !== 'object') throw new Error('Thiếu thông số dự án.');
+    // Backward-compatible defaults for projects saved before production allowance was introduced.
+    if (project.inputs.mainFlapAllowance === undefined) project.inputs.mainFlapAllowance = 0;
 
     for (const id of PROJECT_INPUT_IDS) {
       const value = Number(project.inputs[id]);
@@ -2246,6 +2265,10 @@ document.getElementById('projectInput').addEventListener('change', async event =
     });
 
     PROJECT_INPUT_IDS.forEach(id => { document.getElementById(id).value = project.inputs[id]; });
+    autoTopFlapHeight = project.autoTopFlapHeight ?? Math.abs(Number(project.inputs.topFlapH) - Number(project.inputs.W) / 2) < 0.05;
+    autoBotFlapHeight = project.autoBotFlapHeight ?? Math.abs(Number(project.inputs.botFlapH) - Number(project.inputs.W) / 2) < 0.05;
+    document.getElementById('autoTopFlap').checked = autoTopFlapHeight;
+    document.getElementById('autoBotFlap').checked = autoBotFlapHeight;
     document.getElementById('paperColorPicker').value = project.paperColor;
     document.getElementById('paperPreset').value = project.paperPreset || project.paperColor;
     document.getElementById('tapeMode').value = project.tapeMode;
@@ -2372,7 +2395,7 @@ document.getElementById('artInput').addEventListener('change', e => {
   img.src = url;
 });
 
-['L', 'W', 'H', 'thick', 'glueTS', 'topFlapH', 'botFlapH', 'slotGap', 'paperColorPicker', 'fluteLayers', 'tapeWidthMm', 'tapeOverlapMm'].forEach(id => {
+['L', 'W', 'H', 'thick', 'glueTS', 'topFlapH', 'botFlapH', 'mainFlapAllowance', 'slotGap', 'paperColorPicker', 'fluteLayers', 'tapeWidthMm', 'tapeOverlapMm'].forEach(id => {
   const el = document.getElementById(id);
   el.addEventListener('input', () => {
     const raw = parseFloat(el.value);
@@ -2383,6 +2406,33 @@ document.getElementById('artInput').addEventListener('change', e => {
     sanitizeDims(true);
     if (currentMode === '2d') render2DDieline(); else buildCarton3D();
   });
+});
+
+document.getElementById('W').addEventListener('input', event => {
+  const width = clampNum(Number(event.target.value) || 30, 30, 4000);
+  if (autoTopFlapHeight) document.getElementById('topFlapH').value = formatDim(width / 2);
+  if (autoBotFlapHeight) document.getElementById('botFlapH').value = formatDim(width / 2);
+  if (currentMode === '2d') render2DDieline(); else buildCarton3D();
+});
+
+[['autoTopFlap', 'topFlapH'], ['autoBotFlap', 'botFlapH']].forEach(([checkId, inputId]) => {
+  const check = document.getElementById(checkId);
+  check.addEventListener('change', () => {
+    const enabled = check.checked;
+    if (inputId === 'topFlapH') autoTopFlapHeight = enabled;
+    else autoBotFlapHeight = enabled;
+    if (enabled) document.getElementById(inputId).value = formatDim(clampNum(getRawNum('W', 305), 30, 4000) / 2);
+    if (currentMode === '2d') render2DDieline(); else buildCarton3D();
+  });
+});
+
+document.getElementById('topFlapH').addEventListener('input', () => {
+  autoTopFlapHeight = false;
+  document.getElementById('autoTopFlap').checked = false;
+});
+document.getElementById('botFlapH').addEventListener('input', () => {
+  autoBotFlapHeight = false;
+  document.getElementById('autoBotFlap').checked = false;
 });
 
 document.getElementById('paperPreset').onchange = e => {
