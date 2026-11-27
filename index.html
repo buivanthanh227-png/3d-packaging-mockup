@@ -2163,7 +2163,15 @@ function makeProjectSnapshot() {
 document.getElementById('saveProjectBtn').onclick = () => {
   try {
     const project = makeProjectSnapshot();
+    if (project.artworkDataUrl && project.artworkDataUrl.length > 45 * 1024 * 1024) {
+      alert('Artwork nhúng quá lớn để lưu thành dự án (giới hạn 45 MB). Hãy giảm kích thước ảnh rồi thử lại.');
+      return;
+    }
     const blob = new Blob([JSON.stringify(project, null, 2)], { type: 'application/json;charset=utf-8' });
+    if (blob.size > 50 * 1024 * 1024) {
+      alert('Tệp dự án vượt giới hạn 50 MB. Hãy giảm kích thước artwork rồi thử lại.');
+      return;
+    }
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     const { L, W, H } = getDims();

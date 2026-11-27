@@ -16,7 +16,7 @@
 
 Mở `index.html` bằng trình duyệt có hỗ trợ JavaScript modules và WebGL. Ứng dụng tải Three.js từ jsDelivr nên cần kết nối Internet. Nhập kích thước và chọn **DỰNG BẢN TRẢI PHẲNG 2D NGAY!** để kiểm tra bản trải; chọn **DỰNG MOCKUP 3D NGAY** để xem thùng. Trong chế độ 3D, dùng thanh công cụ để đổi góc nhìn, xuất PNG hoặc **Xuất 3D GLB**.
 
-Artwork hiện nhận PNG, JPG và WebP. Tệp PDF chưa được rasterize trực tiếp trong ứng dụng; cần chuyển trang thiết kế thành ảnh trước khi tải lên. Tệp dự án JSON nhúng dữ liệu artwork nên có thể lớn; giới hạn mở tệp là 50 MB.
+Artwork hiện nhận PNG, JPG và WebP. Tệp PDF chưa được rasterize trực tiếp trong ứng dụng; cần chuyển trang thiết kế thành ảnh trước khi tải lên. Tệp dự án JSON nhúng dữ liệu artwork nên có thể lớn; artwork nhúng tối đa 45 MB và toàn bộ tệp dự án tối đa 50 MB (áp dụng khi lưu và mở).
 
 ## Chạy máy chủ cục bộ
 
