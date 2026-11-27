@@ -286,14 +286,31 @@ button.flip-glue.right{
       <div class="mini-field"><label>Độ dày sóng, mm</label><input id="thick" type="number" min="1" max="25" step="0.5" value="5"></div>
     </div>
     <div class="grid-2" style="margin-top:5px">
-      <div class="mini-field"><label>Cao cánh trên (mm)</label><input id="topFlapH" type="number" min="0" value="152.5"><label style="font-size:10px"><input id="autoTopFlap" type="checkbox" checked> Tự tính W/2</label></div>
-      <div class="mini-field"><label>Cao cánh đáy (mm)</label><input id="botFlapH" type="number" min="0" value="152.5"><label style="font-size:10px"><input id="autoBotFlap" type="checkbox" checked> Tự tính W/2</label></div>
+      <div class="mini-field"><label>Cao cánh trên dùng chung (mm)</label><input id="topFlapH" type="number" min="0" step="0.5" value="152.5"><label style="font-size:10px"><input id="autoTopFlap" type="checkbox" checked> Tự tính W/2</label></div>
+      <div class="mini-field"><label>Cao cánh đáy dùng chung (mm)</label><input id="botFlapH" type="number" min="0" step="0.5" value="152.5"><label style="font-size:10px"><input id="autoBotFlap" type="checkbox" checked> Tự tính W/2</label></div>
     </div>
     <div class="grid-2" style="margin-top:5px">
       <div class="mini-field"><label>Bù chiều cao cánh chính (mm)</label><input id="mainFlapAllowance" type="number" min="0" step="0.5" value="0"></div>
       <div style="font-size:10px;color:var(--muted);align-self:end;line-height:1.35">Nhập mức bù theo tính toán sản xuất; không áp ngưỡng cố định 5 mm.</div>
     </div>
     <label style="display:block;margin-top:5px;font-size:11px;line-height:1.4"><input id="mainFlapFitConfirmed" type="checkbox"> Tôi xác nhận chiều cao cánh đã chọn không bị chồng mí khi gấp thùng</label>
+    <div style="margin-top:7px;padding:7px;border:1px solid #cbd5e1;border-radius:7px;background:#f8fafc">
+      <label style="font-size:11px;font-weight:750"><input id="customTopFlaps" type="checkbox"> Nhập riêng chiều cao từng cánh trên</label>
+      <div id="customTopFlapFields" class="grid-2" style="display:none;margin-top:5px">
+        <div class="mini-field"><label>Cánh trên L1 (mặt dài trước), mm</label><input id="topFlapH0" type="number" min="0" step="0.5" value="152.5"></div>
+        <div class="mini-field"><label>Cánh trên W1 (hông phải), mm</label><input id="topFlapH1" type="number" min="0" step="0.5" value="152.5"></div>
+        <div class="mini-field"><label>Cánh trên L2 (mặt dài sau), mm</label><input id="topFlapH2" type="number" min="0" step="0.5" value="152.5"></div>
+        <div class="mini-field"><label>Cánh trên W2 (hông trái), mm</label><input id="topFlapH3" type="number" min="0" step="0.5" value="152.5"></div>
+      </div>
+      <label style="display:block;margin-top:6px;font-size:11px;font-weight:750"><input id="customBotFlaps" type="checkbox"> Nhập riêng chiều cao từng cánh dưới</label>
+      <div id="customBotFlapFields" class="grid-2" style="display:none;margin-top:5px">
+        <div class="mini-field"><label>Cánh đáy L1 (mặt dài trước), mm</label><input id="botFlapH0" type="number" min="0" step="0.5" value="152.5"></div>
+        <div class="mini-field"><label>Cánh đáy W1 (hông phải), mm</label><input id="botFlapH1" type="number" min="0" step="0.5" value="152.5"></div>
+        <div class="mini-field"><label>Cánh đáy L2 (mặt dài sau), mm</label><input id="botFlapH2" type="number" min="0" step="0.5" value="152.5"></div>
+        <div class="mini-field"><label>Cánh đáy W2 (hông trái), mm</label><input id="botFlapH3" type="number" min="0" step="0.5" value="152.5"></div>
+      </div>
+      <div style="margin-top:5px;font-size:10px;color:var(--muted)">Tùy chỉnh riêng áp dụng cho mô hình 3D; bản trải 2D vẫn dùng chiều cao chung. Hai cánh chính L1/L2 được so tổng chiều cao với W để xác định chồng mí.</div>
+    </div>
     <div class="grid-2" style="margin-top:5px">
       <div class="mini-field"><label>Mối nối TS (mm)</label><input id="glueTS" type="number" min="0" value="35"></div>
       <div class="mini-field"><label>Khe xẻ rãnh (mm)</label><input id="slotGap" type="number" min="0" max="15" value="6"></div>
@@ -827,6 +844,9 @@ function clampNum(v, min, max) {
   return Math.min(max, Math.max(min, v));
 }
 
+const TOP_FLAP_INPUT_IDS = ['topFlapH0', 'topFlapH1', 'topFlapH2', 'topFlapH3'];
+const BOT_FLAP_INPUT_IDS = ['botFlapH0', 'botFlapH1', 'botFlapH2', 'botFlapH3'];
+
 function getDims() {
   const L = clampNum(getRawNum('L', 545), 30, 4000);
   const W = clampNum(getRawNum('W', 305), 30, 4000);
@@ -838,9 +858,18 @@ function getDims() {
   let botFlapH = clampNum(getRawNum('botFlapH', W / 2), 0, 3000);
   const mainFlapAllowance = Math.max(0, getRawNum('mainFlapAllowance', 0));
   const mainFlapFitConfirmed = document.getElementById('mainFlapFitConfirmed').checked;
+  const customTopFlaps = document.getElementById('customTopFlaps').checked;
+  const customBotFlaps = document.getElementById('customBotFlaps').checked;
+  const topFlapHeights = customTopFlaps
+    ? TOP_FLAP_INPUT_IDS.map(id => clampNum(getRawNum(id, topFlapH), 0, 3000))
+    : [topFlapH, topFlapH, topFlapH, topFlapH];
+  const botFlapHeights = customBotFlaps
+    ? BOT_FLAP_INPUT_IDS.map(id => clampNum(getRawNum(id, botFlapH), 0, 3000))
+    : [botFlapH, botFlapH, botFlapH, botFlapH];
   const slotGap = clampNum(getRawNum('slotGap', 6), 0, 15);
   return {
-    L, W, H, T, TS, topFlapH, botFlapH, mainFlapAllowance, mainFlapFitConfirmed, slotGap,
+    L, W, H, T, TS, topFlapH, botFlapH, topFlapHeights, botFlapHeights,
+    customTopFlaps, customBotFlaps, mainFlapAllowance, mainFlapFitConfirmed, slotGap,
     fluteLayers: parseInt(document.getElementById('fluteLayers').value || 5, 10),
     tapeWidthMm: clampNum(getRawNum('tapeWidthMm', 60), 20, 100),
     tapeOverlapMm: clampNum(getRawNum('tapeOverlapMm', 60), 0, 150)
@@ -857,6 +886,17 @@ function writeDim(id, value) {
   if (el.value !== next) el.value = next;
 }
 
+function syncIndividualFlapInputs(ids, value) {
+  ids.forEach(id => { document.getElementById(id).value = formatDim(value); });
+}
+
+function updateIndividualFlapUi() {
+  const customTop = document.getElementById('customTopFlaps').checked;
+  const customBot = document.getElementById('customBotFlaps').checked;
+  document.getElementById('customTopFlapFields').style.display = customTop ? 'grid' : 'none';
+  document.getElementById('customBotFlapFields').style.display = customBot ? 'grid' : 'none';
+}
+
 function sanitizeDims(showMsg) {
   const d = getDims();
   writeDim('L', d.L);
@@ -866,6 +906,8 @@ function sanitizeDims(showMsg) {
   writeDim('glueTS', d.TS);
   writeDim('topFlapH', d.topFlapH);
   writeDim('botFlapH', d.botFlapH);
+  if (d.customTopFlaps) d.topFlapHeights.forEach((height, i) => writeDim(TOP_FLAP_INPUT_IDS[i], height));
+  if (d.customBotFlaps) d.botFlapHeights.forEach((height, i) => writeDim(BOT_FLAP_INPUT_IDS[i], height));
   writeDim('mainFlapAllowance', d.mainFlapAllowance);
   writeDim('slotGap', d.slotGap);
   writeDim('tapeWidthMm', d.tapeWidthMm);
@@ -873,10 +915,14 @@ function sanitizeDims(showMsg) {
 
   const notes = [];
   const fitAllowance = d.mainFlapFitConfirmed ? d.mainFlapAllowance : 0;
-  if (d.topFlapH > d.W / 2 + fitAllowance + 0.05 || d.botFlapH > d.W / 2 + fitAllowance + 0.05) {
-    notes.push(`Chiều cao cánh vượt mức W/2${fitAllowance ? ` + bù đã xác nhận ${formatDim(fitAllowance)} mm` : ''} — phần vượt sẽ thể hiện chồng mí trong 3D.`);
-  } else if (d.mainFlapFitConfirmed && fitAllowance > 0 && (d.topFlapH > d.W / 2 + 0.05 || d.botFlapH > d.W / 2 + 0.05)) {
-    notes.push(`Đã xác nhận mức bù ${formatDim(fitAllowance)} mm; 3D mô phỏng cánh đóng khít theo xác nhận này.`);
+  const topMainSum = d.topFlapHeights[0] + d.topFlapHeights[2];
+  const botMainSum = d.botFlapHeights[0] + d.botFlapHeights[2];
+  const topMainOverlap = Math.max(0, topMainSum - d.W - fitAllowance);
+  const botMainOverlap = Math.max(0, botMainSum - d.W - fitAllowance);
+  if (topMainOverlap > 0.05) notes.push(`Hai cánh chính trên chồng mí tổng ${formatDim(topMainOverlap)} mm (L1 ${formatDim(d.topFlapHeights[0])} + L2 ${formatDim(d.topFlapHeights[2])} − W ${formatDim(d.W)}${fitAllowance ? ` − bù ${formatDim(fitAllowance)}` : ''}).`);
+  if (botMainOverlap > 0.05) notes.push(`Hai cánh chính đáy chồng mí tổng ${formatDim(botMainOverlap)} mm (L1 ${formatDim(d.botFlapHeights[0])} + L2 ${formatDim(d.botFlapHeights[2])} − W ${formatDim(d.W)}${fitAllowance ? ` − bù ${formatDim(fitAllowance)}` : ''}).`);
+  if (d.mainFlapFitConfirmed && fitAllowance > 0 && topMainSum > d.W + 0.05 && topMainOverlap <= 0.05 && botMainSum <= d.W + 0.05) {
+    notes.push(`Đã xác nhận bù ${formatDim(fitAllowance)} mm; cặp cánh chính trên được mô phỏng đóng khít.`);
   }
   if (d.T >= Math.min(20, d.W * 0.22, d.L * 0.22) - 0.01) {
     notes.push('Độ dày sóng đã được giới hạn để thành thùng không bị vỡ.');
@@ -1707,9 +1753,11 @@ function createPanelMaterial3D(panelIdx, regionType, d) {
   const panelX = panelXmm(d, panelIdx);
   const pw = (panelIdx % 2 === 0) ? d.L : d.W;
 
+  const panelTopFlapH = d.topFlapHeights[panelIdx];
+  const panelBotFlapH = d.botFlapHeights[panelIdx];
   let regionY = d.topFlapH, rh = d.H;
-  if (regionType === 'top') { regionY = 0; rh = d.topFlapH; }
-  else if (regionType === 'bottom') { regionY = d.topFlapH + d.H; rh = d.botFlapH; }
+  if (regionType === 'top') { regionY = 0; rh = panelTopFlapH; }
+  else if (regionType === 'bottom') { regionY = d.topFlapH + d.H; rh = panelBotFlapH; }
 
   if (loadedArtImg) {
     ctx.save();
@@ -1780,9 +1828,15 @@ function buildCarton3D() {
   botOverlapGroup = null;
 
   const d = getDims();
-  const { L, W, H, T, TS, topFlapH, botFlapH, mainFlapAllowance, mainFlapFitConfirmed, slotGap, fluteLayers, tapeWidthMm, tapeOverlapMm } = d;
-  const topFitAllowance = mainFlapFitConfirmed ? Math.min(mainFlapAllowance, Math.max(0, topFlapH - W / 2)) : 0;
-  const botFitAllowance = mainFlapFitConfirmed ? Math.min(mainFlapAllowance, Math.max(0, botFlapH - W / 2)) : 0;
+  const { L, W, H, T, TS, topFlapH, botFlapH, topFlapHeights, botFlapHeights, mainFlapAllowance, mainFlapFitConfirmed, slotGap, fluteLayers, tapeWidthMm, tapeOverlapMm } = d;
+  const topMainPairSum = topFlapHeights[0] + topFlapHeights[2];
+  const botMainPairSum = botFlapHeights[0] + botFlapHeights[2];
+  const topFitAllowance = mainFlapFitConfirmed ? Math.min(mainFlapAllowance, Math.max(0, topMainPairSum - W)) : 0;
+  const botFitAllowance = mainFlapFitConfirmed ? Math.min(mainFlapAllowance, Math.max(0, botMainPairSum - W)) : 0;
+  const topOverlap = Math.max(0, topMainPairSum - W - topFitAllowance);
+  const botOverlap = Math.max(0, botMainPairSum - W - botFitAllowance);
+  const topOverlapCenterZ = (topFlapHeights[2] - topFitAllowance - topFlapHeights[0]) / 2;
+  const botOverlapCenterZ = (botFlapHeights[2] - botFitAllowance - botFlapHeights[0]) / 2;
   const paperColor = document.getElementById('paperColorPicker').value;
   const STACK_GAP = 0.15;
 
@@ -1813,35 +1867,39 @@ function buildCarton3D() {
     const kz = cfg.isLong ? -(T / 2 + STACK_GAP * 0.5) : (T / 2 + STACK_GAP * 0.25);
 
     // ---- CÁNH TRÊN ----
-    if (topFlapH > 0) {
+    const panelTopFlapH = topFlapHeights[cfg.panelIdx];
+    const panelBotFlapH = botFlapHeights[cfg.panelIdx];
+    if (panelTopFlapH > 0) {
       const hinge = new THREE.Group(); hinge.position.set(0, H / 2, kz); wallGroup.add(hinge);
       const flapMat = createPanelMaterial3D(cfg.panelIdx, 'top', d);
       const flapW = Math.max(4, cfg.w - slotGap);
       // Bù chỉ được áp dụng khi người dùng xác nhận mức bù này đóng khít trong sản xuất.
-      const flapDepth = cfg.isLong ? Math.max(1, topFlapH - T * 0.25 - topFitAllowance) : topFlapH;
+      const panelAllowance = cfg.panelIdx === 2 ? topFitAllowance : 0;
+      const flapDepth = cfg.isLong ? Math.max(1, panelTopFlapH - T * 0.25 - panelAllowance) : panelTopFlapH;
       const flapBox = new THREE.Mesh(new THREE.BoxGeometry(flapW, flapDepth, T), [edgeMat, edgeMat, edgeMat, edgeMat, flapMat, innerMat]);
       // Stacking gọn: cánh phụ (minor) lớp dưới, cánh chính (major) chỉ nhích nhẹ ~0.6*T
       // để khi đóng không bị đội cao và không xuyên hình.
-      let stackOffsetTop = cfg.isLong ? (T * 0.25) : 0;
+      let stackOffsetTop = cfg.isLong ? (T * 0.25 + (cfg.panelIdx === 2 ? T + STACK_GAP : 0)) : 0;
       flapBox.position.set(0, flapDepth / 2, -kz + stackOffsetTop);
       flapBox.castShadow = true; flapBox.receiveShadow = true;
       hinge.add(flapBox);
-      flapControllers.push({ hinge, isTop: true, isLong: cfg.isLong, type: 'top' });
+      flapControllers.push({ hinge, isTop: true, isLong: cfg.isLong, panelIdx: cfg.panelIdx, type: 'top' });
     }
 
     // ---- CÁNH ĐÁY ----
-    if (botFlapH > 0) {
+    if (panelBotFlapH > 0) {
       const hinge = new THREE.Group(); hinge.position.set(0, -H / 2, kz); wallGroup.add(hinge);
       const flapMat = createPanelMaterial3D(cfg.panelIdx, 'bottom', d);
       const flapW = Math.max(4, cfg.w - slotGap);
-      const flapDepth = cfg.isLong ? Math.max(1, botFlapH - T * 0.75 - botFitAllowance) : botFlapH;
+      const panelAllowance = cfg.panelIdx === 2 ? botFitAllowance : 0;
+      const flapDepth = cfg.isLong ? Math.max(1, panelBotFlapH - T * 0.75 - panelAllowance) : panelBotFlapH;
       const flapBox = new THREE.Mesh(new THREE.BoxGeometry(flapW, flapDepth, T), [edgeMat, edgeMat, edgeMat, edgeMat, flapMat, innerMat]);
       // Đáy: đảo chiều offset vì hinge + chiều quay ngược → cánh chính vẫn nằm ngoài khi đóng.
-      let stackOffsetBot = cfg.isLong ? -(T * 0.25) : 0;
+      let stackOffsetBot = cfg.isLong ? -(T * 0.25) + (cfg.panelIdx === 2 ? T + STACK_GAP : 0) : 0;
       flapBox.position.set(0, -flapDepth / 2, -kz + stackOffsetBot);
       flapBox.castShadow = true; flapBox.receiveShadow = true;
       hinge.add(flapBox);
-      flapControllers.push({ hinge, isTop: false, isLong: cfg.isLong, type: 'bottom' });
+      flapControllers.push({ hinge, isTop: false, isLong: cfg.isLong, panelIdx: cfg.panelIdx, type: 'bottom' });
     }
   });
 
@@ -1851,12 +1909,12 @@ function buildCarton3D() {
   // Vị trí mép của cánh trên (Panel 0) khi đóng kín
   // The user-confirmed allowance counts toward a flush closure; without confirmation,
   // any length beyond W/2 is modeled as real overlap.
-  const seamZ = W / 2 - topFlapH + topFitAllowance;
-  const seamZ_bot = W / 2 - botFlapH + botFitAllowance;
+  const seamZ = topOverlap > 0.25 ? topOverlapCenterZ : 0;
+  const seamZ_bot = botOverlap > 0.25 ? botOverlapCenterZ : 0;
   // Nếu seamZ < 0: 2 cánh đè lên nhau, mép cánh trên ở seamZ -> Băng keo căn giữa theo seamZ
   // Nếu seamZ >= 0: 2 cánh có khe hở, khe hở đối xứng qua 0 -> Băng keo căn giữa theo 0
-  const tapeTopZ = seamZ < 0 ? seamZ : 0;
-  const tapeBotZ = seamZ_bot < 0 ? seamZ_bot : 0;
+  const tapeTopZ = topOverlap > 0.25 ? topOverlapCenterZ : 0;
+  const tapeBotZ = botOverlap > 0.25 ? botOverlapCenterZ : 0;
 
   // MỐI NỐI TS (Glue Tab)
   if (TS > 2 && H > 6) {
@@ -1923,8 +1981,8 @@ function buildCarton3D() {
     return group;
   };
 
-  if (topFlapH > 0) topTapeGroup = createFoldedTapeGroup(true, tapeTopZ);
-  if (botFlapH > 0) botTapeGroup = createFoldedTapeGroup(false, tapeBotZ);
+  if (topFlapHeights.some(h => h > 0)) topTapeGroup = createFoldedTapeGroup(true, tapeTopZ);
+  if (botFlapHeights.some(h => h > 0)) botTapeGroup = createFoldedTapeGroup(false, tapeBotZ);
 
   // ---- ĐƯỜNG TIẾP XÚC GIỮA 2 CÁNH MẶT CHÍNH (Seam line) ----
   const seamWidthZ = 1.6;
@@ -1933,15 +1991,12 @@ function buildCarton3D() {
   // Overlay the seam markers just above any closed-flap tape so the join remains visible.
   const seamY_top = H + 2 * T + STACK_GAP + 0.48;
   const seamY_bot = -(2 * T + STACK_GAP + 0.48);
-  const topOverlap = Math.max(0, topFlapH - W / 2 - topFitAllowance);
-  const botOverlap = Math.max(0, botFlapH - W / 2 - botFitAllowance);
-
-  const makeOverlapMarker = (isTop, overlap, label) => {
+  const makeOverlapMarker = (isTop, overlap, centerZ, label) => {
     if (overlap <= 0.25) return null;
     const group = new THREE.Group();
     group.name = `${label} overlap indicator`;
     group.userData.overlapMm = overlap;
-    const halfWidth = Math.min(W / 2, overlap);
+    const halfWidth = Math.min(W / 2, overlap / 2);
     const markerY = isTop ? seamY_top - 0.04 : seamY_bot + 0.04;
     const rotationX = isTop ? -Math.PI / 2 : Math.PI / 2;
     const markerMat = new THREE.MeshBasicMaterial({
@@ -1955,14 +2010,14 @@ function buildCarton3D() {
     const band = new THREE.Mesh(new THREE.PlaneGeometry(seamLen, Math.max(1, halfWidth * 2)), markerMat);
     band.name = `${label} overlap band`;
     band.rotation.x = rotationX;
-    band.position.set(0, markerY, 0);
+    band.position.set(0, markerY, centerZ);
     band.renderOrder = 5;
     group.add(band);
     [-halfWidth, halfWidth].forEach((z, index) => {
       const edge = new THREE.Mesh(new THREE.PlaneGeometry(seamLen, seamWidthZ), boundaryMat.clone());
       edge.name = `${label} overlap edge ${index + 1}`;
       edge.rotation.x = rotationX;
-      edge.position.set(0, markerY + (isTop ? 0.025 : -0.025), z);
+      edge.position.set(0, markerY + (isTop ? 0.025 : -0.025), centerZ + z);
       edge.renderOrder = 6;
       group.add(edge);
     });
@@ -1970,7 +2025,7 @@ function buildCarton3D() {
     return group;
   };
 
-  if (topFlapH > 0) {
+  if (topFlapHeights.some(h => h > 0)) {
     const seamMat = new THREE.MeshBasicMaterial({
       color: 0x221408, side: THREE.DoubleSide, transparent: true, opacity: 0.82, depthWrite: false
     });
@@ -1982,12 +2037,12 @@ function buildCarton3D() {
     topSeamMesh.visible = false;
     topSeamMesh.renderOrder = 7;
     topSeamMesh.userData.isOverlap = topOverlap > 0.25;
-    topSeamMesh.userData.hasContact = topFlapH >= W / 2 - 0.25;
+    topSeamMesh.userData.hasContact = topMainPairSum >= W - 0.25;
     cartonRoot.add(topSeamMesh);
-    topOverlapGroup = makeOverlapMarker(true, topOverlap, 'Top flap');
+    topOverlapGroup = makeOverlapMarker(true, topOverlap, topOverlapCenterZ, 'Top flap');
   }
 
-  if (botFlapH > 0) {
+  if (botFlapHeights.some(h => h > 0)) {
     const seamMatB = new THREE.MeshBasicMaterial({
       color: 0x221408, side: THREE.DoubleSide, transparent: true, opacity: 0.82, depthWrite: false
     });
@@ -1999,9 +2054,9 @@ function buildCarton3D() {
     botSeamMesh.visible = false;
     botSeamMesh.renderOrder = 7;
     botSeamMesh.userData.isOverlap = botOverlap > 0.25;
-    botSeamMesh.userData.hasContact = botFlapH >= W / 2 - 0.25;
+    botSeamMesh.userData.hasContact = botMainPairSum >= W - 0.25;
     cartonRoot.add(botSeamMesh);
-    botOverlapGroup = makeOverlapMarker(false, botOverlap, 'Bottom flap');
+    botOverlapGroup = makeOverlapMarker(false, botOverlap, botOverlapCenterZ, 'Bottom flap');
   }
 
   applyFlapAngles();
@@ -2157,8 +2212,11 @@ function updateAnimation(timestamp) {
 }
 
 function focusCamera(preset = 'iso') {
-  const { L, W, H, topFlapH, botFlapH } = getDims();
-  const size = new THREE.Vector3(L + 2 * getDims().T, H + topFlapH + botFlapH + 4 * getDims().T, W + 2 * getDims().T);
+  const d = getDims();
+  const { L, W, H, T } = d;
+  const topExtent = Math.max(...d.topFlapHeights);
+  const botExtent = Math.max(...d.botFlapHeights);
+  const size = new THREE.Vector3(L + 2 * T, H + topExtent + botExtent + 4 * T, W + 2 * T);
   const center = new THREE.Vector3(0, H / 2, 0);
   const verticalFov = THREE.MathUtils.degToRad(camera.fov);
   const horizontalFov = 2 * Math.atan(Math.tan(verticalFov / 2) * camera.aspect);
@@ -2205,7 +2263,7 @@ document.getElementById('clearArtBtn').onclick = () => clearUploadedArtwork(true
 const PROJECT_FORMAT = '3d-packaging-mockup-project';
 const PROJECT_VERSION = 1;
 const PROJECT_INPUT_IDS = [
-  'L', 'W', 'H', 'thick', 'glueTS', 'topFlapH', 'botFlapH', 'mainFlapAllowance', 'slotGap',
+  'L', 'W', 'H', 'thick', 'glueTS', 'topFlapH', 'botFlapH', ...TOP_FLAP_INPUT_IDS, ...BOT_FLAP_INPUT_IDS, 'mainFlapAllowance', 'slotGap',
   'fluteLayers', 'tapeWidthMm', 'tapeOverlapMm', 'topMainOpen', 'topSideOpen', 'bottomOpen'
 ];
 
@@ -2223,6 +2281,8 @@ function makeProjectSnapshot() {
     show2DLabels,
     autoTopFlapHeight,
     autoBotFlapHeight,
+    customTopFlaps: document.getElementById('customTopFlaps').checked,
+    customBotFlaps: document.getElementById('customBotFlaps').checked,
     mainFlapFitConfirmed: document.getElementById('mainFlapFitConfirmed').checked,
     artRect: { ...artRect },
     artworkDataUrl: getArtDataURL(),
@@ -2270,6 +2330,9 @@ document.getElementById('projectInput').addEventListener('change', async event =
     if (!project.inputs || typeof project.inputs !== 'object') throw new Error('Thiếu thông số dự án.');
     // Backward-compatible defaults for projects saved before production allowance was introduced.
     if (project.inputs.mainFlapAllowance === undefined) project.inputs.mainFlapAllowance = 0;
+    // Older project files have no per-flap values; initialize them from the shared heights.
+    TOP_FLAP_INPUT_IDS.forEach(id => { if (project.inputs[id] === undefined) project.inputs[id] = project.inputs.topFlapH ?? Number(project.inputs.W) / 2; });
+    BOT_FLAP_INPUT_IDS.forEach(id => { if (project.inputs[id] === undefined) project.inputs[id] = project.inputs.botFlapH ?? Number(project.inputs.W) / 2; });
 
     for (const id of PROJECT_INPUT_IDS) {
       const value = Number(project.inputs[id]);
@@ -2323,6 +2386,9 @@ document.getElementById('projectInput').addEventListener('change', async event =
     autoBotFlapHeight = project.autoBotFlapHeight ?? Math.abs(Number(project.inputs.botFlapH) - Number(project.inputs.W) / 2) < 0.05;
     document.getElementById('autoTopFlap').checked = autoTopFlapHeight;
     document.getElementById('autoBotFlap').checked = autoBotFlapHeight;
+    document.getElementById('customTopFlaps').checked = project.customTopFlaps === true;
+    document.getElementById('customBotFlaps').checked = project.customBotFlaps === true;
+    updateIndividualFlapUi();
     document.getElementById('mainFlapFitConfirmed').checked = project.mainFlapFitConfirmed === true;
     document.getElementById('paperColorPicker').value = project.paperColor;
     document.getElementById('paperPreset').value = project.paperPreset || project.paperColor;
@@ -2470,8 +2536,16 @@ document.getElementById('mainFlapFitConfirmed').addEventListener('change', () =>
 
 document.getElementById('W').addEventListener('input', event => {
   const width = clampNum(Number(event.target.value) || 30, 30, 4000);
-  if (autoTopFlapHeight) document.getElementById('topFlapH').value = formatDim(width / 2);
-  if (autoBotFlapHeight) document.getElementById('botFlapH').value = formatDim(width / 2);
+  if (autoTopFlapHeight) {
+    const height = formatDim(width / 2);
+    document.getElementById('topFlapH').value = height;
+    if (!document.getElementById('customTopFlaps').checked) syncIndividualFlapInputs(TOP_FLAP_INPUT_IDS, width / 2);
+  }
+  if (autoBotFlapHeight) {
+    const height = formatDim(width / 2);
+    document.getElementById('botFlapH').value = height;
+    if (!document.getElementById('customBotFlaps').checked) syncIndividualFlapInputs(BOT_FLAP_INPUT_IDS, width / 2);
+  }
   if (currentMode === '2d') render2DDieline(); else buildCarton3D();
 });
 
@@ -2481,18 +2555,47 @@ document.getElementById('W').addEventListener('input', event => {
     const enabled = check.checked;
     if (inputId === 'topFlapH') autoTopFlapHeight = enabled;
     else autoBotFlapHeight = enabled;
-    if (enabled) document.getElementById(inputId).value = formatDim(clampNum(getRawNum('W', 305), 30, 4000) / 2);
+    if (enabled) {
+      const height = clampNum(getRawNum('W', 305), 30, 4000) / 2;
+      document.getElementById(inputId).value = formatDim(height);
+      const ids = inputId === 'topFlapH' ? TOP_FLAP_INPUT_IDS : BOT_FLAP_INPUT_IDS;
+      if (!(inputId === 'topFlapH' ? document.getElementById('customTopFlaps').checked : document.getElementById('customBotFlaps').checked)) syncIndividualFlapInputs(ids, height);
+    }
     if (currentMode === '2d') render2DDieline(); else buildCarton3D();
+  });
+});
+
+[['customTopFlaps', TOP_FLAP_INPUT_IDS], ['customBotFlaps', BOT_FLAP_INPUT_IDS]].forEach(([checkId, ids]) => {
+  document.getElementById(checkId).addEventListener('change', () => {
+    const sharedId = checkId === 'customTopFlaps' ? 'topFlapH' : 'botFlapH';
+    if (document.getElementById(checkId).checked) {
+      const shared = getRawNum(sharedId, getRawNum('W', 305) / 2);
+      ids.forEach(id => { if (!Number.isFinite(parseFloat(document.getElementById(id).value))) document.getElementById(id).value = formatDim(shared); });
+    }
+    updateIndividualFlapUi();
+    sanitizeDims(true);
+    if (currentMode === '2d') render2DDieline(); else buildCarton3D();
+  });
+  ids.forEach(id => {
+    document.getElementById(id).addEventListener('input', () => {
+      if (currentMode === '3d') buildCarton3D();
+    });
+    document.getElementById(id).addEventListener('change', () => {
+      sanitizeDims(true);
+      if (currentMode === '3d') buildCarton3D();
+    });
   });
 });
 
 document.getElementById('topFlapH').addEventListener('input', () => {
   autoTopFlapHeight = false;
   document.getElementById('autoTopFlap').checked = false;
+  if (!document.getElementById('customTopFlaps').checked) syncIndividualFlapInputs(TOP_FLAP_INPUT_IDS, getRawNum('topFlapH', 0));
 });
 document.getElementById('botFlapH').addEventListener('input', () => {
   autoBotFlapHeight = false;
   document.getElementById('autoBotFlap').checked = false;
+  if (!document.getElementById('customBotFlaps').checked) syncIndividualFlapInputs(BOT_FLAP_INPUT_IDS, getRawNum('botFlapH', 0));
 });
 
 document.getElementById('paperPreset').onchange = e => {
