@@ -191,6 +191,11 @@ button.sm{padding:5px 9px;font-size:11.5px}
   font-size:11.5px;font-weight:650;line-height:1.35;
 }
 .dim-warn.visible{display:block}
+.preflight-card{padding:8px 9px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;font-size:11px;line-height:1.45}
+.preflight-card strong{color:#0f172a;font-variant-numeric:tabular-nums}
+.preflight-status{margin-top:4px;padding:5px 7px;border-radius:6px;background:#ecfdf5;color:#047857;font-weight:700}
+.preflight-status.warn{background:#fff7ed;color:#9a3412}
+.preflight-note{margin-top:5px;color:var(--muted);font-size:10px}
 .glue-hint{margin:2px 0 0;font-size:11px;color:#0369a1;font-weight:700}
 button.flip-glue{
   width:100%;background:#0f172a;color:#fff;border:1px solid #334155;
@@ -402,7 +407,12 @@ button.flip-glue.right{
   </div>
 
   <div class="section">
-    <h2>4. Xuất bản vẽ 2D</h2>
+    <h2>4. Kiểm tra & Xuất bản vẽ</h2>
+    <div class="preflight-card" aria-live="polite">
+      <div>Kích thước phôi trải: <strong id="preflightBlankSize">—</strong></div>
+      <div id="preflightFlapStatus" class="preflight-status">Đang kiểm tra cánh chính…</div>
+      <div class="preflight-note">Kiểm tra chỉ bao gồm kích thước phôi và chồng mí cánh chính, không thay thế duyệt kỹ thuật trước sản xuất.</div>
+    </div>
     <div class="actions" style="flex-direction:column;gap:6px">
       <button id="exportPngBtn" class="secondary" style="width:100%;justify-content:flex-start;padding:7px 10px">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -419,8 +429,14 @@ button.flip-glue.right{
         </svg>
         <span>Xuất SVG vector (Illustrator/Corel)</span>
       </button>
+      <button id="exportDxfBtn" class="secondary" style="width:100%;justify-content:flex-start;padding:7px 10px;border:1px solid #94a3b8" title="Xuất dieline CAD theo đơn vị mm, tách lớp cắt và cấn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 4h16v16H4z"></path><path d="M8 8h8M8 12h8M8 16h5"></path>
+        </svg>
+        <span>Xuất DXF CAD/CAM (CUT / CREASE)</span>
+      </button>
       <div style="font-size:10.5px;color:var(--muted);line-height:1.4;padding:4px 2px">
-        💡 File SVG giữ nguyên vector đường cấn &amp; khe rãnh, mở trực tiếp trong Illustrator/Corel để chỉnh sửa in ấn.
+        DXF gồm đường bao và khe xẻ trên lớp CUT, đường gấp trên lớp CREASE; artwork và chữ không được nhúng. Kiểm tra đơn vị và gán dao trên phần mềm CAD/CAM trước khi sản xuất.
       </div>
     </div>
   </div>
@@ -976,6 +992,31 @@ function getDielineGeometry(d) {
   return { totalW, totalH, topExtent, botExtent };
 }
 
+function updateDielinePreflight() {
+  const d = getDims();
+  const geom = getDielineGeometry(d);
+  const sizeEl = document.getElementById('preflightBlankSize');
+  const statusEl = document.getElementById('preflightFlapStatus');
+  if (sizeEl) sizeEl.textContent = `${formatDim(geom.totalW)} × ${formatDim(geom.totalH)} mm`;
+  if (!statusEl) return;
+
+  const allowance = d.mainFlapFitConfirmed ? d.mainFlapAllowance : 0;
+  const topOverlap = Math.max(0, d.topFlapHeights[0] + d.topFlapHeights[2] - d.W - allowance);
+  const botOverlap = Math.max(0, d.botFlapHeights[0] + d.botFlapHeights[2] - d.W - allowance);
+  const hasOverlap = topOverlap > 0.05 || botOverlap > 0.05;
+  statusEl.classList.toggle('warn', hasOverlap);
+  if (hasOverlap) {
+    const details = [];
+    if (topOverlap > 0.05) details.push(`trên ${formatDim(topOverlap)} mm`);
+    if (botOverlap > 0.05) details.push(`đáy ${formatDim(botOverlap)} mm`);
+    statusEl.textContent = `Cần xem lại chồng mí cánh chính: ${details.join(', ')}.`;
+  } else if (d.mainFlapFitConfirmed && allowance > 0) {
+    statusEl.textContent = `Đã áp dụng xác nhận bù ${formatDim(allowance)} mm; mô phỏng hiện không còn chồng mí.`;
+  } else {
+    statusEl.textContent = 'Không phát hiện chồng mí cánh chính theo kích thước mô phỏng.';
+  }
+}
+
 function getDielineOutlinePoints(d) {
   const geom = getDielineGeometry(d);
   const edges = blankEdges(d);
@@ -1081,6 +1122,7 @@ function eraseAtWorldPos(worldPos, prevWorldPos) {
 function render2DDieline() {
   if (currentMode !== '2d') return;
   const d = getDims();
+  updateDielinePreflight();
   const cw = canvas2D.width, ch = canvas2D.height;
 
   ctx2D.clearRect(0, 0, cw, ch);
@@ -1830,6 +1872,7 @@ function buildCarton3D() {
   botOverlapGroup = null;
 
   const d = getDims();
+  updateDielinePreflight();
   const { L, W, H, T, TS, topFlapH, botFlapH, topFlapHeights, botFlapHeights, mainFlapAllowance, mainFlapFitConfirmed, slotGap, fluteLayers, tapeWidthMm, tapeOverlapMm } = d;
   const topMainPairSum = topFlapHeights[0] + topFlapHeights[2];
   const botMainPairSum = botFlapHeights[0] + botFlapHeights[2];
@@ -2837,8 +2880,79 @@ function export2DAsSVG() {
   setTimeout(() => URL.revokeObjectURL(url), 1500);
 }
 
+function export2DAsDXF() {
+  const d = getDims();
+  const geom = getDielineGeometry(d);
+  const edges = blankEdges(d);
+  const panelWidths = [d.L, d.W, d.L, d.W];
+  const entities = [];
+  const toDxf = n => String(Number(n.toFixed(3)));
+  const pointY = y => geom.totalH - y;
+
+  function addPolyline(points, layer, closed = false) {
+    if (points.length < 2) return;
+    entities.push(['0', 'LWPOLYLINE', '8', layer, '90', String(points.length), '70', closed ? '1' : '0']);
+    points.forEach(([x, y]) => entities.push(['10', toDxf(x), '20', toDxf(pointY(y))]));
+  }
+
+  function addLine(x1, y1, x2, y2, layer) {
+    entities.push(['0', 'LINE', '8', layer, '10', toDxf(x1), '20', toDxf(pointY(y1)), '30', '0', '11', toDxf(x2), '21', toDxf(pointY(y2)), '31', '0']);
+  }
+
+  addPolyline(getDielineOutlinePoints(d), 'CUT', true);
+
+  const topFold = geom.topExtent;
+  const bottomFold = topFold + d.H;
+  let seamX = edges.bodyLeft;
+  panelWidths.forEach((width, idx) => {
+    if (idx > 0) {
+      const gap = d.slotGap;
+      const topSlot = Math.max(d.topFlapHeights[idx - 1], d.topFlapHeights[idx]);
+      const botSlot = Math.max(d.botFlapHeights[idx - 1], d.botFlapHeights[idx]);
+      if (gap > 0 && topSlot > 0) {
+        addPolyline([[seamX-gap/2, topFold-topSlot],[seamX+gap/2, topFold-topSlot],[seamX+gap/2, topFold],[seamX-gap/2, topFold]], 'CUT', true);
+      }
+      if (gap > 0 && botSlot > 0) {
+        addPolyline([[seamX-gap/2, bottomFold],[seamX+gap/2, bottomFold],[seamX+gap/2, bottomFold+botSlot],[seamX-gap/2, bottomFold+botSlot]], 'CUT', true);
+      }
+    }
+    seamX += width;
+  });
+
+  if (d.topFlapHeights.some(height => height > 0)) addLine(edges.bodyLeft, topFold, edges.bodyRight, topFold, 'CREASE');
+  if (d.botFlapHeights.some(height => height > 0)) addLine(edges.bodyLeft, bottomFold, edges.bodyRight, bottomFold, 'CREASE');
+  let panelX = edges.bodyLeft;
+  panelWidths.forEach((width, idx) => {
+    if (idx > 0) addLine(panelX, topFold, panelX, bottomFold, 'CREASE');
+    panelX += width;
+  });
+  if (d.TS > 0) {
+    const glueCreaseX = glueOnRight ? edges.bodyRight : edges.bodyLeft;
+    addLine(glueCreaseX, topFold, glueCreaseX, bottomFold, 'CREASE');
+  }
+
+  const table = lines => lines.join('\n');
+  const dxf = [
+    '0','SECTION','2','HEADER','9','$ACADVER','1','AC1015','9','$INSUNITS','70','4','9','$MEASUREMENT','70','1','0','ENDSEC',
+    '0','SECTION','2','TABLES','0','TABLE','2','LTYPE','70','1',
+    '0','LTYPE','2','CONTINUOUS','70','0','3','Solid line','72','65','73','0','40','0.0','0','ENDTAB',
+    '0','TABLE','2','LAYER','70','2',
+    '0','LAYER','2','CUT','70','0','62','7','6','CONTINUOUS',
+    '0','LAYER','2','CREASE','70','0','62','6','6','CONTINUOUS','0','ENDTAB','0','ENDSEC',
+    '0','SECTION','2','ENTITIES',table(entities.flat()),'0','ENDSEC','0','EOF'
+  ].join('\n');
+  const blob = new Blob([dxf], { type: 'application/dxf;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.download = `Dieline_2D_${d.L}x${d.W}x${d.H}mm.dxf`;
+  a.href = url;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
+}
+
 document.getElementById('exportPngBtn').onclick = export2DAsHighResPNG;
 document.getElementById('exportSvgBtn').onclick = export2DAsSVG;
+document.getElementById('exportDxfBtn').onclick = export2DAsDXF;
 
 new ResizeObserver(() => {
   if (currentMode === '3d') {

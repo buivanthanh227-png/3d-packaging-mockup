@@ -12,11 +12,15 @@
 - Dựng thùng carton 3D với vật liệu giấy, lớp sóng, màu sắc, băng keo và góc mở cánh; khi đóng, đường ráp giữa hai cánh luôn hiển thị, còn phần chồng mí thật được tô vùng màu và đánh dấu hai mép.
 - Xem các góc camera, phát/tua hoạt ảnh trình tự gập cánh và xuất ảnh PNG.
 - Xuất mô hình 3D định dạng GLB để dùng trong công cụ tương thích glTF.
-- Xuất bản trải 2D thành ảnh PNG độ phân giải cao hoặc SVG vector.
+- Kiểm tra trước khi xuất: hiển thị kích thước bao bản trải và chồng mí còn lại của cánh chính theo mô phỏng hiện tại. Đây là kiểm tra hỗ trợ thiết kế, không thay cho duyệt kỹ thuật sản xuất.
+- Xuất bản trải 2D thành ảnh PNG độ phân giải cao, SVG vector hoặc DXF ASCII theo đơn vị mm. DXF tách đường bao/khe xẻ vào lớp `CUT` và đường gấp vào lớp `CREASE`; artwork và chữ không được nhúng.
+- Ghi nhận tính năng các công cụ đối chiếu và nguồn chính thức tại [docs/competitor-review.md](docs/competitor-review.md).
 
 ## Sử dụng
 
 Mở `index.html` bằng trình duyệt có hỗ trợ JavaScript modules và WebGL. Ứng dụng tải Three.js từ jsDelivr nên cần kết nối Internet. Nhập kích thước và chọn **DỰNG BẢN TRẢI PHẲNG 2D NGAY!** để kiểm tra bản trải; chọn **DỰNG MOCKUP 3D NGAY** để xem thùng. Trong chế độ 3D, dùng thanh công cụ để đổi góc nhìn, xuất PNG hoặc **Xuất 3D GLB**.
+
+DXF chỉ chứa hình học bản trải, không chứa artwork, chữ, thiết lập máy cắt hay quy tắc riêng của nhà máy. Trước khi sản xuất, mở thử tệp trong CAD/CAM, xác nhận đơn vị mm và gán thao tác/dao cho từng lớp `CUT` và `CREASE`.
 
 Artwork hiện nhận PNG, JPG và WebP. Tệp PDF chưa được rasterize trực tiếp trong ứng dụng; cần chuyển trang thiết kế thành ảnh trước khi tải lên. Tệp dự án JSON nhúng dữ liệu artwork nên có thể lớn; artwork nhúng tối đa 45 MB và toàn bộ tệp dự án tối đa 50 MB (áp dụng khi lưu và mở).
 
